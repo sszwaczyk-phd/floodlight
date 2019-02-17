@@ -1,4 +1,4 @@
-package pl.sszwaczyk.repositories;
+package pl.sszwaczyk.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,13 +12,11 @@ import pl.sszwaczyk.domain.Service;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public class ServiceRepository implements IFloodlightModule {
+public class ServiceService implements IFloodlightModule, IServiceService {
 
-    protected static final Logger log = LoggerFactory.getLogger(ServiceRepository.class);
+    protected static final Logger log = LoggerFactory.getLogger(ServiceService.class);
 
     private static String DEFAULT_SERVICE_REPOSITORY_FILE = "src/main/resources/repositories/services.json";
 
@@ -26,12 +24,18 @@ public class ServiceRepository implements IFloodlightModule {
 
     @Override
     public Collection<Class<? extends IFloodlightService>> getModuleServices() {
-        return null;
+        Collection<Class<? extends IFloodlightService>> s =
+                new HashSet<Class<? extends IFloodlightService>>();
+        s.add(IServiceService.class);
+        return s;
     }
 
     @Override
     public Map<Class<? extends IFloodlightService>, IFloodlightService> getServiceImpls() {
-        return null;
+        Map<Class<? extends IFloodlightService>, IFloodlightService> m =
+                new HashMap<Class<? extends IFloodlightService>, IFloodlightService>();
+        m.put(IServiceService.class, this);
+        return m;
     }
 
     @Override

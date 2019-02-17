@@ -1,4 +1,4 @@
-package pl.sszwaczyk.repositories;
+package pl.sszwaczyk.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,13 +12,11 @@ import pl.sszwaczyk.domain.User;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public class UserRepository implements IFloodlightModule {
+public class UserService implements IFloodlightModule, IUserService {
 
-    protected static final Logger log = LoggerFactory.getLogger(UserRepository.class);
+    protected static final Logger log = LoggerFactory.getLogger(UserService.class);
 
     private static String DEFAULT_USER_REPOSITORY_FILE = "src/main/resources/repositories/users.json";
 
@@ -26,12 +24,18 @@ public class UserRepository implements IFloodlightModule {
 
     @Override
     public Collection<Class<? extends IFloodlightService>> getModuleServices() {
-        return null;
+        Collection<Class<? extends IFloodlightService>> s =
+                new HashSet<Class<? extends IFloodlightService>>();
+        s.add(IUserService.class);
+        return s;
     }
 
     @Override
     public Map<Class<? extends IFloodlightService>, IFloodlightService> getServiceImpls() {
-        return null;
+        Map<Class<? extends IFloodlightService>, IFloodlightService> m =
+                new HashMap<Class<? extends IFloodlightService>, IFloodlightService>();
+        m.put(IUserService.class, this);
+        return m;
     }
 
     @Override
@@ -63,7 +67,8 @@ public class UserRepository implements IFloodlightModule {
 
     }
 
-    private User findUserByIP(String ip) {
+    @Override
+    public User getUserByIp(String ip) {
         return users.stream().filter(u -> u.getIp().equals(ip))
                 .findFirst()
                 .orElse(null);
@@ -81,4 +86,5 @@ public class UserRepository implements IFloodlightModule {
             }
         }
     }
+
 }
