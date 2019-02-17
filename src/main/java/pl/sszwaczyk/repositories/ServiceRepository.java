@@ -63,6 +63,12 @@ public class ServiceRepository implements IFloodlightModule {
 
     }
 
+    public Service getServiceById(String id) {
+        return services.stream().filter(s -> s.getId().equals(id))
+                .findFirst()
+                .orElse(null);
+    }
+
     private void loadServices() throws IOException {
         File usersFile = new File(DEFAULT_SERVICE_REPOSITORY_FILE);
         ObjectMapper objectMapper = new ObjectMapper();

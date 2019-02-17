@@ -6,7 +6,6 @@ import net.floodlightcontroller.core.module.FloodlightModuleContext;
 import net.floodlightcontroller.core.module.FloodlightModuleException;
 import net.floodlightcontroller.core.module.IFloodlightModule;
 import net.floodlightcontroller.core.module.IFloodlightService;
-import net.floodlightcontroller.forwarding.Forwarding;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.sszwaczyk.domain.User;
@@ -62,6 +61,12 @@ public class UserRepository implements IFloodlightModule {
     @Override
     public void startUp(FloodlightModuleContext context) throws FloodlightModuleException {
 
+    }
+
+    private User findUserByIP(String ip) {
+        return users.stream().filter(u -> u.getIp().equals(ip))
+                .findFirst()
+                .orElse(null);
     }
 
     private void loadUsers() throws IOException {
