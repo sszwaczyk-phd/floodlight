@@ -6,10 +6,9 @@ import net.floodlightcontroller.core.module.FloodlightModuleContext;
 import net.floodlightcontroller.core.module.FloodlightModuleException;
 import net.floodlightcontroller.core.module.IFloodlightModule;
 import net.floodlightcontroller.core.module.IFloodlightService;
-import net.floodlightcontroller.forwarding.Forwarding;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.sszwaczyk.domain.User;
+import pl.sszwaczyk.domain.Service;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,13 +16,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public class UserRepository implements IFloodlightModule {
+public class ServiceRepository implements IFloodlightModule {
 
-    protected static final Logger log = LoggerFactory.getLogger(UserRepository.class);
+    protected static final Logger log = LoggerFactory.getLogger(ServiceRepository.class);
 
-    private static String DEFAULT_USER_REPOSITORY_FILE = "src/main/resources/repositories/users.json";
+    private static String DEFAULT_SERVICE_REPOSITORY_FILE = "src/main/resources/repositories/services.json";
 
-    private List<User> users;
+    private List<Service> services;
 
     @Override
     public Collection<Class<? extends IFloodlightService>> getModuleServices() {
@@ -45,17 +44,17 @@ public class UserRepository implements IFloodlightModule {
         Map<String, String> configParameters = context.getConfigParams(this);
         String tmp = configParameters.get("repository-file");
         if (tmp != null) {
-            DEFAULT_USER_REPOSITORY_FILE = tmp;
-            log.info("Default users repository file set to {}.", DEFAULT_USER_REPOSITORY_FILE);
+            DEFAULT_SERVICE_REPOSITORY_FILE = tmp;
+            log.info("Default services repository file set to {}.", DEFAULT_SERVICE_REPOSITORY_FILE);
         } else {
-            log.info("Default users repository not configured. Using {}.", DEFAULT_USER_REPOSITORY_FILE);
+            log.info("Default services repository not configured. Using {}.", DEFAULT_SERVICE_REPOSITORY_FILE);
         }
 
         try {
-            loadUsers();
+            loadServices();
         } catch (IOException e) {
-            log.error("Cannot read users from file because {}.", e.getMessage());
-            throw new FloodlightModuleException("Cannot init Users Repository!");
+            log.error("Cannot read services from file because {}.", e.getMessage());
+            throw new FloodlightModuleException("Cannot init Services Repository!");
         }
     }
 
@@ -64,15 +63,15 @@ public class UserRepository implements IFloodlightModule {
 
     }
 
-    private void loadUsers() throws IOException {
-        File usersFile = new File(DEFAULT_USER_REPOSITORY_FILE);
+    private void loadServices() throws IOException {
+        File usersFile = new File(DEFAULT_SERVICE_REPOSITORY_FILE);
         ObjectMapper objectMapper = new ObjectMapper();
-        users = objectMapper.readValue(usersFile, new TypeReference<List<User>>(){});
+        services = objectMapper.readValue(usersFile, new TypeReference<List<Service>>(){});
 
         if(log.isDebugEnabled()) {
-            log.debug("Loaded users:");
-            for (User user: users) {
-                log.debug(user.toString());
+            log.debug("Loaded services:");
+            for (Service service: services) {
+                log.debug(service.toString());
             }
         }
     }
