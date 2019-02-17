@@ -42,11 +42,14 @@ public class ControllerSwitchesResource extends ServerResource {
         private final String inetAddress; 
         private final long connectedSince;
         private final String version;
-        public DatapathIDJsonSerializerWrapper(DatapathId dpid, String inetAddress, long connectedSince, OFVersion version) {
+        private final float trust;
+
+        public DatapathIDJsonSerializerWrapper(DatapathId dpid, String inetAddress, long connectedSince, OFVersion version, float trust) {
             this.dpid = dpid;
             this.inetAddress = inetAddress;
             this.connectedSince = connectedSince;
             this.version = version.toString();
+            this.trust = trust;
         }
         
         @JsonSerialize(using=DPIDSerializer.class)
@@ -65,6 +68,10 @@ public class ControllerSwitchesResource extends ServerResource {
         public String getOpenFlowVersion() {
             return version;
         }
+
+        public float getTrust() {
+            return trust;
+        }
     }
 
     @Get("json")
@@ -77,7 +84,8 @@ public class ControllerSwitchesResource extends ServerResource {
             dpidSets.add(new DatapathIDJsonSerializerWrapper(sw.getId(), 
                     sw.getInetAddress().toString(), 
                     sw.getConnectedSince().getTime(),
-                    sw.getOFFactory().getVersion()));
+                    sw.getOFFactory().getVersion(),
+                    (Float) sw.getAttributes().get("TRUST")));
 
         }
         return dpidSets;

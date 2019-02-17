@@ -33,3 +33,4 @@ net.floodlightcontroller.hasupport.HAController
 pl.sszwaczyk.service.UserService
 pl.sszwaczyk.service.ServiceService
 pl.sszwaczyk.forwarding.SecurityForwarding
+pl.sszwaczyk.service.SecurityPropertiesService

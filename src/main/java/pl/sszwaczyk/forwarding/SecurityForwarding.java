@@ -1,9 +1,13 @@
 package pl.sszwaczyk.forwarding;
 
+import net.floodlightcontroller.core.FloodlightContext;
+import net.floodlightcontroller.core.IOFSwitch;
 import net.floodlightcontroller.core.module.FloodlightModuleContext;
 import net.floodlightcontroller.core.module.FloodlightModuleException;
 import net.floodlightcontroller.core.module.IFloodlightService;
 import net.floodlightcontroller.forwarding.Forwarding;
+import net.floodlightcontroller.routing.IRoutingDecision;
+import org.projectfloodlight.openflow.protocol.OFPacketIn;
 import pl.sszwaczyk.service.IServiceService;
 import pl.sszwaczyk.service.IUserService;
 
@@ -28,5 +32,10 @@ public class SecurityForwarding extends Forwarding {
         userService = context.getServiceImpl(IUserService.class);
         serviceService = context.getServiceImpl(IServiceService.class);
         log.info("SecurityForwarding module initialized");
+    }
+
+    @Override
+    public Command processPacketInMessage(IOFSwitch sw, OFPacketIn pi, IRoutingDecision decision, FloodlightContext cntx) {
+        return super.processPacketInMessage(sw, pi, decision, cntx);
     }
 }
