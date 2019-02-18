@@ -97,14 +97,15 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
                     if(link.getSrc().equals(ldUpdate.getSrc())
                         && link.getDst().equals(ldUpdate.getDst())
                         && link.getSrcPort().equals(ldUpdate.getSrcPort())
-                        && link.getDstPort().equals(ldUpdate.getDstPort())) {
-                        log.debug("Handling link update ({})", link);
-                        Map<SecurityDimension, Float> securityProperties = new HashMap<>();
-                        securityProperties.put(SecurityDimension.CONFIDENTIALITY, 0.99f);
-                        securityProperties.put(SecurityDimension.INTEGRITY, 0.99f);
-                        securityProperties.put(SecurityDimension.AVAILABILITY, 0.99f);
-                        link.setSecurityProperties(securityProperties);
-                        log.info("C, I, A for new link {} set to 0.99", link);
+                        && link.getDstPort().equals(ldUpdate.getDstPort())
+                        && link.getSecurityProperties() == null) {
+                            log.debug("Handling link update ({})", link);
+                            Map<SecurityDimension, Float> securityProperties = new HashMap<>();
+                            securityProperties.put(SecurityDimension.CONFIDENTIALITY, 0.99f);
+                            securityProperties.put(SecurityDimension.INTEGRITY, 0.99f);
+                            securityProperties.put(SecurityDimension.AVAILABILITY, 0.99f);
+                            link.setSecurityProperties(securityProperties);
+                            log.info("C, I, A for new link {} set to 0.99", link);
                     }
                 }
             }
