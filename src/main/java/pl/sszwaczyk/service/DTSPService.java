@@ -8,9 +8,8 @@ import net.floodlightcontroller.core.module.IFloodlightModule;
 import net.floodlightcontroller.core.module.IFloodlightService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.sszwaczyk.domain.DTSP;
+import pl.sszwaczyk.domain.security.DTSP;
 import pl.sszwaczyk.domain.Service;
-import pl.sszwaczyk.domain.User;
 import pl.sszwaczyk.json.DTSPJson;
 
 import java.io.File;
@@ -19,7 +18,7 @@ import java.util.*;
 
 public class DTSPService implements IFloodlightModule, IDTSPService {
 
-    protected static final Logger log = LoggerFactory.getLogger(UserService.class);
+    protected static final Logger log = LoggerFactory.getLogger(DTSPService.class);
 
     private static String DEFAULT_DTSP_REPOSITORY_FILE = "src/main/resources/repositories/dtsp.json";
 

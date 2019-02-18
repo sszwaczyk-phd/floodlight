@@ -35,3 +35,4 @@ pl.sszwaczyk.service.ServiceService
 pl.sszwaczyk.forwarding.SecurityForwarding
 pl.sszwaczyk.service.SecurityPropertiesService
 pl.sszwaczyk.service.DTSPService
+pl.sszwaczyk.service.RiskCalculationService
