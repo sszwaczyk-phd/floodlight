@@ -1,4 +1,4 @@
-package pl.sszwaczyk.security;
+package pl.sszwaczyk.security.properties;
 
 import net.floodlightcontroller.core.IOFSwitch;
 import net.floodlightcontroller.core.IOFSwitchListener;
@@ -11,36 +11,49 @@ import net.floodlightcontroller.core.module.IFloodlightService;
 import net.floodlightcontroller.linkdiscovery.ILinkDiscoveryListener;
 import net.floodlightcontroller.linkdiscovery.ILinkDiscoveryService;
 import net.floodlightcontroller.linkdiscovery.Link;
+import net.floodlightcontroller.restserver.IRestApiService;
 import org.projectfloodlight.openflow.protocol.OFPortDesc;
 import org.projectfloodlight.openflow.types.DatapathId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.sszwaczyk.security.SecurityDimension;
+import pl.sszwaczyk.security.properties.web.SecurityPropertiesWebRoutable;
+import pl.sszwaczyk.security.properties.web.SwitchSecurityProperties;
 import pl.sszwaczyk.security.soc.*;
 
 import java.util.*;
 
-public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchListener, ILinkDiscoveryListener, ISOCListener {
+public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchListener, ILinkDiscoveryListener,
+        ISOCListener, ISecurityPropertiesService {
 
     private static final Logger log = LoggerFactory.getLogger(SecurityPropertiesService.class);
 
+    private IRestApiService restApiService;
     private IOFSwitchService switchService;
     private ILinkDiscoveryService linkService;
     private ISOCService socService;
 
     @Override
     public Collection<Class<? extends IFloodlightService>> getModuleServices() {
-        return null;
+        Collection<Class<? extends IFloodlightService>> s =
+                new HashSet<Class<? extends IFloodlightService>>();
+        s.add(ISecurityPropertiesService.class);
+        return s;
     }
 
     @Override
     public Map<Class<? extends IFloodlightService>, IFloodlightService> getServiceImpls() {
-        return null;
+        Map<Class<? extends IFloodlightService>, IFloodlightService> m =
+                new HashMap<Class<? extends IFloodlightService>, IFloodlightService>();
+        m.put(ISecurityPropertiesService.class, this);
+        return m;
     }
 
     @Override
     public Collection<Class<? extends IFloodlightService>> getModuleDependencies() {
         Collection<Class<? extends IFloodlightService>> l =
                 new ArrayList<Class<? extends IFloodlightService>>();
+        l.add(IRestApiService.class);
         l.add(IOFSwitchService.class);
         l.add(ILinkDiscoveryService.class);
         l.add(ISOCService.class);
@@ -49,6 +62,7 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
 
     @Override
     public void init(FloodlightModuleContext context) throws FloodlightModuleException {
+        this.restApiService = context.getServiceImpl(IRestApiService.class);
         this.switchService = context.getServiceImpl(IOFSwitchService.class);
         this.linkService = context.getServiceImpl(ILinkDiscoveryService.class);
         this.socService = context.getServiceImpl(ISOCService.class);
@@ -56,6 +70,7 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
 
     @Override
     public void startUp(FloodlightModuleContext context) throws FloodlightModuleException {
+        restApiService.addRestletRoutable(new SecurityPropertiesWebRoutable());
         switchService.addOFSwitchListener(this);
         linkService.addListener(this);
         socService.addListener(this);
@@ -235,5 +250,20 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
 
         }
 
+    }
+
+    @Override
+    public List<SwitchSecurityProperties> getSwitchesSecurityProperties() {
+        List<SwitchSecurityProperties> properties = new ArrayList<>();
+
+        Map<DatapathId, IOFSwitch> allSwitches = switchService.getAllSwitchMap();
+        allSwitches.values().forEach(s -> {
+            SwitchSecurityProperties props = new SwitchSecurityProperties();
+            props.setSwitchDpid(s.getId().toString());
+            props.setTrust((Float) s.getAttributes().get(SecurityDimension.TRUST));
+            properties.add(props);
+        });
+
+        return properties;
     }
 }
