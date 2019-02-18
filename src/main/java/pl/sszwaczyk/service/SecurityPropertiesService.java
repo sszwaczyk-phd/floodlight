@@ -15,11 +15,9 @@ import org.projectfloodlight.openflow.protocol.OFPortDesc;
 import org.projectfloodlight.openflow.types.DatapathId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.sszwaczyk.domain.SecurityDimension;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchListener, ILinkDiscoveryListener {
 
@@ -63,7 +61,7 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
     public void switchAdded(DatapathId switchId) {
         log.debug("Switch added handling ({})", switchId);
         IOFSwitch newSwitch = switchService.getSwitch(switchId);
-        newSwitch.getAttributes().put("TRUST", 0.99f);
+        newSwitch.getAttributes().put(SecurityDimension.TRUST, 0.99f);
         log.info("Trust for new switch {} set to 0.99", switchId);
     }
 
@@ -97,9 +95,11 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
                         && link.getSrcPort().equals(ldUpdate.getSrcPort())
                         && link.getDstPort().equals(ldUpdate.getDstPort())) {
                         log.debug("Handling link update ({})", link);
-                        link.setConfidentiality(0.99f);
-                        link.setIntegrity(0.99f);
-                        link.setAvailability(0.99f);
+                        Map<SecurityDimension, Float> securityProperties = new HashMap<>();
+                        securityProperties.put(SecurityDimension.CONFIDENTIALITY, 0.99f);
+                        securityProperties.put(SecurityDimension.INTEGRITY, 0.99f);
+                        securityProperties.put(SecurityDimension.AVAILABILITY, 0.99f);
+                        link.setSecurityProperties(securityProperties);
                         log.info("C, I, A for new link {} set to 0.99", link);
                     }
                 }

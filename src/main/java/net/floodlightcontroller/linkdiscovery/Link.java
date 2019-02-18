@@ -22,6 +22,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.projectfloodlight.openflow.types.DatapathId;
 import org.projectfloodlight.openflow.types.OFPort;
 import org.projectfloodlight.openflow.types.U64;
+import pl.sszwaczyk.domain.SecurityDimension;
+
+import java.util.Map;
 
 public class Link implements Comparable<Link> {
     @JsonProperty("src-switch")
@@ -35,9 +38,7 @@ public class Link implements Comparable<Link> {
     @JsonProperty("latency") 
     private U64 latency; /* we intentionally exclude the latency from hashcode and equals */
 
-    private Float confidentiality;
-    private Float integrity;
-    private Float availability;
+    Map<SecurityDimension, Float> securityProperties;
 
     public Link(DatapathId srcId, OFPort srcPort, DatapathId dstId, OFPort dstPort, U64 latency) {
         this.src = srcId;
@@ -95,28 +96,24 @@ public class Link implements Comparable<Link> {
     	this.latency = latency;
     }
 
-    public Float getConfidentiality() {
-        return confidentiality;
+    public Map<SecurityDimension, Float> getSecurityProperties() {
+        return securityProperties;
     }
 
-    public void setConfidentiality(Float confidentiality) {
-        this.confidentiality = confidentiality;
+    public void setSecurityProperties(Map<SecurityDimension, Float> securityProperties) {
+        this.securityProperties = securityProperties;
+    }
+
+    public Float getConfidentiality() {
+        return securityProperties.get(SecurityDimension.CONFIDENTIALITY);
     }
 
     public Float getIntegrity() {
-        return integrity;
-    }
-
-    public void setIntegrity(Float integrity) {
-        this.integrity = integrity;
+        return securityProperties.get(SecurityDimension.INTEGRITY);
     }
 
     public Float getAvailability() {
-        return availability;
-    }
-
-    public void setAvailability(Float availability) {
-        this.availability = availability;
+        return securityProperties.get(SecurityDimension.AVAILABILITY);
     }
 
     @Override
