@@ -6,8 +6,10 @@ import net.floodlightcontroller.core.module.FloodlightModuleContext;
 import net.floodlightcontroller.core.module.FloodlightModuleException;
 import net.floodlightcontroller.core.module.IFloodlightModule;
 import net.floodlightcontroller.core.module.IFloodlightService;
+import net.floodlightcontroller.restserver.IRestApiService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.sszwaczyk.security.dtsp.web.DTSPWebRoutable;
 import pl.sszwaczyk.service.Service;
 import pl.sszwaczyk.json.DTSPJson;
 import pl.sszwaczyk.service.IServiceService;
@@ -24,6 +26,7 @@ public class DTSPService implements IFloodlightModule, IDTSPService {
 
     private Map<Service, DTSP> dtsps;
 
+    private IRestApiService restApiService;
     private IServiceService serviceService;
 
     @Override
@@ -46,12 +49,14 @@ public class DTSPService implements IFloodlightModule, IDTSPService {
     public Collection<Class<? extends IFloodlightService>> getModuleDependencies() {
         Collection<Class<? extends IFloodlightService>> l =
                 new ArrayList<Class<? extends IFloodlightService>>();
+        l.add(IRestApiService.class);
         l.add(IServiceService.class);
         return l;
     }
 
     @Override
     public void init(FloodlightModuleContext context) throws FloodlightModuleException {
+        restApiService = context.getServiceImpl(IRestApiService.class);
         serviceService = context.getServiceImpl(IServiceService.class);
 
         Map<String, String> configParameters = context.getConfigParams(this);
@@ -73,7 +78,12 @@ public class DTSPService implements IFloodlightModule, IDTSPService {
 
     @Override
     public void startUp(FloodlightModuleContext context) throws FloodlightModuleException {
+        restApiService.addRestletRoutable(new DTSPWebRoutable());
+    }
 
+    @Override
+    public List<DTSP> getAllDTSPs() {
+        return new ArrayList<>(dtsps.values());
     }
 
     @Override

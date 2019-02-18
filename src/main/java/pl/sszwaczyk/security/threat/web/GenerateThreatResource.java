@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import pl.sszwaczyk.security.threat.IThreatService;
 import pl.sszwaczyk.security.threat.Threat;
 
-import java.util.Timer;
 import java.util.UUID;
 
 public class GenerateThreatResource extends ServerResource {
