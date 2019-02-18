@@ -1,0 +1,23 @@
+[
+  {
+    "serviceId": "Service1",
+    "requirements": {
+      "CONFIDENTIALITY": 0.8,
+      "INTEGRITY": 0.7,
+      "AVAILABILITY": 0.6,
+      "TRUST": 0.5
+    },
+    "consequences": {
+      "CONFIDENTIALITY": 100,
+      "INTEGRITY": 75,
+      "AVAILABILITY": 50,
+      "TRUST": 25
+    },
+    "acceptableRiskIncrease": {
+      "CONFIDENTIALITY": 10,
+      "INTEGRITY": 20,
+      "AVAILABILITY": 30,
+      "TRUST": 40
+    }
+  }
+]
