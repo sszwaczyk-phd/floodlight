@@ -31,7 +31,7 @@ public class SecurityForwarding extends Forwarding {
         super.init(context);
         userService = context.getServiceImpl(IUserService.class);
         serviceService = context.getServiceImpl(IServiceService.class);
-        log.info("SecurityForwarding module initialized");
+        log.info("Security Forwarding module initialized");
     }
 
     @Override

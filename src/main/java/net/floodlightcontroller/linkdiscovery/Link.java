@@ -35,6 +35,10 @@ public class Link implements Comparable<Link> {
     @JsonProperty("latency") 
     private U64 latency; /* we intentionally exclude the latency from hashcode and equals */
 
+    private Float confidentiality;
+    private Float integrity;
+    private Float availability;
+
     public Link(DatapathId srcId, OFPort srcPort, DatapathId dstId, OFPort dstPort, U64 latency) {
         this.src = srcId;
         this.srcPort = srcPort;
@@ -89,6 +93,30 @@ public class Link implements Comparable<Link> {
     
     public void setLatency(U64 latency) {
     	this.latency = latency;
+    }
+
+    public Float getConfidentiality() {
+        return confidentiality;
+    }
+
+    public void setConfidentiality(Float confidentiality) {
+        this.confidentiality = confidentiality;
+    }
+
+    public Float getIntegrity() {
+        return integrity;
+    }
+
+    public void setIntegrity(Float integrity) {
+        this.integrity = integrity;
+    }
+
+    public Float getAvailability() {
+        return availability;
+    }
+
+    public void setAvailability(Float availability) {
+        this.availability = availability;
     }
 
     @Override
