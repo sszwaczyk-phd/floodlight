@@ -6,15 +6,15 @@ import pl.sszwaczyk.security.properties.ISecurityPropertiesService;
 
 import java.util.List;
 
-public class SecurityPropertiesResource extends ServerResource {
+public class LinkSecurityPropertiesResource extends ServerResource {
 
-    @Get("switches")
-    public List<SwitchSecurityProperties> getSwitchesSecurityProperties() {
+    @Get("links")
+    public List<LinkSecurityProperties> getLinksSecurityProperties() {
         ISecurityPropertiesService propertiesService =
                 (ISecurityPropertiesService) getContext().getAttributes().
                         get(ISecurityPropertiesService.class.getCanonicalName());
 
-        return propertiesService.getSwitchesSecurityProperties();
+        return propertiesService.getLinksSecurityProperties();
     }
 
 }

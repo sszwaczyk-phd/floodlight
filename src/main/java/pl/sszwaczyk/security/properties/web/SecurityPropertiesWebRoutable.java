@@ -10,7 +10,8 @@ public class SecurityPropertiesWebRoutable implements RestletRoutable {
     @Override
     public Restlet getRestlet(Context context) {
         Router router = new Router(context);
-        router.attach("/switches", SecurityPropertiesResource.class);
+        router.attach("/switches", SwitchSecurityPropertiesResource.class);
+        router.attach("/links", LinkSecurityPropertiesResource.class);
         return router;
     }
 

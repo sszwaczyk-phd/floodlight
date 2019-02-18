@@ -11,12 +11,14 @@ import net.floodlightcontroller.core.module.IFloodlightService;
 import net.floodlightcontroller.linkdiscovery.ILinkDiscoveryListener;
 import net.floodlightcontroller.linkdiscovery.ILinkDiscoveryService;
 import net.floodlightcontroller.linkdiscovery.Link;
+import net.floodlightcontroller.linkdiscovery.internal.LinkInfo;
 import net.floodlightcontroller.restserver.IRestApiService;
 import org.projectfloodlight.openflow.protocol.OFPortDesc;
 import org.projectfloodlight.openflow.types.DatapathId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.sszwaczyk.security.SecurityDimension;
+import pl.sszwaczyk.security.properties.web.LinkSecurityProperties;
 import pl.sszwaczyk.security.properties.web.SecurityPropertiesWebRoutable;
 import pl.sszwaczyk.security.properties.web.SwitchSecurityProperties;
 import pl.sszwaczyk.security.soc.*;
@@ -261,6 +263,26 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
             SwitchSecurityProperties props = new SwitchSecurityProperties();
             props.setSwitchDpid(s.getId().toString());
             props.setTrust((Float) s.getAttributes().get(SecurityDimension.TRUST));
+            properties.add(props);
+        });
+
+        return properties;
+    }
+
+    @Override
+    public List<LinkSecurityProperties> getLinksSecurityProperties() {
+        List<LinkSecurityProperties> properties = new ArrayList<>();
+
+        Map<Link, LinkInfo> allLinks = linkService.getLinks();
+        allLinks.keySet().forEach(l -> {
+            LinkSecurityProperties props = new LinkSecurityProperties();
+            props.setSrc(l.getSrc().toString());
+            props.setSrcPort(l.getSrcPort().getPortNumber());
+            props.setDst(l.getDst().toString());
+            props.setDstPort(l.getDstPort().getPortNumber());
+            props.setConfidentiality(l.getConfidentiality());
+            props.setIntegrity(l.getIntegrity());
+            props.setAvailability(l.getAvailability());
             properties.add(props);
         });
 
