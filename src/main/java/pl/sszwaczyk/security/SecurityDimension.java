@@ -1,4 +1,4 @@
-package pl.sszwaczyk.domain;
+package pl.sszwaczyk.security;
 
 public enum SecurityDimension {
     //switch

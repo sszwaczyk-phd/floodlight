@@ -29,7 +29,7 @@ import org.restlet.resource.Get;
 import org.restlet.resource.ServerResource;
 import net.floodlightcontroller.core.web.serializers.DPIDSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import pl.sszwaczyk.domain.SecurityDimension;
+import pl.sszwaczyk.security.SecurityDimension;
 
 /**
  * Get a list of switches connected to the controller

@@ -1,4 +1,4 @@
-package pl.sszwaczyk.service;
+package pl.sszwaczyk.security.dtsp;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,9 +8,9 @@ import net.floodlightcontroller.core.module.IFloodlightModule;
 import net.floodlightcontroller.core.module.IFloodlightService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.sszwaczyk.domain.security.DTSP;
-import pl.sszwaczyk.domain.Service;
+import pl.sszwaczyk.service.Service;
 import pl.sszwaczyk.json.DTSPJson;
+import pl.sszwaczyk.service.IServiceService;
 
 import java.io.File;
 import java.io.IOException;

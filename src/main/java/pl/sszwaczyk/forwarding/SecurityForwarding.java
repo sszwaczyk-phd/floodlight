@@ -9,7 +9,7 @@ import net.floodlightcontroller.forwarding.Forwarding;
 import net.floodlightcontroller.routing.IRoutingDecision;
 import org.projectfloodlight.openflow.protocol.OFPacketIn;
 import pl.sszwaczyk.service.IServiceService;
-import pl.sszwaczyk.service.IUserService;
+import pl.sszwaczyk.user.IUserService;
 
 import java.util.Collection;
 

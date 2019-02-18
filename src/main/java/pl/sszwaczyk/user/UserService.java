@@ -1,4 +1,4 @@
-package pl.sszwaczyk.service;
+package pl.sszwaczyk.user;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -8,7 +8,6 @@ import net.floodlightcontroller.core.module.IFloodlightModule;
 import net.floodlightcontroller.core.module.IFloodlightService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.sszwaczyk.domain.User;
 
 import java.io.File;
 import java.io.IOException;

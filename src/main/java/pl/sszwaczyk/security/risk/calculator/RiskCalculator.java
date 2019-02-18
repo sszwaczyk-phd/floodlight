@@ -1,6 +1,6 @@
-package pl.sszwaczyk.domain.security.risk;
+package pl.sszwaczyk.security.risk.calculator;
 
-import pl.sszwaczyk.domain.SecurityDimension;
+import pl.sszwaczyk.security.SecurityDimension;
 
 import java.util.Map;
 

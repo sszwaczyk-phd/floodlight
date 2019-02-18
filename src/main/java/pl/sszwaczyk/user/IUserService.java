@@ -1,7 +1,6 @@
-package pl.sszwaczyk.service;
+package pl.sszwaczyk.user;
 
 import net.floodlightcontroller.core.module.IFloodlightService;
-import pl.sszwaczyk.domain.User;
 
 public interface IUserService extends IFloodlightService {
 

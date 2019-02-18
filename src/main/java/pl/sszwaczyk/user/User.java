@@ -1,4 +1,4 @@
-package pl.sszwaczyk.domain;
+package pl.sszwaczyk.user;
 
 import lombok.Data;
 import lombok.ToString;

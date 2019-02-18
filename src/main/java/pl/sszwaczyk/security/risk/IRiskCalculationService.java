@@ -1,7 +1,7 @@
-package pl.sszwaczyk.service;
+package pl.sszwaczyk.security.risk;
 
 import net.floodlightcontroller.core.module.IFloodlightService;
-import pl.sszwaczyk.domain.SecurityDimension;
+import pl.sszwaczyk.security.SecurityDimension;
 
 import java.util.Map;
 

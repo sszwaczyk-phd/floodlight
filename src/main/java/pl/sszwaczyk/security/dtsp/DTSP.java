@@ -1,11 +1,11 @@
-package pl.sszwaczyk.domain.security;
+package pl.sszwaczyk.security.dtsp;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import pl.sszwaczyk.domain.SecurityDimension;
-import pl.sszwaczyk.domain.Service;
+import pl.sszwaczyk.security.SecurityDimension;
+import pl.sszwaczyk.service.Service;
 
 import java.util.Map;
 

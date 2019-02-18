@@ -8,7 +8,6 @@ import net.floodlightcontroller.core.module.IFloodlightModule;
 import net.floodlightcontroller.core.module.IFloodlightService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.sszwaczyk.domain.Service;
 
 import java.io.File;
 import java.io.IOException;

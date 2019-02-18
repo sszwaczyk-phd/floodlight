@@ -22,7 +22,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.projectfloodlight.openflow.types.DatapathId;
 import org.projectfloodlight.openflow.types.OFPort;
 import org.projectfloodlight.openflow.types.U64;
-import pl.sszwaczyk.domain.SecurityDimension;
+import pl.sszwaczyk.security.SecurityDimension;
 
 import java.util.Map;
 

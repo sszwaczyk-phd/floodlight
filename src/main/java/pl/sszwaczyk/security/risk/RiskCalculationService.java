@@ -1,4 +1,4 @@
-package pl.sszwaczyk.service;
+package pl.sszwaczyk.security.risk;
 
 import net.floodlightcontroller.core.module.FloodlightModuleContext;
 import net.floodlightcontroller.core.module.FloodlightModuleException;
@@ -6,9 +6,9 @@ import net.floodlightcontroller.core.module.IFloodlightModule;
 import net.floodlightcontroller.core.module.IFloodlightService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.sszwaczyk.domain.SecurityDimension;
-import pl.sszwaczyk.domain.security.risk.LogRiskCalculator;
-import pl.sszwaczyk.domain.security.risk.RiskCalculator;
+import pl.sszwaczyk.security.SecurityDimension;
+import pl.sszwaczyk.security.risk.calculator.LogRiskCalculator;
+import pl.sszwaczyk.security.risk.calculator.RiskCalculator;
 
 import java.util.Collection;
 import java.util.Map;

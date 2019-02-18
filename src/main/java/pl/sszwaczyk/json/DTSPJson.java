@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import pl.sszwaczyk.domain.SecurityDimension;
+import pl.sszwaczyk.security.SecurityDimension;
 
 import java.util.Map;
 

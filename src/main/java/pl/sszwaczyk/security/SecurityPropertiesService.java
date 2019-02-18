@@ -1,4 +1,4 @@
-package pl.sszwaczyk.service;
+package pl.sszwaczyk.security;
 
 import net.floodlightcontroller.core.IOFSwitch;
 import net.floodlightcontroller.core.IOFSwitchListener;
@@ -15,16 +15,20 @@ import org.projectfloodlight.openflow.protocol.OFPortDesc;
 import org.projectfloodlight.openflow.types.DatapathId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.sszwaczyk.domain.SecurityDimension;
+import pl.sszwaczyk.security.soc.ISOCListener;
+import pl.sszwaczyk.security.soc.ISOCService;
+import pl.sszwaczyk.security.soc.SOCUpdate;
+import pl.sszwaczyk.security.soc.SOCUpdateType;
 
 import java.util.*;
 
-public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchListener, ILinkDiscoveryListener {
+public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchListener, ILinkDiscoveryListener, ISOCListener {
 
     private static final Logger log = LoggerFactory.getLogger(SecurityPropertiesService.class);
 
     private IOFSwitchService switchService;
     private ILinkDiscoveryService linkService;
+    private ISOCService socService;
 
     @Override
     public Collection<Class<? extends IFloodlightService>> getModuleServices() {
@@ -42,6 +46,7 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
                 new ArrayList<Class<? extends IFloodlightService>>();
         l.add(IOFSwitchService.class);
         l.add(ILinkDiscoveryService.class);
+        l.add(ISOCService.class);
         return l;
     }
 
@@ -49,12 +54,14 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
     public void init(FloodlightModuleContext context) throws FloodlightModuleException {
         this.switchService = context.getServiceImpl(IOFSwitchService.class);
         this.linkService = context.getServiceImpl(ILinkDiscoveryService.class);
+        this.socService = context.getServiceImpl(ISOCService.class);
     }
 
     @Override
     public void startUp(FloodlightModuleContext context) throws FloodlightModuleException {
         switchService.addOFSwitchListener(this);
         linkService.addListener(this);
+        socService.addListener(this);
     }
 
     @Override
@@ -104,6 +111,35 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
                     }
                 }
             }
+        }
+    }
+
+    @Override
+    public void socUpdate(SOCUpdate socUpdate) {
+        log.info("SOC update {} received", socUpdate);
+
+        SOCUpdateType type = socUpdate.getType();
+        Map<SecurityDimension, Float> newSecurityProps = socUpdate.getNewSecurityProperties();
+
+        switch (type) {
+            case SWITCH:
+                IOFSwitch s = switchService.getSwitch(socUpdate.getSrc());
+                s.getAttributes().put(SecurityDimension.TRUST, newSecurityProps.get(SecurityDimension.TRUST));
+                log.info("Set TRUST for switch {} to {}", socUpdate.getSrc(), newSecurityProps.get(SecurityDimension.TRUST));
+                break;
+            case LINK:
+                for(Link link: linkService.getLinks().keySet()) {
+                    if(link.getSrc().equals(socUpdate.getSrc())
+                            && link.getDst().equals(socUpdate.getDst())
+                            && link.getSrcPort().equals(socUpdate.getSrcPort())
+                            && link.getDstPort().equals(socUpdate.getDstPort())) {
+                        link.setSecurityProperties(socUpdate.getNewSecurityProperties());
+                        log.info("Set new C, I, A for link {}", link);
+                        log.info("Confidentiality = {}", newSecurityProps.get(SecurityDimension.CONFIDENTIALITY));
+                        log.info("Integrity = {}", newSecurityProps.get(SecurityDimension.INTEGRITY));
+                        log.info("Availability = {}", newSecurityProps.get(SecurityDimension.AVAILABILITY));
+                    }
+                }
         }
     }
 }
