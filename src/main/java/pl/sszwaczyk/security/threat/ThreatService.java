@@ -1,14 +1,18 @@
 package pl.sszwaczyk.security.threat;
 
+import net.floodlightcontroller.core.internal.IOFSwitchService;
 import net.floodlightcontroller.core.module.FloodlightModuleContext;
 import net.floodlightcontroller.core.module.FloodlightModuleException;
 import net.floodlightcontroller.core.module.IFloodlightModule;
 import net.floodlightcontroller.core.module.IFloodlightService;
+import net.floodlightcontroller.linkdiscovery.ILinkDiscoveryService;
 import net.floodlightcontroller.restserver.IRestApiService;
+import net.floodlightcontroller.util.ParseUtils;
 import org.projectfloodlight.openflow.types.DatapathId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.sszwaczyk.security.soc.ISOCService;
+import pl.sszwaczyk.security.threat.generator.UniformThreatsGenerator;
 import pl.sszwaczyk.security.threat.web.ThreatWebRoutable;
 
 import java.util.*;
@@ -18,6 +22,8 @@ public class ThreatService implements IFloodlightModule, IThreatService {
     protected static final Logger log = LoggerFactory.getLogger(ThreatService.class);
 
     private IRestApiService restApiService;
+    private IOFSwitchService switchService;
+    private ILinkDiscoveryService linkService;
 
     private List<IThreatListener> listeners = new ArrayList<>();
 
@@ -42,12 +48,41 @@ public class ThreatService implements IFloodlightModule, IThreatService {
         Collection<Class<? extends IFloodlightService>> l =
                 new ArrayList<Class<? extends IFloodlightService>>();
         l.add(IRestApiService.class);
+        l.add(IOFSwitchService.class);
+        l.add(ILinkDiscoveryService.class);
         return l;
     }
 
     @Override
     public void init(FloodlightModuleContext context) throws FloodlightModuleException {
         restApiService = context.getServiceImpl(IRestApiService.class);
+        switchService = context.getServiceImpl(IOFSwitchService.class);
+        linkService = context.getServiceImpl(ILinkDiscoveryService.class);
+
+        Map<String, String> configParameters = context.getConfigParams(this);
+        boolean enableThreatsGenerator = Boolean.parseBoolean(configParameters.get("enable-threats-generator"));
+        if(enableThreatsGenerator) {
+            log.info("Threats generator enabled. Running threats generator...");
+            UniformThreatsGenerator uniformThreatsGenerator = UniformThreatsGenerator.builder()
+                    .threatService(this)
+                    .linkService(linkService)
+                    .switchService(switchService)
+                    .minGap(Integer.parseInt(configParameters.get("min-gap")))
+                    .maxGap(Integer.parseInt(configParameters.get("max-gap")))
+                    .minDuration(Integer.parseInt(configParameters.get("min-duration")))
+                    .maxDuration(Integer.parseInt(configParameters.get("max-duration")))
+                    .build();
+
+            new Timer().schedule(
+                    new TimerTask() {
+                        @Override
+                        public void run() {
+                            uniformThreatsGenerator.start();
+                        }
+                    },
+                    Long.parseLong(configParameters.get("threats-generator-start-time")) * 1000
+            );
+        }
     }
 
     @Override
@@ -79,7 +114,7 @@ public class ThreatService implements IFloodlightModule, IThreatService {
 
     private void scheduleThreatEnd(Threat threat) {
         new Timer().schedule(
-                new java.util.TimerTask() {
+                new TimerTask() {
                     @Override
                     public void run() {
                         stopThreat(threat);
