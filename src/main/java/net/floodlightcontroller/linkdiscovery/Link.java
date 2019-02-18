@@ -116,6 +116,18 @@ public class Link implements Comparable<Link> {
         return securityProperties.get(SecurityDimension.AVAILABILITY);
     }
 
+    public void setConfidentiality(Float confidentiality) {
+        securityProperties.put(SecurityDimension.CONFIDENTIALITY, confidentiality);
+    }
+
+    public void setIntegrity(Float integrity) {
+        securityProperties.put(SecurityDimension.INTEGRITY, integrity);
+    }
+
+    public void setAvailability(Float availability) {
+        securityProperties.put(SecurityDimension.AVAILABILITY, availability);
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;

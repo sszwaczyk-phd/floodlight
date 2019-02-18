@@ -21,6 +21,6 @@ public class SOCUpdate {
     private OFPort srcPort;
     private DatapathId dst;
     private OFPort dstPort;
-    private Map<SecurityDimension, Float> newSecurityProperties;
+    private Map<SecurityDimension, Float> securityPropertiesDifference;
 
 }

@@ -15,10 +15,7 @@ import org.projectfloodlight.openflow.protocol.OFPortDesc;
 import org.projectfloodlight.openflow.types.DatapathId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.sszwaczyk.security.soc.ISOCListener;
-import pl.sszwaczyk.security.soc.ISOCService;
-import pl.sszwaczyk.security.soc.SOCUpdate;
-import pl.sszwaczyk.security.soc.SOCUpdateType;
+import pl.sszwaczyk.security.soc.*;
 
 import java.util.*;
 
@@ -119,27 +116,123 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
         log.info("SOC update {} received", socUpdate);
 
         SOCUpdateType type = socUpdate.getType();
-        Map<SecurityDimension, Float> newSecurityProps = socUpdate.getNewSecurityProperties();
+        Map<SecurityDimension, Float> securityPropertiesDifference = socUpdate.getSecurityPropertiesDifference();
 
-        switch (type) {
-            case SWITCH:
-                IOFSwitch s = switchService.getSwitch(socUpdate.getSrc());
-                s.getAttributes().put(SecurityDimension.TRUST, newSecurityProps.get(SecurityDimension.TRUST));
-                log.info("Set TRUST for switch {} to {}", socUpdate.getSrc(), newSecurityProps.get(SecurityDimension.TRUST));
-                break;
-            case LINK:
-                for(Link link: linkService.getLinks().keySet()) {
-                    if(link.getSrc().equals(socUpdate.getSrc())
-                            && link.getDst().equals(socUpdate.getDst())
-                            && link.getSrcPort().equals(socUpdate.getSrcPort())
-                            && link.getDstPort().equals(socUpdate.getDstPort())) {
-                        link.setSecurityProperties(socUpdate.getNewSecurityProperties());
-                        log.info("Set new C, I, A for link {}", link);
-                        log.info("Confidentiality = {}", newSecurityProps.get(SecurityDimension.CONFIDENTIALITY));
-                        log.info("Integrity = {}", newSecurityProps.get(SecurityDimension.INTEGRITY));
-                        log.info("Availability = {}", newSecurityProps.get(SecurityDimension.AVAILABILITY));
+        if(type.equals(SOCUpdateType.THREAT_ACTIVATED_SWITCH)) {
+
+            IOFSwitch s = switchService.getSwitch(socUpdate.getSrc());
+            Float actualTrust = (Float) s.getAttributes().get(SecurityDimension.TRUST);
+            Float trustDifference = securityPropertiesDifference.get(SecurityDimension.TRUST);
+            if(trustDifference > actualTrust) {
+                log.warn("New threat TRUST difference more than actual TRUST for switch {}. Setting TRUST to 0.", socUpdate.getSrc());
+                s.getAttributes().put(SecurityDimension.TRUST, 0.0f);
+            } else {
+                s.getAttributes().put(SecurityDimension.TRUST, actualTrust - trustDifference);
+                log.info("Set TRUST for switch {} to {}", socUpdate.getSrc(), s.getAttributes().get(SecurityDimension.TRUST));
+            }
+
+        } else if(type.equals(SOCUpdateType.THREAT_ACTIVATED_LINK)) {
+
+            for(Link link: linkService.getLinks().keySet()) {
+                if(link.getSrc().equals(socUpdate.getSrc())
+                        && link.getDst().equals(socUpdate.getDst())
+                        && link.getSrcPort().equals(socUpdate.getSrcPort())
+                        && link.getDstPort().equals(socUpdate.getDstPort())) {
+
+                    Float actualConfidentiality = link.getConfidentiality();
+                    Float confidentialityDifference = securityPropertiesDifference.get(SecurityDimension.CONFIDENTIALITY);
+                    if(confidentialityDifference > actualConfidentiality) {
+                        log.warn("New threat CONFIDENTIALITY difference more than actual CONFIDENTIALITY for link {}. Setting CONFIDENTIALITY to 0.", link);
+                        link.setConfidentiality(0.0f);
+                    } else {
+                        link.setConfidentiality(actualConfidentiality - confidentialityDifference);
                     }
+
+                    Float actualIntegrity = link.getIntegrity();
+                    Float integrityDifference = securityPropertiesDifference.get(SecurityDimension.INTEGRITY);
+                    if(integrityDifference > actualIntegrity) {
+                        log.warn("New threat INTEGRITY difference more than actual INTEGRITY for link {}. Setting INTEGRITY to 0.", link);
+                        link.setIntegrity(0.0f);
+                    } else {
+                        link.setIntegrity(actualIntegrity - integrityDifference);
+                    }
+
+                    Float actualAvailability = link.getAvailability();
+                    Float availabilityDifference = securityPropertiesDifference.get(SecurityDimension.AVAILABILITY);
+                    if(availabilityDifference > actualAvailability) {
+                        log.warn("New threat AVAILABILITY difference more than actual AVAILABILITY for link {}. Setting AVAILABILITY to 0.", link);
+                        link.setAvailability(0.0f);
+                    } else {
+                        link.setAvailability(actualAvailability - availabilityDifference);
+                    }
+
+                    log.info("Set new C, I, A for link {}", link);
+                    log.info("Confidentiality = {}", link.getConfidentiality());
+                    log.info("Integrity = {}", link.getIntegrity());
+                    log.info("Availability = {}", link.getAvailability());
+
+                    break;
                 }
+            }
+
+        } else if(type.equals(SOCUpdateType.THREAT_ENDED_SWITCH)) {
+
+            IOFSwitch s = switchService.getSwitch(socUpdate.getSrc());
+            Float actualTrust = (Float) s.getAttributes().get(SecurityDimension.TRUST);
+            Float trustDifference = securityPropertiesDifference.get(SecurityDimension.TRUST);
+            if(actualTrust + trustDifference > 0.99) {
+                log.warn("Threat ended TRUST plus actual TRUST is more than 0.99 for switch {}. Setting TRUST to 0.99", socUpdate.getSrc());
+                s.getAttributes().put(SecurityDimension.TRUST, 0.99f);
+            } else {
+                s.getAttributes().put(SecurityDimension.TRUST, actualTrust + trustDifference);
+                log.info("Set TRUST for switch {} to {}", socUpdate.getSrc(), s.getAttributes().get(SecurityDimension.TRUST));
+            }
+
+        } else if(type.equals(SOCUpdateType.THREAT_ENDED_LINK)) {
+
+            for(Link link: linkService.getLinks().keySet()) {
+                if(link.getSrc().equals(socUpdate.getSrc())
+                        && link.getDst().equals(socUpdate.getDst())
+                        && link.getSrcPort().equals(socUpdate.getSrcPort())
+                        && link.getDstPort().equals(socUpdate.getDstPort())) {
+
+                    Float actualConfidentiality = link.getConfidentiality();
+                    Float confidentialityDifference = securityPropertiesDifference.get(SecurityDimension.CONFIDENTIALITY);
+                    if(actualConfidentiality + confidentialityDifference > 0.99) {
+                        log.warn("Threat ended CONFIDENTIALITY plus actual CONFIDENTIALITY for link {} is more than 0.99. Setting CONFIDENTIALITY to 0.99.", link);
+                        link.setConfidentiality(0.99f);
+                    } else {
+                        link.setConfidentiality(actualConfidentiality + confidentialityDifference);
+                    }
+
+                    Float actualIntegrity = link.getIntegrity();
+                    Float integrityDifference = securityPropertiesDifference.get(SecurityDimension.INTEGRITY);
+                    if(actualIntegrity + integrityDifference > 0.99) {
+                        log.warn("Threat ended INTEGRITY plus actual INTEGRITY for link {} is more than 0.99. Setting INTEGRITY to 0.99.", link);
+                        link.setIntegrity(0.99f);
+                    } else {
+                        link.setIntegrity(actualIntegrity + integrityDifference);
+                    }
+
+                    Float actualAvailability = link.getAvailability();
+                    Float availabilityDifference = securityPropertiesDifference.get(SecurityDimension.AVAILABILITY);
+                    if(actualAvailability + availabilityDifference > 0.99) {
+                        log.warn("Threat ended AVAILABILITY plus actual AVAILABILITY for link {} is more than 0.99. Setting AVAILABILITY to 0.99.", link);
+                        link.setAvailability(0.99f);
+                    } else {
+                        link.setAvailability(actualAvailability + availabilityDifference);
+                    }
+
+                    log.info("Set new C, I, A for link {}", link);
+                    log.info("Confidentiality = {}", link.getConfidentiality());
+                    log.info("Integrity = {}", link.getIntegrity());
+                    log.info("Availability = {}", link.getAvailability());
+
+                    break;
+                }
+            }
+
         }
+
     }
 }
