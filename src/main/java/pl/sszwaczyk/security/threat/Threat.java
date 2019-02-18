@@ -20,4 +20,5 @@ public class Threat {
     private DatapathId dst;
     private OFPort dstPort;
 
+    private Long duration; //seconds
 }
