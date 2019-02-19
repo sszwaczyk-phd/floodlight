@@ -38,3 +38,4 @@ pl.sszwaczyk.security.dtsp.DTSPService
 pl.sszwaczyk.security.risk.RiskCalculationService
 pl.sszwaczyk.security.soc.SOCService
 pl.sszwaczyk.security.threat.ThreatService
+pl.sszwaczyk.path.PathPropertiesService
