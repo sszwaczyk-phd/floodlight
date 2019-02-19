@@ -730,7 +730,6 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
             Path rarRfPath = null;
             double rarRfPathDistance = Float.MAX_VALUE;
             for(Path p: allPaths) {
-                //TODO: implement
                 Map<SecurityDimension, Float> pathProperties = pathPropertiesService.calculatePathProperties(p);
                 Map<SecurityDimension, Float> pathRisks = riskService.calculateRisk(pathProperties, dtsp.getConsequences());
                 if(isPathRiskInRange(acceptableRisks, pathRisks)) {
@@ -753,24 +752,49 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
                 } else {
                     if(rarBfPath == null) {
                         if(isPathRiskInRange(maxRisks, pathRisks)) {
-                            //TODO: implement
+                            float pathConfidentialityRisk = pathRisks.get(SecurityDimension.CONFIDENTIALITY);
+                            float confidentialityDifference = pathConfidentialityRisk - acceptableRisks.get(SecurityDimension.CONFIDENTIALITY);
+                            if(confidentialityDifference < 0) {
+                                confidentialityDifference = 0;
+                            }
+
+                            float pathIntegrityRisk = pathRisks.get(SecurityDimension.INTEGRITY);
+                            float integrityDifference = pathIntegrityRisk - acceptableRisks.get(SecurityDimension.INTEGRITY);
+                            if(integrityDifference < 0) {
+                                integrityDifference = 0;
+                            }
+
+                            float pathAvailabilityRisk = pathRisks.get(SecurityDimension.AVAILABILITY);
+                            float availabilityDifference = pathAvailabilityRisk - acceptableRisks.get(SecurityDimension.AVAILABILITY);
+                            if(availabilityDifference < 0) {
+                                availabilityDifference = 0;
+                            }
+
+                            float pathTrustRisk = pathRisks.get(SecurityDimension.TRUST);
+                            float trustDifference = pathTrustRisk - acceptableRisks.get(SecurityDimension.TRUST);
+                            if(trustDifference < 0) {
+                                trustDifference = 0;
+                            }
+
+                            double pathDistance = Math.sqrt(Math.pow(confidentialityDifference, 2)
+                                + Math.pow(integrityDifference, 2)
+                                + Math.pow(availabilityDifference, 2)
+                                + Math.pow(trustDifference, 2));
+                            if(pathDistance < rarRfPathDistance) {
+                                rarRfPath = p;
+                                rarRfPathDistance = pathDistance;
+                            }
                         }
                     }
                 }
             }
 
             if(rarBfPath != null) {
-                List<NodePortTuple> nptList = new ArrayList<NodePortTuple>(rarBfPath.getPath());
-                NodePortTuple npt = new NodePortTuple(srcSw, srcPort);
-                nptList.add(0, npt); // add src port to the front
-                npt = new NodePortTuple(dstAp.getNodeId(), dstAp.getPortId());
-                nptList.add(npt); // add dst port to the end
-
-                PathId id = new PathId(srcSw, dstAp.getNodeId());
-                path = new Path(id, nptList);
+                path = addSrcAndDstToPath(srcPort, srcSw, dstAp, rarBfPath);
                 log.info("Path {} in RAR-BF with distance {}", path, rarBfPathDistance);
             } else if(rarRfPath != null) {
-                //TODO: implement
+                path = addSrcAndDstToPath(srcPort, srcSw, dstAp, rarRfPath);
+                log.info("Path {} in RAR-RF with distance {}", path, rarRfPathDistance);
             }
         } else {
             log.info("Standard routing...");
@@ -806,6 +830,19 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
         } /* else no path was found */
     }
 
+    private Path addSrcAndDstToPath(OFPort srcPort, DatapathId srcSw, SwitchPort dstAp, Path rarBfPath) {
+        Path path;
+        List<NodePortTuple> nptList = new ArrayList<NodePortTuple>(rarBfPath.getPath());
+        NodePortTuple npt = new NodePortTuple(srcSw, srcPort);
+        nptList.add(0, npt); // add src port to the front
+        npt = new NodePortTuple(dstAp.getNodeId(), dstAp.getPortId());
+        nptList.add(npt); // add dst port to the end
+
+        PathId id = new PathId(srcSw, dstAp.getNodeId());
+        path = new Path(id, nptList);
+        return path;
+    }
+
     private boolean isPathRiskInRange(Map<SecurityDimension, Float> range, Map<SecurityDimension, Float> pathRisks) {
         if(range.get(SecurityDimension.CONFIDENTIALITY) <= pathRisks.get(SecurityDimension.CONFIDENTIALITY)) {
             return false;
@@ -831,10 +868,12 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
         Map<SecurityDimension, Float> acceptableRisks = riskService.calculateRisk(dtsp.getRequirements(), dtsp.getConsequences());
         Map<SecurityDimension, Float> maxRisks = new HashMap<>();
         Map<SecurityDimension, Float> increase = dtsp.getAcceptableRiskIncrease();
-        maxRisks.put(SecurityDimension.CONFIDENTIALITY, acceptableRisks.get(SecurityDimension.CONFIDENTIALITY) + acceptableRisks.get(SecurityDimension.CONFIDENTIALITY) * increase.get(SecurityDimension.CONFIDENTIALITY));
-        maxRisks.put(SecurityDimension.INTEGRITY, acceptableRisks.get(SecurityDimension.INTEGRITY) + acceptableRisks.get(SecurityDimension.INTEGRITY) * increase.get(SecurityDimension.INTEGRITY));
-        maxRisks.put(SecurityDimension.AVAILABILITY, acceptableRisks.get(SecurityDimension.AVAILABILITY) + acceptableRisks.get(SecurityDimension.AVAILABILITY) * increase.get(SecurityDimension.AVAILABILITY));
-        maxRisks.put(SecurityDimension.TRUST, acceptableRisks.get(SecurityDimension.TRUST) + acceptableRisks.get(SecurityDimension.TRUST) * increase.get(SecurityDimension.TRUST));
+        maxRisks.put(SecurityDimension.CONFIDENTIALITY, acceptableRisks.get(SecurityDimension.CONFIDENTIALITY) + acceptableRisks.get(SecurityDimension.CONFIDENTIALITY) * (increase.get(SecurityDimension.CONFIDENTIALITY) / 100.0f));
+        maxRisks.put(SecurityDimension.INTEGRITY, acceptableRisks.get(SecurityDimension.INTEGRITY) + acceptableRisks.get(SecurityDimension.INTEGRITY) * (increase.get(SecurityDimension.INTEGRITY) / 100.0f));
+        maxRisks.put(SecurityDimension.AVAILABILITY, acceptableRisks.get(SecurityDimension.AVAILABILITY) + acceptableRisks.get(SecurityDimension.AVAILABILITY) * (increase.get(SecurityDimension.AVAILABILITY) / 100.0f));
+        maxRisks.put(SecurityDimension.TRUST, acceptableRisks.get(SecurityDimension.TRUST) + acceptableRisks.get(SecurityDimension.TRUST) * (increase.get(SecurityDimension.TRUST) / 100.0f));
+        log.debug("Acceptable risks for service {} are {}", service, acceptableRisks);
+        log.debug("Max risks for service {} are {}", service, maxRisks);
         return new Risks(acceptableRisks, maxRisks);
     }
 
