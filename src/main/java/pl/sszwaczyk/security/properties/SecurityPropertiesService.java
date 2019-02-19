@@ -15,6 +15,7 @@ import net.floodlightcontroller.linkdiscovery.internal.LinkInfo;
 import net.floodlightcontroller.restserver.IRestApiService;
 import org.projectfloodlight.openflow.protocol.OFPortDesc;
 import org.projectfloodlight.openflow.types.DatapathId;
+import org.projectfloodlight.openflow.types.OFPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.sszwaczyk.security.SecurityDimension;
@@ -287,5 +288,24 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
         });
 
         return properties;
+    }
+
+    @Override
+    public void setLinkSecurityProperites(LinkSecurityProperties properties) {
+        Map<Link, LinkInfo> links = linkService.getLinks();
+        for(Link link: linkService.getLinks().keySet()) {
+            if(link.getSrc().equals(DatapathId.of(properties.getSrc()))
+                    && link.getDst().equals(DatapathId.of(properties.getDst()))
+                    && link.getSrcPort().equals(OFPort.of(properties.getSrcPort()))
+                    && link.getDstPort().equals(OFPort.of(properties.getDstPort()))) {
+                link.setConfidentiality(properties.getConfidentiality());
+                link.setIntegrity(properties.getIntegrity());
+                link.setAvailability(properties.getAvailability());
+                log.info("Set new C, I, A for link {}", link);
+                log.info("Confidentiality = {}", link.getConfidentiality());
+                log.info("Integrity = {}", link.getIntegrity());
+                log.info("Availability = {}", link.getAvailability());
+            }
+        }
     }
 }

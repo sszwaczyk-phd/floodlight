@@ -11,4 +11,6 @@ public interface ISecurityPropertiesService extends IFloodlightService {
     List<SwitchSecurityProperties> getSwitchesSecurityProperties();
 
     List<LinkSecurityProperties> getLinksSecurityProperties();
+
+    void setLinkSecurityProperites(LinkSecurityProperties properties);
 }

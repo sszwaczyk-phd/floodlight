@@ -1,6 +1,7 @@
 package pl.sszwaczyk.security.properties.web;
 
 import org.restlet.resource.Get;
+import org.restlet.resource.Post;
 import org.restlet.resource.ServerResource;
 import pl.sszwaczyk.security.properties.ISecurityPropertiesService;
 
@@ -17,4 +18,12 @@ public class LinkSecurityPropertiesResource extends ServerResource {
         return propertiesService.getLinksSecurityProperties();
     }
 
+    @Post("links")
+    public void setLinkProperties(LinkSecurityProperties properties) {
+        ISecurityPropertiesService propertiesService =
+                (ISecurityPropertiesService) getContext().getAttributes().
+                        get(ISecurityPropertiesService.class.getCanonicalName());
+
+        propertiesService.setLinkSecurityProperites(properties);
+    }
 }
