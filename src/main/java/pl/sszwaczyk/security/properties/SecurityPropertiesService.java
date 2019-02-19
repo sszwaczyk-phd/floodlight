@@ -291,7 +291,14 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
     }
 
     @Override
-    public void setLinkSecurityProperites(LinkSecurityProperties properties) {
+    public void setSwitchSecurityProperties(SwitchSecurityProperties properties) {
+        IOFSwitch s = switchService.getSwitch(DatapathId.of(properties.getSwitchDpid()));
+        s.getAttributes().put(SecurityDimension.TRUST, properties.getTrust());
+        log.info("Set TRUST for switch {} to {}",properties.getSwitchDpid(), s.getAttributes().get(SecurityDimension.TRUST));
+    }
+
+    @Override
+    public void setLinkSecurityProperties(LinkSecurityProperties properties) {
         Map<Link, LinkInfo> links = linkService.getLinks();
         for(Link link: linkService.getLinks().keySet()) {
             if(link.getSrc().equals(DatapathId.of(properties.getSrc()))

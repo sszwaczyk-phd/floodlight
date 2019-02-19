@@ -24,6 +24,6 @@ public class LinkSecurityPropertiesResource extends ServerResource {
                 (ISecurityPropertiesService) getContext().getAttributes().
                         get(ISecurityPropertiesService.class.getCanonicalName());
 
-        propertiesService.setLinkSecurityProperites(properties);
+        propertiesService.setLinkSecurityProperties(properties);
     }
 }
