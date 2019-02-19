@@ -57,6 +57,15 @@ import org.python.google.common.collect.ImmutableList;
 import org.python.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.sszwaczyk.security.SecurityDimension;
+import pl.sszwaczyk.security.dtsp.DTSP;
+import pl.sszwaczyk.security.dtsp.IDTSPService;
+import pl.sszwaczyk.security.risk.IRiskCalculationService;
+import pl.sszwaczyk.security.risk.Risks;
+import pl.sszwaczyk.service.IServiceService;
+import pl.sszwaczyk.service.Service;
+import pl.sszwaczyk.utils.AddressAndPort;
+import pl.sszwaczyk.utils.PacketUtils;
 
 import javax.annotation.Nonnull;
 
@@ -101,6 +110,11 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
 
     private Map<OFPacketIn, Ethernet> l3cache;
     private DeviceListenerImpl deviceListener;
+
+    //Secure routing
+    private IServiceService serviceService;
+    private IRiskCalculationService riskService;
+    private IDTSPService dtspService;
 
     protected static class FlowSetIdRegistry {
         private volatile Map<NodePortTuple, Set<U64>> nptToFlowSetIds;
@@ -699,10 +713,36 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
 
         U64 flowSetId = flowSetIdRegistry.generateFlowSetId();
         U64 cookie = makeForwardingCookie(decision, flowSetId);
-        Path path = routingEngineService.getPath(srcSw,
-                srcPort,
-                dstAp.getNodeId(),
-                dstAp.getPortId());
+
+        Path path = new Path(null, ImmutableList.of());
+        Service service = serviceService.getServiceFromCntx(cntx);
+        if(service != null) {
+            log.info("Security routing...");
+            List<Path> allPaths = routingEngineService.getPathsSlow(srcSw, dstAp.getNodeId(), Integer.MAX_VALUE);
+            Risks risks = calculateRisks(service);
+            Map<SecurityDimension, Float> acceptableRisks = risks.getAcceptableRisks();
+            Map<SecurityDimension, Float> maxRisks = risks.getMaxRisks();
+            Path rarBfPath = null;
+            Path rarRfPath = null;
+            for(Path p: allPaths) {
+                //TODO: implement
+            }
+            rarBfPath = allPaths.get(0);
+            List<NodePortTuple> nptList = new ArrayList<NodePortTuple>(rarBfPath.getPath());
+            NodePortTuple npt = new NodePortTuple(srcSw, srcPort);
+            nptList.add(0, npt); // add src port to the front
+            npt = new NodePortTuple(dstAp.getNodeId(), dstAp.getPortId());
+            nptList.add(npt); // add dst port to the end
+
+            PathId id = new PathId(srcSw, dstAp.getNodeId());
+            path = new Path(id, nptList);
+        } else {
+            log.info("Standard routing...");
+            path = routingEngineService.getPath(srcSw,
+                    srcPort,
+                    dstAp.getNodeId(),
+                    dstAp.getPortId());
+        }
 
         Match m = createMatchFromPacket(sw, srcPort, pi, cntx);
 
@@ -730,6 +770,17 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
         } /* else no path was found */
     }
 
+    private Risks calculateRisks(Service service) {
+        DTSP dtsp = dtspService.getDTSPForService(service);
+        Map<SecurityDimension, Float> acceptableRisks = riskService.calculateRisk(dtsp.getRequirements(), dtsp.getConsequences());
+        Map<SecurityDimension, Float> maxRisks = new HashMap<>();
+        Map<SecurityDimension, Float> increase = dtsp.getAcceptableRiskIncrease();
+        maxRisks.put(SecurityDimension.CONFIDENTIALITY, acceptableRisks.get(SecurityDimension.CONFIDENTIALITY) + acceptableRisks.get(SecurityDimension.CONFIDENTIALITY) * increase.get(SecurityDimension.CONFIDENTIALITY));
+        maxRisks.put(SecurityDimension.INTEGRITY, acceptableRisks.get(SecurityDimension.INTEGRITY) + acceptableRisks.get(SecurityDimension.INTEGRITY) * increase.get(SecurityDimension.INTEGRITY));
+        maxRisks.put(SecurityDimension.AVAILABILITY, acceptableRisks.get(SecurityDimension.AVAILABILITY) + acceptableRisks.get(SecurityDimension.AVAILABILITY) * increase.get(SecurityDimension.AVAILABILITY));
+        maxRisks.put(SecurityDimension.TRUST, acceptableRisks.get(SecurityDimension.TRUST) + acceptableRisks.get(SecurityDimension.TRUST) * increase.get(SecurityDimension.TRUST));
+        return new Risks(acceptableRisks, maxRisks);
+    }
 
     /**
      * Generate arp reply packet so virtual gateway can use it to response the cross-subnet ARP request sent from host
@@ -1345,6 +1396,9 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
         this.debugCounterService = context.getServiceImpl(IDebugCounterService.class);
         this.switchService = context.getServiceImpl(IOFSwitchService.class);
         this.linkService = context.getServiceImpl(ILinkDiscoveryService.class);
+        this.serviceService = context.getServiceImpl(IServiceService.class);
+        this.dtspService = context.getServiceImpl(IDTSPService.class);
+        this.riskService = context.getServiceImpl(IRiskCalculationService.class);
 
         l3manager = new L3RoutingManager();
         l3cache = new ConcurrentHashMap<>();

@@ -2,12 +2,15 @@ package pl.sszwaczyk.service;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import net.floodlightcontroller.core.FloodlightContext;
 import net.floodlightcontroller.core.module.FloodlightModuleContext;
 import net.floodlightcontroller.core.module.FloodlightModuleException;
 import net.floodlightcontroller.core.module.IFloodlightModule;
 import net.floodlightcontroller.core.module.IFloodlightService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.sszwaczyk.utils.AddressAndPort;
+import pl.sszwaczyk.utils.PacketUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -66,10 +69,27 @@ public class ServiceService implements IFloodlightModule, IServiceService {
 
     }
 
+    @Override
     public Service getServiceById(String id) {
         return services.stream().filter(s -> s.getId().equals(id))
                 .findFirst()
                 .orElse(null);
+    }
+
+    @Override
+    public Service getServiceByAddrAndPort(String srcAddr, int srcPort) {
+        return services.stream().filter(s -> s.getIp().equals(srcAddr) && s.getPort().equals(srcPort))
+                .findFirst()
+                .orElse(null);
+    }
+
+    @Override
+    public Service getServiceFromCntx(FloodlightContext cntx) {
+        AddressAndPort addressAndPort = PacketUtils.getSrcAddressAndSrcTCPPort(cntx);
+        if(addressAndPort != null) {
+            return getServiceByAddrAndPort(addressAndPort.getAddress(), addressAndPort.getPort());
+        }
+        return null;
     }
 
     private void loadServices() throws IOException {

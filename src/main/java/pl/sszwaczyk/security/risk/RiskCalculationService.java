@@ -9,8 +9,11 @@ import org.slf4j.LoggerFactory;
 import pl.sszwaczyk.security.SecurityDimension;
 import pl.sszwaczyk.security.risk.calculator.LogRiskCalculator;
 import pl.sszwaczyk.security.risk.calculator.RiskCalculator;
+import pl.sszwaczyk.service.IServiceService;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 public class RiskCalculationService implements IFloodlightModule, IRiskCalculationService {
@@ -21,12 +24,18 @@ public class RiskCalculationService implements IFloodlightModule, IRiskCalculati
 
     @Override
     public Collection<Class<? extends IFloodlightService>> getModuleServices() {
-        return null;
+        Collection<Class<? extends IFloodlightService>> s =
+                new HashSet<Class<? extends IFloodlightService>>();
+        s.add(IRiskCalculationService.class);
+        return s;
     }
 
     @Override
     public Map<Class<? extends IFloodlightService>, IFloodlightService> getServiceImpls() {
-        return null;
+        Map<Class<? extends IFloodlightService>, IFloodlightService> m =
+                new HashMap<Class<? extends IFloodlightService>, IFloodlightService>();
+        m.put(IRiskCalculationService.class, this);
+        return m;
     }
 
     @Override

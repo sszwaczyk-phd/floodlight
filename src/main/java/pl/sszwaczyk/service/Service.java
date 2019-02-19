@@ -9,7 +9,7 @@ public class Service {
 
     private String id;
     private String ip;
-    private Long port;
+    private Integer port;
     private String path;
 
 }
