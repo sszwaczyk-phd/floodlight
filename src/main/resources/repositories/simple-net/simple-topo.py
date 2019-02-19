@@ -9,8 +9,8 @@ class SimpleTopo(Topo):
         Topo.__init__( self )
 
         # Add hosts and switches
-        userHost = self.addHost( 'User1' )
-        serviceHost = self.addHost( 'Service1' )
+        userHost = self.addHost( 'User1', ip='10.0.0.1/24' )
+        serviceHost = self.addHost( 'Service1', ip='10.0.0.2/24' )
         leftSwitch = self.addSwitch( 's1' )
         upSwitch = self.addSwitch( 's2' )
         downSwitch = self.addSwitch( 's3' )

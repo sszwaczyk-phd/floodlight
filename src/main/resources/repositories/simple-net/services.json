@@ -3,6 +3,6 @@
     "id": "Service1",
     "ip": "10.0.0.2",
     "port": 8000,
-    "path": "/floodlight/src/main/resources/repositories/simple-net/test-file.txt"
+    "path": "/impl/floodlight/src/main/resources/repositories/simple-net/test-file.txt"
   }
 ]
