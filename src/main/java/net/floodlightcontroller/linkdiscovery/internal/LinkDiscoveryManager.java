@@ -538,6 +538,14 @@ IFloodlightModule, IInfoProvider {
 	}
 
 	@Override
+	public Link getLink(DatapathId srcSw, OFPort srcPort, DatapathId dstSw, OFPort dstPort) {
+		return links.keySet().stream()
+				.filter(l -> l.getSrc().equals(srcSw) && l.getSrcPort().equals(srcPort) && l.getDst().equals(dstSw) && l.getDstPort().equals(dstPort))
+				.findFirst()
+				.orElse(null);
+	}
+
+	@Override
 	public LinkInfo getLinkInfo(Link link) {
 		lock.readLock().lock();
 		LinkInfo linkInfo = links.get(link);

@@ -44,6 +44,8 @@ public interface ILinkDiscoveryService extends IFloodlightService {
      */
     public Map<Link, LinkInfo> getLinks();
 
+    public Link getLink(DatapathId srcSw, OFPort srcPort, DatapathId dstSw, OFPort dstPort);
+
     /**
      * Retrieves the link info for a given link
      * @param link link for which the link info should be returned
