@@ -10,6 +10,7 @@ import net.floodlightcontroller.routing.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.sszwaczyk.path.calculator.MinPathPropertiesCalculator;
+import pl.sszwaczyk.path.calculator.MultiplicationPathPropertiesCalculator;
 import pl.sszwaczyk.path.calculator.PathPropertiesCalculator;
 import pl.sszwaczyk.security.SecurityDimension;
 
@@ -53,7 +54,21 @@ public class PathPropertiesService implements IFloodlightModule, IPathProperties
     public void init(FloodlightModuleContext context) throws FloodlightModuleException {
         this.switchService = context.getServiceImpl(IOFSwitchService.class);
         this.linkService = context.getServiceImpl(ILinkDiscoveryService.class);
-        calculator = new MinPathPropertiesCalculator(switchService, linkService);
+
+        Map<String, String> configParameters = context.getConfigParams(this);
+        String calcString = configParameters.get("path-properties-calculator");
+        if(calcString == null || calcString.isEmpty()) {
+            throw new FloodlightModuleException("Cannot init PathPropertiesService because PathPropertiesCalculator not specified!");
+        }
+
+        if(calcString.equals("minimum")) {
+            calculator = new MinPathPropertiesCalculator(switchService, linkService);
+        } else if(calcString.equals("multiplication")) {
+            calculator = new MultiplicationPathPropertiesCalculator(switchService, linkService);
+        } else {
+            throw new FloodlightModuleException("Cannot init PathPropertiesService because wrong PathPropertiesCalculator specified (" + calcString + ")!");
+        }
+        log.info("PathPropertiesService initialized with " + calcString + " path properties calculator.");
     }
 
     @Override
