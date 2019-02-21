@@ -114,10 +114,6 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
 
     //Secure routing
     private IServiceService serviceService;
-    private IRiskCalculationService riskService;
-    private IDTSPService dtspService;
-    private IPathPropertiesService pathPropertiesService;
-    private ISecureRoutingStatisticsService secureRoutingStatisticsService;
 
     protected static class FlowSetIdRegistry {
         private volatile Map<NodePortTuple, Set<U64>> nptToFlowSetIds;
@@ -721,86 +717,11 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
         Service service = serviceService.getServiceFromCntx(cntx);
         if(service != null) {
             log.info("Security routing for service {}", service);
-            DTSP dtsp = dtspService.getDTSPForService(service);
-            List<Path> allPaths = routingEngineService.getPathsSlow(srcSw, dstAp.getNodeId(), Integer.MAX_VALUE);
-            Risks risks = calculateRisks(service);
-            Map<SecurityDimension, Float> acceptableRisks = risks.getAcceptableRisks();
-            Map<SecurityDimension, Float> maxRisks = risks.getMaxRisks();
-            Path rarBfPath = null;
-            double rarBfPathDistance = Float.MAX_VALUE;
-            Path rarRfPath = null;
-            double rarRfPathDistance = Float.MAX_VALUE;
-            for(Path p: allPaths) {
-                Map<SecurityDimension, Float> pathProperties = pathPropertiesService.calculatePathProperties(p);
-                Map<SecurityDimension, Float> pathRisks = riskService.calculateRisk(pathProperties, dtsp.getConsequences());
-                if(isPathRiskInRange(acceptableRisks, pathRisks)) {
-                    if(rarBfPath == null) {
-                        rarBfPath = p;
-                        rarBfPathDistance = Math.sqrt(Math.pow(pathRisks.get(SecurityDimension.CONFIDENTIALITY), 2)
-                            + Math.pow(pathRisks.get(SecurityDimension.INTEGRITY), 2)
-                            + Math.pow(pathRisks.get(SecurityDimension.AVAILABILITY), 2)
-                            + Math.pow(pathRisks.get(SecurityDimension.TRUST), 2));
-                    } else {
-                        double pathDistance = Math.sqrt(Math.pow(pathRisks.get(SecurityDimension.CONFIDENTIALITY), 2)
-                                + Math.pow(pathRisks.get(SecurityDimension.INTEGRITY), 2)
-                                + Math.pow(pathRisks.get(SecurityDimension.AVAILABILITY), 2)
-                                + Math.pow(pathRisks.get(SecurityDimension.TRUST), 2));
-                        if(pathDistance < rarBfPathDistance) {
-                            rarBfPath = p;
-                            rarBfPathDistance = pathDistance;
-                        }
-                    }
-                } else {
-                    if(rarBfPath == null) {
-                        if(isPathRiskInRange(maxRisks, pathRisks)) {
-                            float pathConfidentialityRisk = pathRisks.get(SecurityDimension.CONFIDENTIALITY);
-                            float confidentialityDifference = pathConfidentialityRisk - acceptableRisks.get(SecurityDimension.CONFIDENTIALITY);
-                            if(confidentialityDifference < 0) {
-                                confidentialityDifference = 0;
-                            }
-
-                            float pathIntegrityRisk = pathRisks.get(SecurityDimension.INTEGRITY);
-                            float integrityDifference = pathIntegrityRisk - acceptableRisks.get(SecurityDimension.INTEGRITY);
-                            if(integrityDifference < 0) {
-                                integrityDifference = 0;
-                            }
-
-                            float pathAvailabilityRisk = pathRisks.get(SecurityDimension.AVAILABILITY);
-                            float availabilityDifference = pathAvailabilityRisk - acceptableRisks.get(SecurityDimension.AVAILABILITY);
-                            if(availabilityDifference < 0) {
-                                availabilityDifference = 0;
-                            }
-
-                            float pathTrustRisk = pathRisks.get(SecurityDimension.TRUST);
-                            float trustDifference = pathTrustRisk - acceptableRisks.get(SecurityDimension.TRUST);
-                            if(trustDifference < 0) {
-                                trustDifference = 0;
-                            }
-
-                            double pathDistance = Math.sqrt(Math.pow(confidentialityDifference, 2)
-                                + Math.pow(integrityDifference, 2)
-                                + Math.pow(availabilityDifference, 2)
-                                + Math.pow(trustDifference, 2));
-                            if(pathDistance < rarRfPathDistance) {
-                                rarRfPath = p;
-                                rarRfPathDistance = pathDistance;
-                            }
-                        }
-                    }
-                }
-            }
-
-            if(rarBfPath != null) {
-                path = addSrcAndDstToPath(srcPort, srcSw, dstAp, rarBfPath);
-                log.info("Path {} in RAR-BF with distance {}", path, rarBfPathDistance);
-                secureRoutingStatisticsService.getSecureRoutingStatistics().setRealizedRequests(secureRoutingStatisticsService.getSecureRoutingStatistics().getRealizedRequests() + 1);
-                log.debug("Updating realized requests statistic");
-            } else if(rarRfPath != null) {
-                path = addSrcAndDstToPath(srcPort, srcSw, dstAp, rarRfPath);
-                log.info("Path {} in RAR-RF with distance {}", path, rarRfPathDistance);
-                secureRoutingStatisticsService.getSecureRoutingStatistics().setRealizedRequests(secureRoutingStatisticsService.getSecureRoutingStatistics().getRealizedRequests() + 1);
-                log.debug("Updating realized requests statistic");
-            }
+            path = routingEngineService.getSecurePath(service,
+                    srcSw,
+                    srcPort,
+                    dstAp.getNodeId(),
+                    dstAp.getPortId());
         } else {
             log.info("Standard routing...");
             path = routingEngineService.getPath(srcSw,
@@ -833,53 +754,6 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
                 flowSetIdRegistry.registerFlowSetId(npt, flowSetId);
             }
         } /* else no path was found */
-    }
-
-    private Path addSrcAndDstToPath(OFPort srcPort, DatapathId srcSw, SwitchPort dstAp, Path rarBfPath) {
-        Path path;
-        List<NodePortTuple> nptList = new ArrayList<NodePortTuple>(rarBfPath.getPath());
-        NodePortTuple npt = new NodePortTuple(srcSw, srcPort);
-        nptList.add(0, npt); // add src port to the front
-        npt = new NodePortTuple(dstAp.getNodeId(), dstAp.getPortId());
-        nptList.add(npt); // add dst port to the end
-
-        PathId id = new PathId(srcSw, dstAp.getNodeId());
-        path = new Path(id, nptList);
-        return path;
-    }
-
-    private boolean isPathRiskInRange(Map<SecurityDimension, Float> range, Map<SecurityDimension, Float> pathRisks) {
-        if(range.get(SecurityDimension.CONFIDENTIALITY) <= pathRisks.get(SecurityDimension.CONFIDENTIALITY)) {
-            return false;
-        }
-
-        if(range.get(SecurityDimension.INTEGRITY) <= pathRisks.get(SecurityDimension.INTEGRITY)) {
-            return false;
-        }
-
-        if(range.get(SecurityDimension.AVAILABILITY) <= pathRisks.get(SecurityDimension.AVAILABILITY)) {
-            return false;
-        }
-
-        if(range.get(SecurityDimension.TRUST) <= pathRisks.get(SecurityDimension.TRUST)) {
-            return false;
-        }
-
-        return true;
-    }
-
-    private Risks calculateRisks(Service service) {
-        DTSP dtsp = dtspService.getDTSPForService(service);
-        Map<SecurityDimension, Float> acceptableRisks = riskService.calculateRisk(dtsp.getRequirements(), dtsp.getConsequences());
-        Map<SecurityDimension, Float> maxRisks = new HashMap<>();
-        Map<SecurityDimension, Float> increase = dtsp.getAcceptableRiskIncrease();
-        maxRisks.put(SecurityDimension.CONFIDENTIALITY, acceptableRisks.get(SecurityDimension.CONFIDENTIALITY) + acceptableRisks.get(SecurityDimension.CONFIDENTIALITY) * (increase.get(SecurityDimension.CONFIDENTIALITY) / 100.0f));
-        maxRisks.put(SecurityDimension.INTEGRITY, acceptableRisks.get(SecurityDimension.INTEGRITY) + acceptableRisks.get(SecurityDimension.INTEGRITY) * (increase.get(SecurityDimension.INTEGRITY) / 100.0f));
-        maxRisks.put(SecurityDimension.AVAILABILITY, acceptableRisks.get(SecurityDimension.AVAILABILITY) + acceptableRisks.get(SecurityDimension.AVAILABILITY) * (increase.get(SecurityDimension.AVAILABILITY) / 100.0f));
-        maxRisks.put(SecurityDimension.TRUST, acceptableRisks.get(SecurityDimension.TRUST) + acceptableRisks.get(SecurityDimension.TRUST) * (increase.get(SecurityDimension.TRUST) / 100.0f));
-        log.debug("Acceptable risks for service {} are {}", service, acceptableRisks);
-        log.debug("Max risks for service {} are {}", service, maxRisks);
-        return new Risks(acceptableRisks, maxRisks);
     }
 
     /**
@@ -1484,7 +1358,8 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
         l.add(ILinkDiscoveryService.class);
 
         //Secure routing
-        l.add(ISecureRoutingStatisticsService.class);
+        l.add(IServiceService.class);
+
         return l;
     }
 
@@ -1500,10 +1375,6 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
         this.switchService = context.getServiceImpl(IOFSwitchService.class);
         this.linkService = context.getServiceImpl(ILinkDiscoveryService.class);
         this.serviceService = context.getServiceImpl(IServiceService.class);
-        this.dtspService = context.getServiceImpl(IDTSPService.class);
-        this.riskService = context.getServiceImpl(IRiskCalculationService.class);
-        this.pathPropertiesService = context.getServiceImpl(IPathPropertiesService.class);
-        this.secureRoutingStatisticsService = context.getServiceImpl(ISecureRoutingStatisticsService.class);
 
         l3manager = new L3RoutingManager();
         l3cache = new ConcurrentHashMap<>();

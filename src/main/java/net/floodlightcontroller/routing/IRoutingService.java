@@ -26,6 +26,7 @@ import net.floodlightcontroller.core.types.NodePortTuple;
 import org.projectfloodlight.openflow.types.*;
 
 import net.floodlightcontroller.core.module.IFloodlightService;
+import pl.sszwaczyk.service.Service;
 
 public interface IRoutingService extends IFloodlightService {
 
@@ -195,7 +196,9 @@ public interface IRoutingService extends IFloodlightService {
      * @return list of paths ordered least to greatest cost
      */
     List<Path> getPathsSlow(DatapathId src, DatapathId dst, int numReqPaths);
-    
+
+    Path getSecurePath(Service service, DatapathId src, OFPort srcPort, DatapathId dst, OFPort dstPort);
+
     /**
      * Recompute paths now, regardless of whether or not there was a change in the
      * topology. This should be called if {@link #setPathMetric(PATH_METRIC)} was
