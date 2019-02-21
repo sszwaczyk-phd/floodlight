@@ -58,6 +58,7 @@ import org.python.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.sszwaczyk.path.IPathPropertiesService;
+import pl.sszwaczyk.routing.ISecureRoutingService;
 import pl.sszwaczyk.security.SecurityDimension;
 import pl.sszwaczyk.security.dtsp.DTSP;
 import pl.sszwaczyk.security.dtsp.IDTSPService;
@@ -1349,7 +1350,7 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
     public Collection<Class<? extends IFloodlightService>> getModuleDependencies() {
         Collection<Class<? extends IFloodlightService>> l =
                 new ArrayList<Class<? extends IFloodlightService>>();
-        l.add(IRoutingService.class);
+        l.add(ISecureRoutingService.class);
         l.add(IRestApiService.class);
         l.add(IDeviceService.class);
         l.add(IFloodlightProviderService.class);
@@ -1367,7 +1368,7 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
     public void init(FloodlightModuleContext context) throws FloodlightModuleException {
         super.init();
         this.floodlightProviderService = context.getServiceImpl(IFloodlightProviderService.class);
-        this.routingEngineService = context.getServiceImpl(IRoutingService.class);
+        this.routingEngineService = context.getServiceImpl(ISecureRoutingService.class);
         this.deviceManagerService = context.getServiceImpl(IDeviceService.class);
         this.restApiService = context.getServiceImpl(IRestApiService.class);
         this.topologyService = context.getServiceImpl(ITopologyService.class);

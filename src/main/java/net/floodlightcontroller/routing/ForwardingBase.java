@@ -44,6 +44,7 @@ import org.projectfloodlight.openflow.protocol.action.OFActionOutput;
 import org.projectfloodlight.openflow.types.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.sszwaczyk.routing.ISecureRoutingService;
 
 
 /**
@@ -83,7 +84,7 @@ public abstract class ForwardingBase implements IOFMessageListener {
     protected IFloodlightProviderService floodlightProviderService;
     protected IOFSwitchService switchService;
     protected IDeviceService deviceManagerService;
-    protected IRoutingService routingEngineService;
+    protected ISecureRoutingService routingEngineService;
     protected ITopologyService topologyService;
     protected IDebugCounterService debugCounterService;
     protected ILinkDiscoveryService linkService;

@@ -5,6 +5,8 @@ import net.floodlightcontroller.core.module.FloodlightModuleException;
 import net.floodlightcontroller.core.module.IFloodlightModule;
 import net.floodlightcontroller.core.module.IFloodlightService;
 import net.floodlightcontroller.restserver.IRestApiService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pl.sszwaczyk.statistics.web.SecureRoutingStatisticsRoutable;
 
 import java.io.FileNotFoundException;
@@ -12,6 +14,8 @@ import java.io.PrintWriter;
 import java.util.*;
 
 public class SecureRoutingStatisticsService implements IFloodlightModule, ISecureRoutingStatisticsService {
+
+    private Logger log = LoggerFactory.getLogger(ISecureRoutingStatisticsService.class);
 
     private IRestApiService restApiService;
 
@@ -72,6 +76,7 @@ public class SecureRoutingStatisticsService implements IFloodlightModule, ISecur
             e.printStackTrace();
         }
 
+        log.info("Snapshot of secure routing statistics to " + statsFile);
         return statsFile;
     }
 }

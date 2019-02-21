@@ -30,9 +30,9 @@ net.floodlightcontroller.statistics.StatisticsCollector
 net.floodlightcontroller.routing.RoutingManager
 net.floodlightcontroller.cpanalyzer.CPAnalyzer
 net.floodlightcontroller.hasupport.HAController
+pl.sszwaczyk.routing.SecureRoutingManager
 pl.sszwaczyk.user.UserService
 pl.sszwaczyk.service.ServiceService
-pl.sszwaczyk.forwarding.SecurityForwarding
 pl.sszwaczyk.security.properties.SecurityPropertiesService
 pl.sszwaczyk.security.dtsp.DTSPService
 pl.sszwaczyk.security.risk.RiskCalculationService
