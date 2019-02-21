@@ -39,3 +39,4 @@ pl.sszwaczyk.security.risk.RiskCalculationService
 pl.sszwaczyk.security.soc.SOCService
 pl.sszwaczyk.security.threat.ThreatService
 pl.sszwaczyk.path.PathPropertiesService
+pl.sszwaczyk.statistics.SecureRoutingStatisticsService

@@ -65,8 +65,8 @@ import pl.sszwaczyk.security.risk.IRiskCalculationService;
 import pl.sszwaczyk.security.risk.Risks;
 import pl.sszwaczyk.service.IServiceService;
 import pl.sszwaczyk.service.Service;
-import pl.sszwaczyk.utils.AddressAndPort;
-import pl.sszwaczyk.utils.PacketUtils;
+import pl.sszwaczyk.statistics.ISecureRoutingStatisticsService;
+import pl.sszwaczyk.statistics.SecureRoutingStatisticsService;
 
 import javax.annotation.Nonnull;
 
@@ -117,6 +117,7 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
     private IRiskCalculationService riskService;
     private IDTSPService dtspService;
     private IPathPropertiesService pathPropertiesService;
+    private ISecureRoutingStatisticsService secureRoutingStatisticsService;
 
     protected static class FlowSetIdRegistry {
         private volatile Map<NodePortTuple, Set<U64>> nptToFlowSetIds;
@@ -792,9 +793,13 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
             if(rarBfPath != null) {
                 path = addSrcAndDstToPath(srcPort, srcSw, dstAp, rarBfPath);
                 log.info("Path {} in RAR-BF with distance {}", path, rarBfPathDistance);
+                secureRoutingStatisticsService.getSecureRoutingStatistics().setRealizedRequests(secureRoutingStatisticsService.getSecureRoutingStatistics().getRealizedRequests() + 1);
+                log.debug("Updating realized requests statistic");
             } else if(rarRfPath != null) {
                 path = addSrcAndDstToPath(srcPort, srcSw, dstAp, rarRfPath);
                 log.info("Path {} in RAR-RF with distance {}", path, rarRfPathDistance);
+                secureRoutingStatisticsService.getSecureRoutingStatistics().setRealizedRequests(secureRoutingStatisticsService.getSecureRoutingStatistics().getRealizedRequests() + 1);
+                log.debug("Updating realized requests statistic");
             }
         } else {
             log.info("Standard routing...");
@@ -1477,6 +1482,9 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
         l.add(ITopologyService.class);
         l.add(IDebugCounterService.class);
         l.add(ILinkDiscoveryService.class);
+
+        //Secure routing
+        l.add(ISecureRoutingStatisticsService.class);
         return l;
     }
 
@@ -1495,6 +1503,7 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
         this.dtspService = context.getServiceImpl(IDTSPService.class);
         this.riskService = context.getServiceImpl(IRiskCalculationService.class);
         this.pathPropertiesService = context.getServiceImpl(IPathPropertiesService.class);
+        this.secureRoutingStatisticsService = context.getServiceImpl(ISecureRoutingStatisticsService.class);
 
         l3manager = new L3RoutingManager();
         l3cache = new ConcurrentHashMap<>();
