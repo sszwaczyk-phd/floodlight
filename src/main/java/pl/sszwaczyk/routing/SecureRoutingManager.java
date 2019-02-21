@@ -33,6 +33,7 @@ public class SecureRoutingManager extends RoutingManager implements ISecureRouti
     private IPathPropertiesService pathPropertiesService;
     private ISecureRoutingStatisticsService secureRoutingStatisticsService;
 
+    private int k; //number of shortest routes
 
     @Override
     public Collection<Class<? extends IFloodlightService>> getModuleServices() {
@@ -68,6 +69,16 @@ public class SecureRoutingManager extends RoutingManager implements ISecureRouti
         dtspService = context.getServiceImpl(IDTSPService.class);
         pathPropertiesService = context.getServiceImpl(IPathPropertiesService.class);
         secureRoutingStatisticsService = context.getServiceImpl(ISecureRoutingStatisticsService.class);
+
+        Map<String, String> configParameters = context.getConfigParams(this);
+        String kString = configParameters.get("k");
+        if(kString == null) {
+            k = Integer.MAX_VALUE;
+            log.info("K shortest path not set. Default to " + Integer.MAX_VALUE);
+        } else {
+            k = Integer.valueOf(kString);
+            log.info("K shortest path set to " + k);
+        }
     }
 
     @Override
@@ -78,7 +89,7 @@ public class SecureRoutingManager extends RoutingManager implements ISecureRouti
     @Override
     public Path getSecurePath(Service service, DatapathId src, OFPort srcPort, DatapathId dst, OFPort dstPort) {
         DTSP dtsp = dtspService.getDTSPForService(service);
-        List<Path> allPaths = getPathsSlow(src, dst, Integer.MAX_VALUE);
+        List<Path> allPaths = getPathsSlow(src, dst, k);
         Risks risks = calculateRisks(service);
         Map<SecurityDimension, Float> acceptableRisks = risks.getAcceptableRisks();
         Map<SecurityDimension, Float> maxRisks = risks.getMaxRisks();
