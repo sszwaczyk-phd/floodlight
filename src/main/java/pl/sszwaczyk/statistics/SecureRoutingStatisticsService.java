@@ -5,11 +5,16 @@ import net.floodlightcontroller.core.module.FloodlightModuleException;
 import net.floodlightcontroller.core.module.IFloodlightModule;
 import net.floodlightcontroller.core.module.IFloodlightService;
 import net.floodlightcontroller.restserver.IRestApiService;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.sszwaczyk.statistics.web.SecureRoutingStatisticsRoutable;
 
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
 
@@ -65,18 +70,25 @@ public class SecureRoutingStatisticsService implements IFloodlightModule, ISecur
 
     @Override
     public String snapshotStatisticsToFile() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Realized requests = " + statistics.getRealizedRequests() + "\n");
-        sb.append("Not realized requests = " + statistics.getNotRealizedRequests() + "\n");
+        log.info("Saving secure routing statistics to file...");
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Statistics");
 
-        String statsFile = "/tmp/" + UUID.randomUUID();
-        try (PrintWriter out = new PrintWriter(statsFile)) {
-            out.println(sb.toString());
-        } catch (FileNotFoundException e) {
+        sheet.createRow(0).createCell(0).setCellValue("Success");
+        sheet.createRow(1).createCell(0).setCellValue("Failed");
+
+        sheet.getRow(0).createCell(1).setCellValue(statistics.getRealizedRequests());
+        sheet.getRow(1).createCell(1).setCellValue(statistics.getNotRealizedRequests());
+
+        String statsFile = "/tmp/" + UUID.randomUUID().toString() + ".xlsx";
+        try (FileOutputStream fos = new FileOutputStream(statsFile)) {
+            workbook.write(fos);
+        } catch (IOException e) {
             e.printStackTrace();
+            log.error("Cannot save secure routing statistics to file " + statsFile + " because " + e.getMessage());
         }
 
-        log.info("Snapshot of secure routing statistics to " + statsFile);
+        log.info("Snapshot of secure routing statistics saved to " + statsFile);
         return statsFile;
     }
 }

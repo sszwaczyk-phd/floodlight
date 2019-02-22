@@ -279,7 +279,16 @@
 			<artifactId>lombok</artifactId>
 			<version>1.18.4</version>
 		</dependency>
-
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>4.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>4.0.1</version>
+		</dependency>
 	</dependencies>
 	<properties>
 		<lib-restlet-version>2.3.2</lib-restlet-version>
