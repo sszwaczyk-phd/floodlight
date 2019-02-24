@@ -16,7 +16,11 @@ public class SwitchPortBandwidth {
 	private OFPort pt;
 	private U64 speed;
 	private U64 rx;
+	private double rxUtilization;
+	private double rxUtilizationPercent;
 	private U64 tx;
+	private double txUtilization;
+	private double txUtilizationPercent;
 	private Date time;
 	private long starttime_ns;
 	private U64 rxValue;
@@ -33,6 +37,10 @@ public class SwitchPortBandwidth {
 		starttime_ns = System.nanoTime();
 		this.rxValue = rxValue;
 		this.txValue = txValue;
+		this.rxUtilization = (double) rx.getValue() / (double) speed.getValue();
+		this.txUtilization = (double) tx.getValue() / (double) speed.getValue();
+		this.rxUtilizationPercent = rxUtilization * 100;
+		this.txUtilizationPercent = txUtilization * 100;
 	}
 	
 	public static SwitchPortBandwidth of(DatapathId d, OFPort p, U64 s, U64 rx, U64 tx, U64 rxValue, U64 txValue) {
@@ -94,6 +102,22 @@ public class SwitchPortBandwidth {
 
 	public long getStartTime_ns() {
 		return starttime_ns;
+	}
+
+	public double getRxUtilization() {
+		return rxUtilization;
+	}
+
+	public double getTxUtilization() {
+		return txUtilization;
+	}
+
+	public double getRxUtilizationPercent() {
+		return rxUtilizationPercent;
+	}
+
+	public double getTxUtilizationPercent() {
+		return txUtilizationPercent;
 	}
 
 	@Override

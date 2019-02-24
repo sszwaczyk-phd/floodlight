@@ -24,6 +24,10 @@ public class SwitchPortBandwidthSerializer extends JsonSerializer<SwitchPortBand
 		jGen.writeStringField("link-speed-bits-per-second", spb.getLinkSpeedBitsPerSec().getBigInteger().toString());
 		jGen.writeStringField("bits-per-second-rx", spb.getBitsPerSecondRx().getBigInteger().toString());
 		jGen.writeStringField("bits-per-second-tx", spb.getBitsPerSecondTx().getBigInteger().toString());
+		jGen.writeNumberField("tx-utilization", spb.getTxUtilization());
+		jGen.writeNumberField("tx-utilization-percent", spb.getTxUtilizationPercent());
+		jGen.writeNumberField("rx-utilization", spb.getRxUtilization());
+		jGen.writeNumberField("rx-utilization-percent", spb.getRxUtilizationPercent());
 		jGen.writeEndObject();
 	}
 
