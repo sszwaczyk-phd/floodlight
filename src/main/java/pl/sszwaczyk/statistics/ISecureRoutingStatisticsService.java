@@ -9,6 +9,6 @@ public interface ISecureRoutingStatisticsService extends IFloodlightService {
     /*
     Returns path to file
      */
-    String snapshotStatisticsToFile();
+    String snapshotStatisticsToFile(String statsFile);
 
 }

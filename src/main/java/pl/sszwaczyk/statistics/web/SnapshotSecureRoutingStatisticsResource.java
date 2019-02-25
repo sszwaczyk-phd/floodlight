@@ -4,6 +4,8 @@ import org.restlet.resource.Post;
 import org.restlet.resource.ServerResource;
 import pl.sszwaczyk.statistics.ISecureRoutingStatisticsService;
 
+import java.util.UUID;
+
 public class SnapshotSecureRoutingStatisticsResource extends ServerResource {
 
     @Post("snapshot")
@@ -12,7 +14,7 @@ public class SnapshotSecureRoutingStatisticsResource extends ServerResource {
                 (ISecureRoutingStatisticsService) getContext().getAttributes().
                         get(ISecureRoutingStatisticsService.class.getCanonicalName());
 
-        return statisticsService.snapshotStatisticsToFile();
+        return statisticsService.snapshotStatisticsToFile("/tmp/" + UUID.randomUUID().toString() + ".xlsx");
     }
 
 }

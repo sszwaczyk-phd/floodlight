@@ -53,6 +53,21 @@ public class SecureRoutingStatisticsService implements IFloodlightModule, ISecur
         restApiService = context.getServiceImpl(IRestApiService.class);
 
         statistics = new SecureRoutingStatistics();
+
+        Map<String, String> configParameters = context.getConfigParams(this);
+        boolean snapshotOnExit = Boolean.parseBoolean(configParameters.get("snapshot-on-exit"));
+        if(snapshotOnExit) {
+            log.info("Snapshot statistics on exit enabled");
+            String snapshotFile = configParameters.get("stats-snapshot-file");
+            if(snapshotFile == null || snapshotFile.isEmpty()) {
+                snapshotFile = "/tmp/" + UUID.randomUUID() + ".xlsx";
+                log.info("Snapshot file not specified. Statistics will be saved to " + snapshotFile);
+            } else {
+                log.info("Statistics will be saved to " + snapshotFile);
+            }
+            Thread thread = new Thread(new SnapshotOnExitRunnable(snapshotFile, this));
+            Runtime.getRuntime().addShutdownHook(thread);
+        }
     }
 
     @Override
@@ -67,7 +82,7 @@ public class SecureRoutingStatisticsService implements IFloodlightModule, ISecur
     }
 
     @Override
-    public String snapshotStatisticsToFile() {
+    public String snapshotStatisticsToFile(String statsFile) {
         log.info("Saving secure routing statistics to file...");
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Statistics");
@@ -78,7 +93,6 @@ public class SecureRoutingStatisticsService implements IFloodlightModule, ISecur
         sheet.getRow(0).createCell(1).setCellValue(statistics.getRealizedRequests());
         sheet.getRow(1).createCell(1).setCellValue(statistics.getNotRealizedRequests());
 
-        String statsFile = "/tmp/" + UUID.randomUUID().toString() + ".xlsx";
         try (FileOutputStream fos = new FileOutputStream(statsFile)) {
             workbook.write(fos);
         } catch (IOException e) {
