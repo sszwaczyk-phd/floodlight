@@ -9,9 +9,15 @@ import org.projectfloodlight.openflow.types.U64;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import net.floodlightcontroller.statistics.web.SwitchPortBandwidthSerializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import pl.sszwaczyk.uneven.calculator.GapUnevenCalculator;
 
 @JsonSerialize(using=SwitchPortBandwidthSerializer.class)
 public class SwitchPortBandwidth {
+
+	private Logger log = LoggerFactory.getLogger(SwitchPortBandwidth.class);
+
 	private DatapathId id;
 	private OFPort pt;
 	private U64 speed;
@@ -37,10 +43,12 @@ public class SwitchPortBandwidth {
 		starttime_ns = System.nanoTime();
 		this.rxValue = rxValue;
 		this.txValue = txValue;
-		this.rxUtilization = (double) rx.getValue() / (double) speed.getValue();
-		this.txUtilization = (double) tx.getValue() / (double) speed.getValue();
-		this.rxUtilizationPercent = rxUtilization * 100;
-		this.txUtilizationPercent = txUtilization * 100;
+		if(speed.getValue() != 0) {
+			this.rxUtilization = ((double) (rx.getValue() / 1000)) / (double) speed.getValue();
+			this.txUtilization = ((double) (tx.getValue() / 1000)) / (double) speed.getValue();
+			this.rxUtilizationPercent = rxUtilization * 100;
+			this.txUtilizationPercent = txUtilization * 100;
+		}
 	}
 	
 	public static SwitchPortBandwidth of(DatapathId d, OFPort p, U64 s, U64 rx, U64 tx, U64 rxValue, U64 txValue) {

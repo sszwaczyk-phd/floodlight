@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.sszwaczyk.statistics.ISecureRoutingStatisticsService;
 import pl.sszwaczyk.uneven.calculator.GapUnevenCalculator;
+import pl.sszwaczyk.uneven.web.UnevenRoutable;
 
 import java.util.*;
 
@@ -59,11 +60,12 @@ public class UnevenService implements IFloodlightModule, IUnevenService {
 
     @Override
     public void startUp(FloodlightModuleContext context) throws FloodlightModuleException {
-//        restApiService.addRestletRoutable(new SecureRoutingStatisticsRoutable());
+        restApiService.addRestletRoutable(new UnevenRoutable());
     }
 
     @Override
     public Map<UnevenMetric, Double> getUneven() {
+        log.debug("Calculating uneven use of resources...");
         Map<UnevenMetric, Double> unevens = new HashMap<>();
 
         Map<NodePortTuple, SwitchPortBandwidth> bandwidthConsumption = statisticsService.getBandwidthConsumption();
@@ -74,7 +76,7 @@ public class UnevenService implements IFloodlightModule, IUnevenService {
     }
 
     @Override
-    public Double getUnven(UnevenMetric metric) {
+    public Double getUneven(UnevenMetric metric) {
         //TODO: implement
         return null;
     }

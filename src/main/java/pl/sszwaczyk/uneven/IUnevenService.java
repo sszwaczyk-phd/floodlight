@@ -8,6 +8,6 @@ public interface IUnevenService extends IFloodlightService {
 
     Map<UnevenMetric, Double> getUneven();
 
-    Double getUnven(UnevenMetric metric);
+    Double getUneven(UnevenMetric metric);
 
 }
