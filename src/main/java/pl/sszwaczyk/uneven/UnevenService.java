@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import pl.sszwaczyk.statistics.ISecureRoutingStatisticsService;
 import pl.sszwaczyk.uneven.calculator.GapUnevenCalculator;
 import pl.sszwaczyk.uneven.calculator.VarianceUnevenCalculator;
+import pl.sszwaczyk.uneven.calculator.VariationCoefficientUnevenCalculator;
 import pl.sszwaczyk.uneven.web.UnevenRoutable;
 
 import java.util.*;
@@ -26,6 +27,7 @@ public class UnevenService implements IFloodlightModule, IUnevenService {
 
     private GapUnevenCalculator gapUnevenCalculator;
     private VarianceUnevenCalculator varianceUnevenCalculator;
+    private VariationCoefficientUnevenCalculator variationCoefficientUnevenCalculator;
 
     @Override
     public Collection<Class<? extends IFloodlightService>> getModuleServices() {
@@ -59,6 +61,7 @@ public class UnevenService implements IFloodlightModule, IUnevenService {
 
         gapUnevenCalculator = new GapUnevenCalculator();
         varianceUnevenCalculator = new VarianceUnevenCalculator();
+        variationCoefficientUnevenCalculator = new VariationCoefficientUnevenCalculator();
     }
 
     @Override
@@ -75,13 +78,24 @@ public class UnevenService implements IFloodlightModule, IUnevenService {
 
         unevens.put(gapUnevenCalculator.getMetric(), gapUnevenCalculator.calculateUneven(bandwidthConsumption));
         unevens.put(varianceUnevenCalculator.getMetric(), varianceUnevenCalculator.calculateUneven(bandwidthConsumption));
+        unevens.put(variationCoefficientUnevenCalculator.getMetric(), variationCoefficientUnevenCalculator.calculateUneven(bandwidthConsumption));
 
         return unevens;
     }
 
     @Override
     public Double getUneven(UnevenMetric metric) {
-        //TODO: implement
-        return null;
+        Map<NodePortTuple, SwitchPortBandwidth> bandwidthConsumption = statisticsService.getBandwidthConsumption();
+        switch (metric) {
+            case GAP:
+                return gapUnevenCalculator.calculateUneven(bandwidthConsumption);
+            case GAP_PERCENT:
+                return 0d;
+            case VARIANCE:
+                return variationCoefficientUnevenCalculator.calculateUneven(bandwidthConsumption);
+            case VARIATION_COEFFICIENT:
+                return variationCoefficientUnevenCalculator.calculateUneven(bandwidthConsumption);
+        }
+        return 0d;
     }
 }

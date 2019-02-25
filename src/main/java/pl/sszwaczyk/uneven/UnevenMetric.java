@@ -2,6 +2,6 @@ package pl.sszwaczyk.uneven;
 
 public enum UnevenMetric {
 
-    GAP, GAP_PERCENT, VARIANCE
+    GAP, GAP_PERCENT, VARIANCE, VARIATION_COEFFICIENT
 
 }
