@@ -37,6 +37,7 @@ public class SwitchPortBandwidth {
 		id = d;
 		pt = p;
 		speed = s;
+		log.debug("Speed of switch (" + d + ") of port (" + p + ") is " + speed.getValue() + "kb/s");
 		this.rx = rx;
 		this.tx = tx;
 		time = new Date();
@@ -45,9 +46,13 @@ public class SwitchPortBandwidth {
 		this.txValue = txValue;
 		if(speed.getValue() != 0) {
 			this.rxUtilization = ((double) (rx.getValue() / 1000)) / (double) speed.getValue();
+			log.debug("Rx utilization is " + rxUtilization);
 			this.txUtilization = ((double) (tx.getValue() / 1000)) / (double) speed.getValue();
+			log.debug("Tx utilization is " + txUtilization);
 			this.rxUtilizationPercent = rxUtilization * 100;
+			log.debug("Rx utilization percent is " + rxUtilizationPercent + " %");
 			this.txUtilizationPercent = txUtilization * 100;
+			log.debug("Tx utilization percent is " + txUtilizationPercent + " %");
 		}
 	}
 	
