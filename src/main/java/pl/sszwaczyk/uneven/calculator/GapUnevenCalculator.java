@@ -27,7 +27,8 @@ public class GapUnevenCalculator implements UnevenCalculator {
         double max = 0;
 
         for(SwitchPortBandwidth b: bandwidth.values()) {
-            if(b.getSwitchPort().toString().equals("local")) {
+            if(b.getSwitchPort().toString().equals("local")
+                || b.getSwitchPort().toString().equals("controller")) {
                 continue;
             }
 

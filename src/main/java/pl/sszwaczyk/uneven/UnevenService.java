@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.sszwaczyk.statistics.ISecureRoutingStatisticsService;
 import pl.sszwaczyk.uneven.calculator.GapUnevenCalculator;
+import pl.sszwaczyk.uneven.calculator.VarianceUnevenCalculator;
 import pl.sszwaczyk.uneven.web.UnevenRoutable;
 
 import java.util.*;
@@ -24,6 +25,7 @@ public class UnevenService implements IFloodlightModule, IUnevenService {
     private IStatisticsService statisticsService;
 
     private GapUnevenCalculator gapUnevenCalculator;
+    private VarianceUnevenCalculator varianceUnevenCalculator;
 
     @Override
     public Collection<Class<? extends IFloodlightService>> getModuleServices() {
@@ -56,6 +58,7 @@ public class UnevenService implements IFloodlightModule, IUnevenService {
         statisticsService = context.getServiceImpl(IStatisticsService.class);
 
         gapUnevenCalculator = new GapUnevenCalculator();
+        varianceUnevenCalculator = new VarianceUnevenCalculator();
     }
 
     @Override
@@ -71,6 +74,7 @@ public class UnevenService implements IFloodlightModule, IUnevenService {
         Map<NodePortTuple, SwitchPortBandwidth> bandwidthConsumption = statisticsService.getBandwidthConsumption();
 
         unevens.put(gapUnevenCalculator.getMetric(), gapUnevenCalculator.calculateUneven(bandwidthConsumption));
+        unevens.put(varianceUnevenCalculator.getMetric(), varianceUnevenCalculator.calculateUneven(bandwidthConsumption));
 
         return unevens;
     }
