@@ -90,8 +90,8 @@ public class SecureRoutingStatisticsService implements IFloodlightModule, ISecur
         sheet.createRow(0).createCell(0).setCellValue("Success");
         sheet.createRow(1).createCell(0).setCellValue("Failed");
 
-        sheet.getRow(0).createCell(1).setCellValue(statistics.getRealizedRequests());
-        sheet.getRow(1).createCell(1).setCellValue(statistics.getNotRealizedRequests());
+        sheet.getRow(0).createCell(1).setCellValue(statistics.getRealized());
+        sheet.getRow(1).createCell(1).setCellValue(statistics.getNotRealized());
 
         try (FileOutputStream fos = new FileOutputStream(statsFile)) {
             workbook.write(fos);

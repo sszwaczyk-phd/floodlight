@@ -22,4 +22,17 @@ public class PacketUtils {
         }
         return null;
     }
+
+    public static AddressAndPort getDstAddressAndDstTCPPort(FloodlightContext cntx) {
+        Ethernet eth = IFloodlightProviderService.bcStore.get(cntx, IFloodlightProviderService.CONTEXT_PI_PAYLOAD);
+        if(eth.getEtherType() == EthType.IPv4) {
+            IPv4 ipv4 = (IPv4) eth.getPayload();
+            if (ipv4.getProtocol() == IpProtocol.TCP) {
+                String dstAddr = ipv4.getDestinationAddress().toString();
+                int dstPort = ((TCP) ipv4.getPayload()).getDestinationPort().getPort();
+                return new AddressAndPort(dstAddr, dstPort);
+            }
+        }
+        return null;
+    }
 }

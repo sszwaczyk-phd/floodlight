@@ -38,7 +38,9 @@ public class PathSerializer extends JsonSerializer<Path> {
         jGen.writeStringField("src_dpid", path.getId().getSrc().toString());
         jGen.writeStringField("dst_dpid", path.getId().getDst().toString());
         jGen.writeStringField("hop_count", Integer.toString(path.getHopCount()));
-        jGen.writeNumberField("latency", path.getLatency().getValue()); // Might be an issue if value exceed what unsigned long can hold
+        if(path.getLatency() != null) {
+            jGen.writeNumberField("latency", path.getLatency().getValue()); // Might be an issue if value exceed what unsigned long can hold
+        }
         jGen.writeNumberField("path_index", path.getPathIndex());
         jGen.writeFieldName("path");
         jGen.writeStartArray();

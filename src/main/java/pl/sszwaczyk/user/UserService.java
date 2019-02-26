@@ -2,12 +2,15 @@ package pl.sszwaczyk.user;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import net.floodlightcontroller.core.FloodlightContext;
 import net.floodlightcontroller.core.module.FloodlightModuleContext;
 import net.floodlightcontroller.core.module.FloodlightModuleException;
 import net.floodlightcontroller.core.module.IFloodlightModule;
 import net.floodlightcontroller.core.module.IFloodlightService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.sszwaczyk.utils.AddressAndPort;
+import pl.sszwaczyk.utils.PacketUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -71,6 +74,15 @@ public class UserService implements IFloodlightModule, IUserService {
         return users.stream().filter(u -> u.getIp().equals(ip))
                 .findFirst()
                 .orElse(null);
+    }
+
+    @Override
+    public User getUserFromCntx(FloodlightContext cntx) {
+        AddressAndPort addressAndPort = PacketUtils.getDstAddressAndDstTCPPort(cntx);
+        if(addressAndPort != null) {
+            return getUserByIp(addressAndPort.getAddress());
+        }
+        return null;
     }
 
     private void loadUsers() throws IOException {

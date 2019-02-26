@@ -20,6 +20,7 @@ import pl.sszwaczyk.security.risk.IRiskCalculationService;
 import pl.sszwaczyk.service.IServiceService;
 import pl.sszwaczyk.service.Service;
 import pl.sszwaczyk.statistics.ISecureRoutingStatisticsService;
+import pl.sszwaczyk.user.User;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -102,7 +103,6 @@ public class SecureRoutingManager extends RoutingManager implements ISecureRouti
             throw new FloodlightModuleException("Unrecognized solver configured");
         }
 
-
     }
 
     @Override
@@ -111,22 +111,22 @@ public class SecureRoutingManager extends RoutingManager implements ISecureRouti
     }
 
     @Override
-    public Path getSecurePath(Service service, DatapathId src, OFPort srcPort, DatapathId dst, OFPort dstPort) {
-        SolveResult result = solver.solve(service, src, srcPort, dst, dstPort);
+    public Path getSecurePath(User user, Service service, DatapathId src, OFPort srcPort, DatapathId dst, OFPort dstPort) {
+        SolveResult result = solver.solve(user, service, src, srcPort, dst, dstPort);
 
         //update stats base on solve result
         if(!result.isSolved()) {
             log.info("Updating not realized requests statistic");
-            secureRoutingStatisticsService.getSecureRoutingStatistics().setNotRealizedRequests(secureRoutingStatisticsService.getSecureRoutingStatistics().getNotRealizedRequests() + 1);
+            secureRoutingStatisticsService.getSecureRoutingStatistics().updateNotRealized(user, service);
             return new Path(null, ImmutableList.of());
         } else if(result.getRegion().equals(SolveRegion.RAR_BF)) {
             log.info("Path {} in RAR-BF with distance {}", result.getPath(), result.getValue());
             log.debug("Updating realized requests statistic");
-            secureRoutingStatisticsService.getSecureRoutingStatistics().setRealizedRequests(secureRoutingStatisticsService.getSecureRoutingStatistics().getRealizedRequests() + 1);
+            secureRoutingStatisticsService.getSecureRoutingStatistics().updateRealized(user, service, result);
         } else if(result.getRegion().equals(SolveRegion.RAR_RF)) {
             log.info("Path {} in RAR-RF with distance {}", result.getPath(), result.getValue());
             log.debug("Updating realized requests statistic");
-            secureRoutingStatisticsService.getSecureRoutingStatistics().setRealizedRequests(secureRoutingStatisticsService.getSecureRoutingStatistics().getRealizedRequests() + 1);
+            secureRoutingStatisticsService.getSecureRoutingStatistics().updateRealized(user, service, result);
         }
 
         return result.getPath();

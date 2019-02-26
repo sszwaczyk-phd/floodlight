@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import net.floodlightcontroller.routing.Path;
+import pl.sszwaczyk.security.SecurityDimension;
+
+import java.util.Map;
 
 @Data
 @Builder
@@ -17,5 +20,7 @@ public class SolveResult {
     private Path path;
     private SolveRegion region;
     private double value;
+    private Map<SecurityDimension, Float> risks;
+    private float risk;
 
 }

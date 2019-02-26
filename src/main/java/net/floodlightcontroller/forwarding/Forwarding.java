@@ -68,6 +68,8 @@ import pl.sszwaczyk.service.IServiceService;
 import pl.sszwaczyk.service.Service;
 import pl.sszwaczyk.statistics.ISecureRoutingStatisticsService;
 import pl.sszwaczyk.statistics.SecureRoutingStatisticsService;
+import pl.sszwaczyk.user.IUserService;
+import pl.sszwaczyk.user.User;
 
 import javax.annotation.Nonnull;
 
@@ -115,6 +117,7 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
 
     //Secure routing
     private IServiceService serviceService;
+    private IUserService userService;
 
     protected static class FlowSetIdRegistry {
         private volatile Map<NodePortTuple, Set<U64>> nptToFlowSetIds;
@@ -717,8 +720,14 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
         Path path = new Path(null, ImmutableList.of());
         Service service = serviceService.getServiceFromCntx(cntx);
         if(service != null) {
-            log.info("Security routing for service {}", service);
-            path = routingEngineService.getSecurePath(service,
+            User user = userService.getUserFromCntx(cntx);
+            if(user == null) {
+                log.error("Cannot get user from server response context");
+                return;
+            }
+            log.info("Security routing for service {} to user {}", service, user);
+            path = routingEngineService.getSecurePath(user,
+                    service,
                     srcSw,
                     srcPort,
                     dstAp.getNodeId(),
@@ -1360,7 +1369,7 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
 
         //Secure routing
         l.add(IServiceService.class);
-
+        l.add(IUserService.class);
         return l;
     }
 
@@ -1375,7 +1384,9 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
         this.debugCounterService = context.getServiceImpl(IDebugCounterService.class);
         this.switchService = context.getServiceImpl(IOFSwitchService.class);
         this.linkService = context.getServiceImpl(ILinkDiscoveryService.class);
+
         this.serviceService = context.getServiceImpl(IServiceService.class);
+        this.userService = context.getServiceImpl(IUserService.class);
 
         l3manager = new L3RoutingManager();
         l3cache = new ConcurrentHashMap<>();

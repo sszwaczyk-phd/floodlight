@@ -17,7 +17,7 @@ import pl.sszwaczyk.security.dtsp.IDTSPService;
 import pl.sszwaczyk.security.risk.IRiskCalculationService;
 import pl.sszwaczyk.security.risk.Risks;
 import pl.sszwaczyk.service.Service;
-import pl.sszwaczyk.statistics.ISecureRoutingStatisticsService;
+import pl.sszwaczyk.user.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,7 +38,7 @@ public class KShortestPathSolver implements Solver {
     private int k;
 
     @Override
-    public SolveResult solve(Service service, DatapathId src, OFPort srcPort, DatapathId dst, OFPort dstPort) {
+    public SolveResult solve(User user, Service service, DatapathId src, OFPort srcPort, DatapathId dst, OFPort dstPort) {
         DTSP dtsp = dtspService.getDTSPForService(service);
         List<Path> allPaths = routingService.getPathsSlow(src, dst, k);
         Risks risks = calculateRisks(service);
@@ -47,8 +47,10 @@ public class KShortestPathSolver implements Solver {
         Path path = null;
         Path rarBfPath = null;
         double rarBfPathDistance = Float.MAX_VALUE;
+        Map<SecurityDimension, Float> rarBfPathRisks = null;
         Path rarRfPath = null;
         double rarRfPathDistance = Float.MAX_VALUE;
+        Map<SecurityDimension, Float> rarRfPathRisks = null;
         for(Path p: allPaths) {
             Map<SecurityDimension, Float> pathProperties = pathPropertiesService.calculatePathProperties(p);
             Map<SecurityDimension, Float> pathRisks = riskService.calculateRisk(pathProperties, dtsp.getConsequences());
@@ -59,6 +61,7 @@ public class KShortestPathSolver implements Solver {
                             + Math.pow(pathRisks.get(SecurityDimension.INTEGRITY), 2)
                             + Math.pow(pathRisks.get(SecurityDimension.AVAILABILITY), 2)
                             + Math.pow(pathRisks.get(SecurityDimension.TRUST), 2));
+                    rarBfPathRisks = pathRisks;
                 } else {
                     double pathDistance = Math.sqrt(Math.pow(pathRisks.get(SecurityDimension.CONFIDENTIALITY), 2)
                             + Math.pow(pathRisks.get(SecurityDimension.INTEGRITY), 2)
@@ -67,6 +70,7 @@ public class KShortestPathSolver implements Solver {
                     if(pathDistance < rarBfPathDistance) {
                         rarBfPath = p;
                         rarBfPathDistance = pathDistance;
+                        rarBfPathRisks = pathRisks;
                     }
                 }
             } else {
@@ -103,6 +107,7 @@ public class KShortestPathSolver implements Solver {
                         if(pathDistance < rarRfPathDistance) {
                             rarRfPath = p;
                             rarRfPathDistance = pathDistance;
+                            rarRfPathRisks = pathRisks;
                         }
                     }
                 }
@@ -124,6 +129,8 @@ public class KShortestPathSolver implements Solver {
                     .region(SolveRegion.RAR_BF)
                     .path(path)
                     .value(rarBfPathDistance)
+                    .risks(rarBfPathRisks)
+                    .risk(aggregateRisk(rarBfPathRisks))
                     .build();
         } else {
             path = addSrcAndDstToPath(srcPort, src, dstPort, dst, rarRfPath);
@@ -133,9 +140,19 @@ public class KShortestPathSolver implements Solver {
                     .region(SolveRegion.RAR_RF)
                     .path(path)
                     .value(rarRfPathDistance)
+                    .risks(rarRfPathRisks)
+                    .risk(aggregateRisk(rarRfPathRisks))
                     .build();
         }
 
+    }
+
+    private float aggregateRisk(Map<SecurityDimension, Float> rarBfPathRisks) {
+        float sum = 0.0f;
+        for(Float r: rarBfPathRisks.values()) {
+            sum += r;
+        }
+        return sum;
     }
 
     private Path addSrcAndDstToPath(OFPort srcPort, DatapathId srcSw, OFPort dstPort, DatapathId dstSw, Path p) {
