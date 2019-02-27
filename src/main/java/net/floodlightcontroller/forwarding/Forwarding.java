@@ -62,6 +62,9 @@ import pl.sszwaczyk.routing.ISecureRoutingService;
 import pl.sszwaczyk.security.SecurityDimension;
 import pl.sszwaczyk.security.dtsp.DTSP;
 import pl.sszwaczyk.security.dtsp.IDTSPService;
+import pl.sszwaczyk.security.properties.ISecurityPropertiesChangedListener;
+import pl.sszwaczyk.security.properties.ISecurityPropertiesService;
+import pl.sszwaczyk.security.properties.SecurityPropertiesUpdate;
 import pl.sszwaczyk.security.risk.IRiskCalculationService;
 import pl.sszwaczyk.security.risk.Risks;
 import pl.sszwaczyk.service.IServiceService;
@@ -74,7 +77,7 @@ import pl.sszwaczyk.user.User;
 import javax.annotation.Nonnull;
 
 public class Forwarding extends ForwardingBase implements IFloodlightModule, IOFSwitchListener, ILinkDiscoveryListener,
-        IRoutingDecisionChangedListener, IGatewayService {
+        IRoutingDecisionChangedListener, IGatewayService, ISecurityPropertiesChangedListener {
     protected static final Logger log = LoggerFactory.getLogger(Forwarding.class);
 
     /*
@@ -118,6 +121,13 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
     //Secure routing
     private IServiceService serviceService;
     private IUserService userService;
+    private ISecurityPropertiesService securityPropertiesService;
+
+    @Override
+    public void securityPropertiesChanged(SecurityPropertiesUpdate update) {
+        log.info("Received security properties changed update {}", update);
+        //TODO: implement
+    }
 
     protected static class FlowSetIdRegistry {
         private volatile Map<NodePortTuple, Set<U64>> nptToFlowSetIds;
@@ -1370,6 +1380,7 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
         //Secure routing
         l.add(IServiceService.class);
         l.add(IUserService.class);
+        l.add(ISecurityPropertiesService.class);
         return l;
     }
 
@@ -1387,6 +1398,7 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
 
         this.serviceService = context.getServiceImpl(IServiceService.class);
         this.userService = context.getServiceImpl(IUserService.class);
+        this.securityPropertiesService = context.getServiceImpl(ISecurityPropertiesService.class);
 
         l3manager = new L3RoutingManager();
         l3cache = new ConcurrentHashMap<>();
@@ -1512,6 +1524,8 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
         if (REMOVE_FLOWS_ON_LINK_OR_PORT_DOWN) {
             linkService.addListener(this);
         }
+
+        securityPropertiesService.addListener(this);
     }
 
     @Override

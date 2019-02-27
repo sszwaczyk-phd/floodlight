@@ -36,6 +36,8 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
     private ILinkDiscoveryService linkService;
     private ISOCService socService;
 
+    private List<ISecurityPropertiesChangedListener> listeners = new ArrayList<>();
+
     @Override
     public Collection<Class<? extends IFloodlightService>> getModuleServices() {
         Collection<Class<? extends IFloodlightService>> s =
@@ -150,12 +152,16 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
                 log.info("Set TRUST for switch {} to {}", socUpdate.getSrc(), s.getAttributes().get(SecurityDimension.TRUST));
             }
 
+            sendUpdates(s, null);
+
         } else if(type.equals(SOCUpdateType.THREAT_ACTIVATED_LINK)) {
 
             Link link = linkService.getLink(socUpdate.getSrc(), socUpdate.getSrcPort(), socUpdate.getDst(), socUpdate.getDstPort());
             activateThreatOnLink(securityPropertiesDifference, link);
             Link reverseLink = linkService.getLink(socUpdate.getDst(), socUpdate.getDstPort(), socUpdate.getSrc(), socUpdate.getSrcPort());
             activateThreatOnLink(securityPropertiesDifference, reverseLink);
+
+            sendUpdates(null, link);
 
         } else if(type.equals(SOCUpdateType.THREAT_ENDED_SWITCH)) {
 
@@ -170,6 +176,8 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
                 log.info("Set TRUST for switch {} to {}", socUpdate.getSrc(), s.getAttributes().get(SecurityDimension.TRUST));
             }
 
+            sendUpdates(s, null);
+
         } else if(type.equals(SOCUpdateType.THREAT_ENDED_LINK)) {
 
             Link link = linkService.getLink(socUpdate.getSrc(), socUpdate.getSrcPort(), socUpdate.getDst(), socUpdate.getDstPort());
@@ -177,6 +185,7 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
             Link reverseLink = linkService.getLink(socUpdate.getDst(), socUpdate.getDstPort(), socUpdate.getSrc(), socUpdate.getSrcPort());
             deactivateThreatOnLink(securityPropertiesDifference, reverseLink);
 
+            sendUpdates(null, link);
         }
 
     }
@@ -221,24 +230,32 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
         IOFSwitch s = switchService.getSwitch(DatapathId.of(properties.getSwitchDpid()));
         s.getAttributes().put(SecurityDimension.TRUST, properties.getTrust());
         log.info("Set TRUST for switch {} to {}",properties.getSwitchDpid(), s.getAttributes().get(SecurityDimension.TRUST));
+
+        sendUpdates(s, null);
     }
 
     @Override
     public void setLinkSecurityProperties(LinkSecurityProperties properties) {
-        for(Link link: linkService.getLinks().keySet()) {
-            if(link.getSrc().equals(DatapathId.of(properties.getSrc()))
-                    && link.getDst().equals(DatapathId.of(properties.getDst()))
-                    && link.getSrcPort().equals(OFPort.of(properties.getSrcPort()))
-                    && link.getDstPort().equals(OFPort.of(properties.getDstPort()))) {
-                link.setConfidentiality(properties.getConfidentiality());
-                link.setIntegrity(properties.getIntegrity());
-                link.setAvailability(properties.getAvailability());
-                log.info("Set new C, I, A for link {}", link);
-                log.info("Confidentiality = {}", link.getConfidentiality());
-                log.info("Integrity = {}", link.getIntegrity());
-                log.info("Availability = {}", link.getAvailability());
-            }
+        Link link = linkService.getLink(DatapathId.of(properties.getSrc()),
+                OFPort.of(properties.getSrcPort()),
+                DatapathId.of(properties.getDst()),
+                OFPort.of(properties.getDstPort()));
+        if(link != null) {
+            link.setConfidentiality(properties.getConfidentiality());
+            link.setIntegrity(properties.getIntegrity());
+            link.setAvailability(properties.getAvailability());
+            log.info("Set new C, I, A for link {}", link);
+            log.info("Confidentiality = {}", link.getConfidentiality());
+            log.info("Integrity = {}", link.getIntegrity());
+            log.info("Availability = {}", link.getAvailability());
         }
+
+        sendUpdates(null, link);
+    }
+
+    @Override
+    public void addListener(ISecurityPropertiesChangedListener listener) {
+        listeners.add(listener);
     }
 
     private void activateThreatOnLink(Map<SecurityDimension, Float> securityPropertiesDifference, Link link) {
@@ -307,5 +324,16 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
         log.info("Confidentiality = {}", link.getConfidentiality());
         log.info("Integrity = {}", link.getIntegrity());
         log.info("Availability = {}", link.getAvailability());
+    }
+
+    private void sendUpdates(IOFSwitch s, Link link) {
+        SecurityPropertiesUpdate update = SecurityPropertiesUpdate.builder()
+                .iofSwitch(s)
+                .link(link)
+                .build();
+        log.info("Sending updates about security properties changed...");
+        for(ISecurityPropertiesChangedListener l: listeners) {
+            l.securityPropertiesChanged(update);
+        }
     }
 }
