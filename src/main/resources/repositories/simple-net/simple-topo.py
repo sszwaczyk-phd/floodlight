@@ -9,19 +9,21 @@ class SimpleTopo(Topo):
         Topo.__init__( self )
 
         # Add hosts and switches
-        userHost = self.addHost( 'User1', ip='10.0.0.1/24' )
-        serviceHost = self.addHost( 'Service1', ip='10.0.0.2/24' )
+        userOneHost = self.addHost( 'User1', ip='10.0.0.1/24' )
+        userTwoHost = self.addHost( 'User2', ip='10.0.0.2/24' )
+        serviceOneHost = self.addHost( 'Service1', ip='10.0.0.100/24' )
         leftSwitch = self.addSwitch( 's1' )
         upSwitch = self.addSwitch( 's2' )
         downSwitch = self.addSwitch( 's3' )
         rightSwitch = self.addSwitch( 's4' )
 
         # Add links
-        self.addLink( userHost, leftSwitch )
-        self.addLink( leftSwitch, upSwitch )
-        self.addLink( leftSwitch, downSwitch )
-        self.addLink( upSwitch, rightSwitch )
-        self.addLink( downSwitch, rightSwitch )
-        self.addLink( rightSwitch, serviceHost )
+        self.addLink( userOneHost, leftSwitch, bw=1000 )
+        self.addLink( userTwoHost, upSwitch, bw=1000 )
+        self.addLink( leftSwitch, upSwitch, bw=1000 )
+        self.addLink( leftSwitch, downSwitch, bw=1000 )
+        self.addLink( upSwitch, rightSwitch, bw=1000 )
+        self.addLink( downSwitch, rightSwitch, bw=1000 )
+        self.addLink( rightSwitch, serviceOneHost, bw=1000 )
 
 topos = { 'simpletopo': (lambda: SimpleTopo())}
