@@ -53,7 +53,7 @@ public class KShortestPathSolver implements Solver {
 
         int lastSize = 0;
         int i = 0;
-        while(rarBfPath == null || rarRfPath == null) {
+        while(rarBfPath == null && rarRfPath == null) {
             List<Path> paths = routingService.getPathsSlow(src, dst, k + i);
             if(paths.size() <= lastSize) {
                 break;
