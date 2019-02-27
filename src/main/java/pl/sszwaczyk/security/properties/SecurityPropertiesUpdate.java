@@ -9,6 +9,7 @@ import net.floodlightcontroller.linkdiscovery.Link;
 @Builder
 public class SecurityPropertiesUpdate {
 
+    private SecurityPropertiesUpdateType type;
     private Link link;
     private IOFSwitch iofSwitch;
 

@@ -19,16 +19,13 @@ import pl.sszwaczyk.utils.AddressesAndPorts;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Map;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class DuplicatedPacketInFilter implements IFloodlightModule, IOFMessageListener {
+public class DuplicatedPacketInFilter implements IFloodlightModule, IOFMessageListener, IDuplicatedPacketInFilter {
 
     private static Logger log = LoggerFactory.getLogger(DuplicatedPacketInFilter.class);
 
@@ -42,12 +39,18 @@ public class DuplicatedPacketInFilter implements IFloodlightModule, IOFMessageLi
 
     @Override
     public Collection<Class<? extends IFloodlightService>> getModuleServices() {
-        return null;
+        Collection<Class<? extends IFloodlightService>> s =
+                new HashSet<Class<? extends IFloodlightService>>();
+        s.add(IDuplicatedPacketInFilter.class);
+        return s;
     }
 
     @Override
     public Map<Class<? extends IFloodlightService>, IFloodlightService> getServiceImpls() {
-        return null;
+        Map<Class<? extends IFloodlightService>, IFloodlightService> m =
+                new HashMap<Class<? extends IFloodlightService>, IFloodlightService>();
+        m.put(IDuplicatedPacketInFilter.class, this);
+        return m;
     }
 
     @Override
@@ -110,6 +113,11 @@ public class DuplicatedPacketInFilter implements IFloodlightModule, IOFMessageLi
     @Override
     public boolean isCallbackOrderingPostreq(OFType type, String name) {
         return (type.equals(OFType.PACKET_IN)) && (name.equals("forwarding"));
+    }
+
+    @Override
+    public void deleteFromBuffering(AddressesAndPorts ap) {
+        buffered.remove(ap);
     }
 
     class FlushExpired implements Runnable {

@@ -330,6 +330,7 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
         SecurityPropertiesUpdate update = SecurityPropertiesUpdate.builder()
                 .iofSwitch(s)
                 .link(link)
+                .type(s != null ? SecurityPropertiesUpdateType.SWITCH : SecurityPropertiesUpdateType.LINK)
                 .build();
         log.info("Sending updates about security properties changed...");
         for(ISecurityPropertiesChangedListener l: listeners) {

@@ -40,6 +40,7 @@ import net.floodlightcontroller.devicemanager.IDeviceService;
 import net.floodlightcontroller.devicemanager.SwitchPort;
 import net.floodlightcontroller.linkdiscovery.ILinkDiscoveryListener;
 import net.floodlightcontroller.linkdiscovery.ILinkDiscoveryService;
+import net.floodlightcontroller.linkdiscovery.Link;
 import net.floodlightcontroller.packet.*;
 import net.floodlightcontroller.restserver.IRestApiService;
 import net.floodlightcontroller.routing.*;
@@ -57,6 +58,7 @@ import org.python.google.common.collect.ImmutableList;
 import org.python.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.sszwaczyk.filter.IDuplicatedPacketInFilter;
 import pl.sszwaczyk.path.IPathPropertiesService;
 import pl.sszwaczyk.routing.ISecureRoutingService;
 import pl.sszwaczyk.security.SecurityDimension;
@@ -65,14 +67,15 @@ import pl.sszwaczyk.security.dtsp.IDTSPService;
 import pl.sszwaczyk.security.properties.ISecurityPropertiesChangedListener;
 import pl.sszwaczyk.security.properties.ISecurityPropertiesService;
 import pl.sszwaczyk.security.properties.SecurityPropertiesUpdate;
+import pl.sszwaczyk.security.properties.SecurityPropertiesUpdateType;
 import pl.sszwaczyk.security.risk.IRiskCalculationService;
 import pl.sszwaczyk.security.risk.Risks;
 import pl.sszwaczyk.service.IServiceService;
 import pl.sszwaczyk.service.Service;
-import pl.sszwaczyk.statistics.ISecureRoutingStatisticsService;
-import pl.sszwaczyk.statistics.SecureRoutingStatisticsService;
 import pl.sszwaczyk.user.IUserService;
 import pl.sszwaczyk.user.User;
+import pl.sszwaczyk.utils.AddressesAndPorts;
+import pl.sszwaczyk.utils.PacketUtils;
 
 import javax.annotation.Nonnull;
 
@@ -122,12 +125,11 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
     private IServiceService serviceService;
     private IUserService userService;
     private ISecurityPropertiesService securityPropertiesService;
-
-    @Override
-    public void securityPropertiesChanged(SecurityPropertiesUpdate update) {
-        log.info("Received security properties changed update {}", update);
-        //TODO: implement
-    }
+    private IRiskCalculationService riskService;
+    private IDTSPService dtspService;
+    private IPathPropertiesService pathPropertiesService;
+    private IDuplicatedPacketInFilter duplicatedPacketInFilter;
+    private static SecurePathsRegistry securePathsRegistry;
 
     protected static class FlowSetIdRegistry {
         private volatile Map<NodePortTuple, Set<U64>> nptToFlowSetIds;
@@ -773,6 +775,11 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
             for (NodePortTuple npt : path.getPath()) {
                 flowSetIdRegistry.registerFlowSetId(npt, flowSetId);
             }
+
+            if(service != null) {
+                log.debug("Registering path to secure paths registry");
+                securePathsRegistry.registerPath(AddressesAndPorts.fromCntx(cntx), path);
+            }
         } /* else no path was found */
     }
 
@@ -1381,6 +1388,10 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
         l.add(IServiceService.class);
         l.add(IUserService.class);
         l.add(ISecurityPropertiesService.class);
+        l.add(IDTSPService.class);
+        l.add(IRiskCalculationService.class);
+        l.add(IPathPropertiesService.class);
+        l.add(IDuplicatedPacketInFilter.class);
         return l;
     }
 
@@ -1399,12 +1410,18 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
         this.serviceService = context.getServiceImpl(IServiceService.class);
         this.userService = context.getServiceImpl(IUserService.class);
         this.securityPropertiesService = context.getServiceImpl(ISecurityPropertiesService.class);
+        this.riskService = context.getServiceImpl(IRiskCalculationService.class);
+        this.dtspService = context.getServiceImpl(IDTSPService.class);
+        this.pathPropertiesService = context.getServiceImpl(IPathPropertiesService.class);
+        this.duplicatedPacketInFilter = context.getServiceImpl(IDuplicatedPacketInFilter.class);
 
         l3manager = new L3RoutingManager();
         l3cache = new ConcurrentHashMap<>();
         deviceListener = new DeviceListenerImpl();
 
         flowSetIdRegistry = FlowSetIdRegistry.getInstance();
+
+        securePathsRegistry = SecurePathsRegistry.getInstance();
 
         Map<String, String> configParameters = context.getConfigParams(this);
         String tmp = configParameters.get("hard-timeout");
@@ -1951,5 +1968,132 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
         return null;
     }
 
+    protected static class SecurePathsRegistry {
 
+        private volatile Map<AddressesAndPorts, Path> paths;
+
+        private static volatile SecurePathsRegistry instance;
+
+        private SecurePathsRegistry() {
+            paths = new ConcurrentHashMap<>();
+        }
+
+        protected static SecurePathsRegistry getInstance() {
+            if (instance == null) {
+                instance = new SecurePathsRegistry();
+            }
+            return instance;
+        }
+
+        public void registerPath(AddressesAndPorts ap, Path path) {
+            paths.put(ap, path);
+        }
+
+        public Map<AddressesAndPorts, Path> getPaths() {
+            return paths;
+        }
+
+        public void deletePath(AddressesAndPorts ap) {
+            paths.remove(ap);
+        }
+    }
+
+    @Override
+    public void securityPropertiesChanged(SecurityPropertiesUpdate update) {
+        log.info("Received security properties changed update {}", update);
+        Map<AddressesAndPorts, Path> paths = securePathsRegistry.getPaths();
+        if(update.getType().equals(SecurityPropertiesUpdateType.SWITCH)) {
+
+            IOFSwitch s = update.getIofSwitch();
+            paths.forEach((ap, p) -> {
+                List<NodePortTuple> npts = p.getPath();
+                npts.remove(npts.size() - 1);
+                npts.remove(0);
+                List<IOFSwitch> switches = new ArrayList<>();
+                for(int i = 0; i < npts.size() - 1; i = i + 2) {
+                    if(i == 0) {
+                        IOFSwitch s1 = switchService.getSwitch(npts.get(i).getNodeId());
+                        switches.add(s1);
+                    }
+                    IOFSwitch s2 = switchService.getSwitch(npts.get(i + 1).getNodeId());
+                    switches.add(s2);
+                }
+                if(switches.contains(s)) {
+                    log.info("Security properties changed in path {} for transfer {}", p, ap);
+
+                    Service service = serviceService.getServiceByAddrAndPort(ap.getSrc().getAddress(), ap.getSrc().getPort());
+                    DTSP dtsp = dtspService.getDTSPForService(service);
+                    Risks risks = calculateRisks(service);
+                    Map<SecurityDimension, Float> acceptableRisks = risks.getAcceptableRisks();
+                    Map<SecurityDimension, Float> maxRisks = risks.getMaxRisks();
+
+                    Map<SecurityDimension, Float> pathProperties = pathPropertiesService.calculatePathProperties(p);
+                    Map<SecurityDimension, Float> pathRisks = riskService.calculateRisk(pathProperties, dtsp.getConsequences());
+
+                    if(!isPathRiskInRange(maxRisks, pathRisks)) {
+                        log.info("Risk increased over DTSP range. Deleting path from switches");
+                        for(IOFSwitch sw: switches) {
+                            OFFlowDelete flowDelete = sw.getOFFactory().buildFlowDelete()
+                                    .setMatch(sw.getOFFactory().buildMatch()
+                                            .setExact(MatchField.ETH_TYPE, EthType.IPv4)
+                                            .setExact(MatchField.IPV4_SRC, IPv4Address.of(ap.getSrc().getAddress()))
+                                            .setExact(MatchField.IPV4_DST, IPv4Address.of(ap.getDst().getAddress()))
+                                            .setExact(MatchField.IP_PROTO, IpProtocol.TCP)
+                                            .setExact(MatchField.TCP_SRC, TransportPort.of(ap.getSrc().getPort()))
+                                            .setExact(MatchField.TCP_DST, TransportPort.of(ap.getDst().getPort()))
+                                            .build()
+                                    ).build();
+
+                            messageDamper.write(sw, flowDelete);
+                        }
+
+                        securePathsRegistry.deletePath(ap);
+                        duplicatedPacketInFilter.deleteFromBuffering(ap);
+
+                    } else {
+                        log.info("Risk still in DTSP range.");
+                    }
+                }
+            });
+
+        } else {
+
+            //TODO: implement
+
+        }
+    }
+
+    private Risks calculateRisks(Service service) {
+        DTSP dtsp = dtspService.getDTSPForService(service);
+        Map<SecurityDimension, Float> acceptableRisks = riskService.calculateRisk(dtsp.getRequirements(), dtsp.getConsequences());
+        Map<SecurityDimension, Float> maxRisks = new HashMap<>();
+        Map<SecurityDimension, Float> increase = dtsp.getAcceptableRiskIncrease();
+        maxRisks.put(SecurityDimension.CONFIDENTIALITY, acceptableRisks.get(SecurityDimension.CONFIDENTIALITY) + acceptableRisks.get(SecurityDimension.CONFIDENTIALITY) * (increase.get(SecurityDimension.CONFIDENTIALITY) / 100.0f));
+        maxRisks.put(SecurityDimension.INTEGRITY, acceptableRisks.get(SecurityDimension.INTEGRITY) + acceptableRisks.get(SecurityDimension.INTEGRITY) * (increase.get(SecurityDimension.INTEGRITY) / 100.0f));
+        maxRisks.put(SecurityDimension.AVAILABILITY, acceptableRisks.get(SecurityDimension.AVAILABILITY) + acceptableRisks.get(SecurityDimension.AVAILABILITY) * (increase.get(SecurityDimension.AVAILABILITY) / 100.0f));
+        maxRisks.put(SecurityDimension.TRUST, acceptableRisks.get(SecurityDimension.TRUST) + acceptableRisks.get(SecurityDimension.TRUST) * (increase.get(SecurityDimension.TRUST) / 100.0f));
+        log.debug("Acceptable risks for service {} are {}", service, acceptableRisks);
+        log.debug("Max risks for service {} are {}", service, maxRisks);
+        return new Risks(acceptableRisks, maxRisks);
+    }
+
+    private boolean isPathRiskInRange(Map<SecurityDimension, Float> range, Map<SecurityDimension, Float> pathRisks) {
+        if(range.get(SecurityDimension.CONFIDENTIALITY) <= pathRisks.get(SecurityDimension.CONFIDENTIALITY)) {
+            return false;
+        }
+
+        if(range.get(SecurityDimension.INTEGRITY) <= pathRisks.get(SecurityDimension.INTEGRITY)) {
+            return false;
+        }
+
+        if(range.get(SecurityDimension.AVAILABILITY) <= pathRisks.get(SecurityDimension.AVAILABILITY)) {
+            return false;
+        }
+
+        if(range.get(SecurityDimension.TRUST) <= pathRisks.get(SecurityDimension.TRUST)) {
+            return false;
+        }
+
+        return true;
+    }
 }
