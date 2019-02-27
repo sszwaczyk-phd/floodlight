@@ -40,7 +40,6 @@ public class KShortestPathSolver implements Solver {
     @Override
     public SolveResult solve(User user, Service service, DatapathId src, OFPort srcPort, DatapathId dst, OFPort dstPort) {
         DTSP dtsp = dtspService.getDTSPForService(service);
-        List<Path> allPaths = routingService.getPathsSlow(src, dst, k);
         Risks risks = calculateRisks(service);
         Map<SecurityDimension, Float> acceptableRisks = risks.getAcceptableRisks();
         Map<SecurityDimension, Float> maxRisks = risks.getMaxRisks();
@@ -51,67 +50,80 @@ public class KShortestPathSolver implements Solver {
         Path rarRfPath = null;
         double rarRfPathDistance = Float.MAX_VALUE;
         Map<SecurityDimension, Float> rarRfPathRisks = null;
-        for(Path p: allPaths) {
-            Map<SecurityDimension, Float> pathProperties = pathPropertiesService.calculatePathProperties(p);
-            Map<SecurityDimension, Float> pathRisks = riskService.calculateRisk(pathProperties, dtsp.getConsequences());
-            if(isPathRiskInRange(acceptableRisks, pathRisks)) {
-                if(rarBfPath == null) {
-                    rarBfPath = p;
-                    rarBfPathDistance = Math.sqrt(Math.pow(pathRisks.get(SecurityDimension.CONFIDENTIALITY), 2)
-                            + Math.pow(pathRisks.get(SecurityDimension.INTEGRITY), 2)
-                            + Math.pow(pathRisks.get(SecurityDimension.AVAILABILITY), 2)
-                            + Math.pow(pathRisks.get(SecurityDimension.TRUST), 2));
-                    rarBfPathRisks = pathRisks;
-                } else {
-                    double pathDistance = Math.sqrt(Math.pow(pathRisks.get(SecurityDimension.CONFIDENTIALITY), 2)
-                            + Math.pow(pathRisks.get(SecurityDimension.INTEGRITY), 2)
-                            + Math.pow(pathRisks.get(SecurityDimension.AVAILABILITY), 2)
-                            + Math.pow(pathRisks.get(SecurityDimension.TRUST), 2));
-                    if(pathDistance < rarBfPathDistance) {
+
+        int lastSize = 0;
+        int i = 0;
+        while(rarBfPath == null || rarRfPath == null) {
+            List<Path> paths = routingService.getPathsSlow(src, dst, k + i);
+            if(paths.size() <= lastSize) {
+                break;
+            }
+            for(int j = lastSize; j < paths.size(); j++) {
+                log.info("Searching shortests paths between " + j + " and " + (k + i));
+                Path p = paths.get(j);
+                Map<SecurityDimension, Float> pathProperties = pathPropertiesService.calculatePathProperties(p);
+                Map<SecurityDimension, Float> pathRisks = riskService.calculateRisk(pathProperties, dtsp.getConsequences());
+                if(isPathRiskInRange(acceptableRisks, pathRisks)) {
+                    if(rarBfPath == null) {
                         rarBfPath = p;
-                        rarBfPathDistance = pathDistance;
+                        rarBfPathDistance = Math.sqrt(Math.pow(pathRisks.get(SecurityDimension.CONFIDENTIALITY), 2)
+                                + Math.pow(pathRisks.get(SecurityDimension.INTEGRITY), 2)
+                                + Math.pow(pathRisks.get(SecurityDimension.AVAILABILITY), 2)
+                                + Math.pow(pathRisks.get(SecurityDimension.TRUST), 2));
                         rarBfPathRisks = pathRisks;
+                    } else {
+                        double pathDistance = Math.sqrt(Math.pow(pathRisks.get(SecurityDimension.CONFIDENTIALITY), 2)
+                                + Math.pow(pathRisks.get(SecurityDimension.INTEGRITY), 2)
+                                + Math.pow(pathRisks.get(SecurityDimension.AVAILABILITY), 2)
+                                + Math.pow(pathRisks.get(SecurityDimension.TRUST), 2));
+                        if(pathDistance < rarBfPathDistance) {
+                            rarBfPath = p;
+                            rarBfPathDistance = pathDistance;
+                            rarBfPathRisks = pathRisks;
+                        }
                     }
-                }
-            } else {
-                if(rarBfPath == null) {
-                    if(isPathRiskInRange(maxRisks, pathRisks)) {
-                        float pathConfidentialityRisk = pathRisks.get(SecurityDimension.CONFIDENTIALITY);
-                        float confidentialityDifference = pathConfidentialityRisk - acceptableRisks.get(SecurityDimension.CONFIDENTIALITY);
-                        if(confidentialityDifference < 0) {
-                            confidentialityDifference = 0;
-                        }
+                } else {
+                    if(rarBfPath == null) {
+                        if(isPathRiskInRange(maxRisks, pathRisks)) {
+                            float pathConfidentialityRisk = pathRisks.get(SecurityDimension.CONFIDENTIALITY);
+                            float confidentialityDifference = pathConfidentialityRisk - acceptableRisks.get(SecurityDimension.CONFIDENTIALITY);
+                            if(confidentialityDifference < 0) {
+                                confidentialityDifference = 0;
+                            }
 
-                        float pathIntegrityRisk = pathRisks.get(SecurityDimension.INTEGRITY);
-                        float integrityDifference = pathIntegrityRisk - acceptableRisks.get(SecurityDimension.INTEGRITY);
-                        if(integrityDifference < 0) {
-                            integrityDifference = 0;
-                        }
+                            float pathIntegrityRisk = pathRisks.get(SecurityDimension.INTEGRITY);
+                            float integrityDifference = pathIntegrityRisk - acceptableRisks.get(SecurityDimension.INTEGRITY);
+                            if(integrityDifference < 0) {
+                                integrityDifference = 0;
+                            }
 
-                        float pathAvailabilityRisk = pathRisks.get(SecurityDimension.AVAILABILITY);
-                        float availabilityDifference = pathAvailabilityRisk - acceptableRisks.get(SecurityDimension.AVAILABILITY);
-                        if(availabilityDifference < 0) {
-                            availabilityDifference = 0;
-                        }
+                            float pathAvailabilityRisk = pathRisks.get(SecurityDimension.AVAILABILITY);
+                            float availabilityDifference = pathAvailabilityRisk - acceptableRisks.get(SecurityDimension.AVAILABILITY);
+                            if(availabilityDifference < 0) {
+                                availabilityDifference = 0;
+                            }
 
-                        float pathTrustRisk = pathRisks.get(SecurityDimension.TRUST);
-                        float trustDifference = pathTrustRisk - acceptableRisks.get(SecurityDimension.TRUST);
-                        if(trustDifference < 0) {
-                            trustDifference = 0;
-                        }
+                            float pathTrustRisk = pathRisks.get(SecurityDimension.TRUST);
+                            float trustDifference = pathTrustRisk - acceptableRisks.get(SecurityDimension.TRUST);
+                            if(trustDifference < 0) {
+                                trustDifference = 0;
+                            }
 
-                        double pathDistance = Math.sqrt(Math.pow(confidentialityDifference, 2)
-                                + Math.pow(integrityDifference, 2)
-                                + Math.pow(availabilityDifference, 2)
-                                + Math.pow(trustDifference, 2));
-                        if(pathDistance < rarRfPathDistance) {
-                            rarRfPath = p;
-                            rarRfPathDistance = pathDistance;
-                            rarRfPathRisks = pathRisks;
+                            double pathDistance = Math.sqrt(Math.pow(confidentialityDifference, 2)
+                                    + Math.pow(integrityDifference, 2)
+                                    + Math.pow(availabilityDifference, 2)
+                                    + Math.pow(trustDifference, 2));
+                            if(pathDistance < rarRfPathDistance) {
+                                rarRfPath = p;
+                                rarRfPathDistance = pathDistance;
+                                rarRfPathRisks = pathRisks;
+                            }
                         }
                     }
                 }
             }
+            lastSize = paths.size();
+            i = lastSize;
         }
 
         if(rarBfPath == null && rarRfPath == null) {

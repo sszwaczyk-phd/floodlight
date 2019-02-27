@@ -86,6 +86,7 @@ public class DuplicatedPacketInFilter implements IFloodlightModule, IOFMessageLi
                         buffered.put(addressesAndPorts, time);
                         return Command.CONTINUE;
                     } else {
+                        log.info("Stopping processing because of duplicate " + addressesAndPorts);
                         return Command.STOP;
                     }
                 }
