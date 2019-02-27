@@ -2006,6 +2006,7 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
 
             IOFSwitch s = update.getIofSwitch();
             paths.forEach((ap, p) -> {
+
                 List<NodePortTuple> npts = p.getPath();
                 npts.remove(npts.size() - 1);
                 npts.remove(0);
@@ -2056,10 +2057,64 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
                 }
             });
 
-        } else {
+        } else if(update.getType().equals(SecurityPropertiesUpdateType.LINK)){
 
-            //TODO: implement
+            Link l = update.getLink();
+            paths.forEach((ap, p) -> {
 
+                List<NodePortTuple> npts = p.getPath();
+                npts.remove(npts.size() - 1);
+                npts.remove(0);
+                List<IOFSwitch> switches = new ArrayList<>();
+                List<Link> links = new ArrayList<>();
+                for(int i = 0; i < npts.size() - 1; i = i + 2) {
+                    IOFSwitch s1 = switchService.getSwitch(npts.get(i).getNodeId());
+                    IOFSwitch s2 = switchService.getSwitch(npts.get(i + 1).getNodeId());
+                    Link link = linkService.getLink(s1.getId(), npts.get(i).getPortId(), s2.getId(), npts.get(i + 1).getPortId());
+                    if(i == 0) {
+                        switches.add(s1);
+                    }
+                    switches.add(s2);
+                    links.add(link);
+                }
+
+                if(links.contains(l)) {
+                    log.info("Security properties changed in path {} for transfer {}", p, ap);
+
+                    Service service = serviceService.getServiceByAddrAndPort(ap.getSrc().getAddress(), ap.getSrc().getPort());
+                    DTSP dtsp = dtspService.getDTSPForService(service);
+                    Risks risks = calculateRisks(service);
+                    Map<SecurityDimension, Float> acceptableRisks = risks.getAcceptableRisks();
+                    Map<SecurityDimension, Float> maxRisks = risks.getMaxRisks();
+
+                    Map<SecurityDimension, Float> pathProperties = pathPropertiesService.calculatePathProperties(p);
+                    Map<SecurityDimension, Float> pathRisks = riskService.calculateRisk(pathProperties, dtsp.getConsequences());
+
+                    if(!isPathRiskInRange(maxRisks, pathRisks)) {
+                        log.info("Risk increased over DTSP range. Deleting path from switches");
+                        for(IOFSwitch sw: switches) {
+                            OFFlowDelete flowDelete = sw.getOFFactory().buildFlowDelete()
+                                    .setMatch(sw.getOFFactory().buildMatch()
+                                            .setExact(MatchField.ETH_TYPE, EthType.IPv4)
+                                            .setExact(MatchField.IPV4_SRC, IPv4Address.of(ap.getSrc().getAddress()))
+                                            .setExact(MatchField.IPV4_DST, IPv4Address.of(ap.getDst().getAddress()))
+                                            .setExact(MatchField.IP_PROTO, IpProtocol.TCP)
+                                            .setExact(MatchField.TCP_SRC, TransportPort.of(ap.getSrc().getPort()))
+                                            .setExact(MatchField.TCP_DST, TransportPort.of(ap.getDst().getPort()))
+                                            .build()
+                                    ).build();
+
+                            messageDamper.write(sw, flowDelete);
+                        }
+
+                        securePathsRegistry.deletePath(ap);
+                        duplicatedPacketInFilter.deleteFromBuffering(ap);
+
+                    } else {
+                        log.info("Risk still in DTSP range.");
+                    }
+                }
+            });
         }
     }
 
