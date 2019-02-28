@@ -35,7 +35,7 @@ RUN git clone https://github.com/sszwaczyk/requests-generator.git && cd requests
 RUN git clone https://github.com/sszwaczyk/http-server.git && cd http-server && mvn -DskipTests clean package
 
 #Utils
-RUN apt-get -y install iproute2 xorg xterm wget
+RUN DEBIAN_FRONTEND=noninteractive apt install -q -y iproute2 xorg xterm wget
 
 #Files
 RUN wget http://ipv4.download.thinkbroadband.com/1GB.zip && wget http://ipv4.download.thinkbroadband.com/512MB.zip && \

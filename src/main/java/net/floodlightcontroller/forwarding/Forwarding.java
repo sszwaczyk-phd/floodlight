@@ -38,6 +38,8 @@ import net.floodlightcontroller.devicemanager.IDevice;
 import net.floodlightcontroller.devicemanager.IDeviceListener;
 import net.floodlightcontroller.devicemanager.IDeviceService;
 import net.floodlightcontroller.devicemanager.SwitchPort;
+import pl.sszwaczyk.repository.ISecureFlowsRepository;
+import pl.sszwaczyk.repository.web.SecureFlowsRepositoryRoutable;
 import net.floodlightcontroller.linkdiscovery.ILinkDiscoveryListener;
 import net.floodlightcontroller.linkdiscovery.ILinkDiscoveryService;
 import net.floodlightcontroller.linkdiscovery.Link;
@@ -75,7 +77,6 @@ import pl.sszwaczyk.service.Service;
 import pl.sszwaczyk.user.IUserService;
 import pl.sszwaczyk.user.User;
 import pl.sszwaczyk.utils.AddressesAndPorts;
-import pl.sszwaczyk.utils.PacketUtils;
 
 import javax.annotation.Nonnull;
 
@@ -129,7 +130,7 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
     private IDTSPService dtspService;
     private IPathPropertiesService pathPropertiesService;
     private IDuplicatedPacketInFilter duplicatedPacketInFilter;
-    private static SecurePathsRegistry securePathsRegistry;
+    private ISecureFlowsRepository secureFlowsRepository;
 
     protected static class FlowSetIdRegistry {
         private volatile Map<NodePortTuple, Set<U64>> nptToFlowSetIds;
@@ -778,7 +779,7 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
 
             if(service != null) {
                 log.debug("Registering path to secure paths registry");
-                securePathsRegistry.registerPath(AddressesAndPorts.fromCntx(cntx), path);
+                secureFlowsRepository.registerFlow(AddressesAndPorts.fromCntx(cntx), path);
             }
         } /* else no path was found */
     }
@@ -1392,6 +1393,7 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
         l.add(IRiskCalculationService.class);
         l.add(IPathPropertiesService.class);
         l.add(IDuplicatedPacketInFilter.class);
+        l.add(ISecureFlowsRepository.class);
         return l;
     }
 
@@ -1414,14 +1416,13 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
         this.dtspService = context.getServiceImpl(IDTSPService.class);
         this.pathPropertiesService = context.getServiceImpl(IPathPropertiesService.class);
         this.duplicatedPacketInFilter = context.getServiceImpl(IDuplicatedPacketInFilter.class);
+        this.secureFlowsRepository = context.getServiceImpl(ISecureFlowsRepository.class);
 
         l3manager = new L3RoutingManager();
         l3cache = new ConcurrentHashMap<>();
         deviceListener = new DeviceListenerImpl();
 
         flowSetIdRegistry = FlowSetIdRegistry.getInstance();
-
-        securePathsRegistry = SecurePathsRegistry.getInstance();
 
         Map<String, String> configParameters = context.getConfigParams(this);
         String tmp = configParameters.get("hard-timeout");
@@ -1534,6 +1535,7 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
         switchService.addOFSwitchListener(this);
         routingEngineService.addRoutingDecisionChangedListener(this);
         restApiService.addRestletRoutable(new RoutingWebRoutable());
+        restApiService.addRestletRoutable(new SecureFlowsRepositoryRoutable());
 
         deviceManagerService.addListener(this.deviceListener);
 
@@ -1968,40 +1970,10 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
         return null;
     }
 
-    protected static class SecurePathsRegistry {
-
-        private volatile Map<AddressesAndPorts, Path> paths;
-
-        private static volatile SecurePathsRegistry instance;
-
-        private SecurePathsRegistry() {
-            paths = new ConcurrentHashMap<>();
-        }
-
-        protected static SecurePathsRegistry getInstance() {
-            if (instance == null) {
-                instance = new SecurePathsRegistry();
-            }
-            return instance;
-        }
-
-        public void registerPath(AddressesAndPorts ap, Path path) {
-            paths.put(ap, path);
-        }
-
-        public Map<AddressesAndPorts, Path> getPaths() {
-            return paths;
-        }
-
-        public void deletePath(AddressesAndPorts ap) {
-            paths.remove(ap);
-        }
-    }
-
     @Override
     public void securityPropertiesChanged(SecurityPropertiesUpdate update) {
         log.info("Received security properties changed update {}", update);
-        Map<AddressesAndPorts, Path> paths = securePathsRegistry.getPaths();
+        Map<AddressesAndPorts, Path> paths = secureFlowsRepository.getFlows();
         if(update.getType().equals(SecurityPropertiesUpdateType.SWITCH)) {
 
             IOFSwitch s = update.getIofSwitch();
@@ -2048,7 +2020,7 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
                             messageDamper.write(sw, flowDelete);
                         }
 
-                        securePathsRegistry.deletePath(ap);
+                        secureFlowsRepository.deleteFlow(ap);
                         duplicatedPacketInFilter.deleteFromBuffering(ap);
 
                     } else {
@@ -2107,7 +2079,7 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
                             messageDamper.write(sw, flowDelete);
                         }
 
-                        securePathsRegistry.deletePath(ap);
+                        secureFlowsRepository.deleteFlow(ap);
                         duplicatedPacketInFilter.deleteFromBuffering(ap);
 
                     } else {
