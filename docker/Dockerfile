@@ -21,6 +21,15 @@ RUN apt-get update && \
     apt-get install -y oracle-java8-installer && \
     apt-get clean
 
+#Utils
+RUN DEBIAN_FRONTEND=noninteractive apt install -q -y iproute2 xorg xterm wget
+
+#Files
+RUN wget http://ipv4.download.thinkbroadband.com/1GB.zip && wget http://ipv4.download.thinkbroadband.com/512MB.zip && \
+    wget http://ipv4.download.thinkbroadband.com/200MB.zip && wget http://ipv4.download.thinkbroadband.com/100MB.zip && \
+    wget http://ipv4.download.thinkbroadband.com/50MB.zip && wget http://ipv4.download.thinkbroadband.com/20MB.zip && \
+    wget http://ipv4.download.thinkbroadband.com/10MB.zip && wget http://ipv4.download.thinkbroadband.com/5MB.zip
+
 #Floodlight
 RUN apt-get -y install git build-essential maven
 RUN git clone https://github.com/sszwaczyk/floodlight.git
@@ -33,13 +42,5 @@ RUN git clone https://github.com/sszwaczyk/requests-generator.git && cd requests
 
 #Http server
 RUN git clone https://github.com/sszwaczyk/http-server.git && cd http-server && mvn -DskipTests clean package
-
-#Utils
-RUN DEBIAN_FRONTEND=noninteractive apt install -q -y iproute2 xorg xterm wget
-
-#Files
-RUN wget http://ipv4.download.thinkbroadband.com/1GB.zip && wget http://ipv4.download.thinkbroadband.com/512MB.zip && \
-    wget http://ipv4.download.thinkbroadband.com/200MB.zip && wget http://ipv4.download.thinkbroadband.com/100MB.zip && \
-    wget http://ipv4.download.thinkbroadband.com/50MB.zip && http://ipv4.download.thinkbroadband.com/20MB.zip
 
 CMD ovs-ctl start && bash
