@@ -3,6 +3,7 @@ FROM ubuntu:18.04
 MAINTAINER Sebastian Szwaczyk <sebastian.szwaczyk@wat.edu.pl>
 
 RUN apt-get update && apt-get -y install apt-utils net-tools iputils-ping
+RUN DEBIAN_FRONTEND=noninteractive apt install -q -y iproute2 xorg xterm wget tcptraceroute nano
 
 RUN mkdir impl
 WORKDIR /impl
@@ -21,8 +22,6 @@ RUN apt-get update && \
     apt-get install -y oracle-java8-installer && \
     apt-get clean
 
-#Utils
-RUN DEBIAN_FRONTEND=noninteractive apt install -q -y iproute2 xorg xterm wget
 
 #Files
 RUN wget http://ipv4.download.thinkbroadband.com/1GB.zip && wget http://ipv4.download.thinkbroadband.com/512MB.zip && \

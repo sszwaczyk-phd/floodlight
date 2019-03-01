@@ -45,7 +45,15 @@ public class SecureRoutingStatistics {
             serviceRelationStatsMap.put(service, relationStats);
             relationStatsMap.put(user, serviceRelationStatsMap);
         } else {
-            serviceRelationStatsMap.get(service).updateRealized(result.getRegion());
+            RelationStats relationStats = serviceRelationStatsMap.get(service);
+            if(relationStats == null) {
+                relationStats = new RelationStats();
+                relationStats.updateRealized(result.getRegion());
+                serviceRelationStatsMap.put(service, relationStats);
+            } else {
+                relationStats.updateRealized(result.getRegion());
+            }
+
         }
 
         ServerResponse serverResponse = ServerResponse.builder()
@@ -68,7 +76,14 @@ public class SecureRoutingStatistics {
             serviceRelationStatsMap.put(service, relationStats);
             relationStatsMap.put(user, serviceRelationStatsMap);
         } else {
-            serviceRelationStatsMap.get(service).updateNotRealized();
+            RelationStats relationStats = serviceRelationStatsMap.get(service);
+            if(relationStats == null) {
+                relationStats = new RelationStats();
+                relationStats.updateNotRealized();
+                serviceRelationStatsMap.put(service, relationStats);
+            } else {
+                relationStats.updateNotRealized();
+            }
         }
     }
 
