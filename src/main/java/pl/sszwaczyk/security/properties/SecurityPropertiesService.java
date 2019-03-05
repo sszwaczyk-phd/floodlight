@@ -22,7 +22,10 @@ import pl.sszwaczyk.security.SecurityDimension;
 import pl.sszwaczyk.security.properties.web.LinkSecurityProperties;
 import pl.sszwaczyk.security.properties.web.SecurityPropertiesWebRoutable;
 import pl.sszwaczyk.security.properties.web.SwitchSecurityProperties;
-import pl.sszwaczyk.security.soc.*;
+import pl.sszwaczyk.security.soc.ISOCListener;
+import pl.sszwaczyk.security.soc.ISOCService;
+import pl.sszwaczyk.security.soc.SOCUpdate;
+import pl.sszwaczyk.security.soc.SOCUpdateType;
 
 import java.util.*;
 
@@ -162,8 +165,10 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
                     activateThreatOnLink(securityPropertiesDifference, link);
                 }
 
-                sendUpdates(SecurityPropertiesUpdateType.PROPERTIES_DOWN, switches);
+
             }
+
+            sendUpdates(SecurityPropertiesUpdateType.PROPERTIES_DOWN, switches);
 
         } else if(type.equals(SOCUpdateType.THREAT_ENDED)) {
 
@@ -186,8 +191,9 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
                     deactivateThreatOnLink(securityPropertiesDifference, link);
                 }
 
-                sendUpdates(SecurityPropertiesUpdateType.PROPERTIES_UP, switches);
             }
+
+            sendUpdates(SecurityPropertiesUpdateType.PROPERTIES_UP, switches);
 
         }
 

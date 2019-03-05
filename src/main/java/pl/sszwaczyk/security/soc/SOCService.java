@@ -5,7 +5,6 @@ import net.floodlightcontroller.core.module.FloodlightModuleException;
 import net.floodlightcontroller.core.module.IFloodlightModule;
 import net.floodlightcontroller.core.module.IFloodlightService;
 import net.floodlightcontroller.restserver.IRestApiService;
-import net.floodlightcontroller.util.ParseUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.sszwaczyk.security.SecurityDimension;
@@ -67,19 +66,54 @@ public class SOCService implements IFloodlightModule, ISOCService, IThreatListen
         if(calculator == null || calculator.isEmpty()) {
             throw new FloodlightModuleException("Threat influence calculator not specified");
         } else if(calculator.equals("random")) {
-            String randomMinString = configParameters.get("random-min");
-            String randomMaxString = configParameters.get("random-max");
-            if(randomMinString == null || randomMaxString == null || randomMinString.isEmpty() || randomMaxString.isEmpty()) {
-                throw new FloodlightModuleException("Random threat influcence calculator need random-min and random-max specified");
+            String randomMinTString = configParameters.get("random-min-T");
+            String randomMaxTString = configParameters.get("random-max-T");
+            if(randomMinTString == null || randomMaxTString == null || randomMinTString.isEmpty() || randomMaxTString.isEmpty()) {
+                throw new FloodlightModuleException("Random threat influcence calculator need random-min-T and random-max-T specified");
             }
 
-            Double min = Double.valueOf(randomMinString);
-            Double max = Double.valueOf(randomMaxString);
+            String randomMinCString = configParameters.get("random-min-C");
+            String randomMaxCString = configParameters.get("random-max-C");
+            if(randomMinCString == null || randomMaxCString == null || randomMinCString.isEmpty() || randomMaxCString.isEmpty()) {
+                throw new FloodlightModuleException("Random threat influcence calculator need random-min-C and random-max-C specified");
+            }
+
+            String randomMinIString = configParameters.get("random-min-I");
+            String randomMaxIString = configParameters.get("random-max-I");
+            if(randomMinIString == null || randomMaxIString == null || randomMinIString.isEmpty() || randomMaxIString.isEmpty()) {
+                throw new FloodlightModuleException("Random threat influcence calculator need random-min-I and random-max-I specified");
+            }
+
+            String randomMinAString = configParameters.get("random-min-A");
+            String randomMaxAString = configParameters.get("random-max-A");
+            if(randomMinAString == null || randomMaxAString == null || randomMinAString.isEmpty() || randomMaxAString.isEmpty()) {
+                throw new FloodlightModuleException("Random threat influcence calculator need random-min-A and random-max-A specified");
+            }
+
+            Double minT = Double.valueOf(randomMinTString);
+            Double maxT = Double.valueOf(randomMaxTString);
+
+            Double minC = Double.valueOf(randomMinCString);
+            Double maxC = Double.valueOf(randomMaxCString);
+
+            Double minI = Double.valueOf(randomMinIString);
+            Double maxI = Double.valueOf(randomMaxIString);
+
+            Double minA = Double.valueOf(randomMinAString);
+            Double maxA = Double.valueOf(randomMaxAString);
+
             threatInfluenceCalculator = RandomThreatInfluenceCalculator.builder()
-                    .min(min)
-                    .max(max)
+                    .minT(minT)
+                    .maxT(maxT)
+                    .minC(minC)
+                    .maxC(maxC)
+                    .minI(minI)
+                    .maxI(maxI)
+                    .minA(minA)
+                    .maxA(maxA)
                     .build();
-            log.info("RandomThreatInfluenceCalculator with min {} and max {} initialized", min, max);
+
+            log.info("RandomThreatInfluenceCalculator with minT = " + minT + "; maxT = " + maxT + "; minC = " + minC + "; maxC = " + maxC + "; minI = " + minI + "; maxI = " + maxI + "; minA = " + minA + "; maxA = " + maxA);
         } else {
             throw new FloodlightModuleException("Invalid threat influence calculator specified");
         }
