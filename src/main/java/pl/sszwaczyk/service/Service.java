@@ -11,5 +11,6 @@ public class Service {
     private String ip;
     private Integer port;
     private String path;
+    private Double bandwidth;
 
 }

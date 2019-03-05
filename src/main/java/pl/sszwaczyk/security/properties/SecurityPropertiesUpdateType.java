@@ -2,6 +2,6 @@ package pl.sszwaczyk.security.properties;
 
 public enum SecurityPropertiesUpdateType {
 
-    SWITCH, LINK
+    PROPERTIES_UP, PROPERTIES_DOWN
 
 }

@@ -137,55 +137,58 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
         log.info("SOC update {} received", socUpdate);
 
         SOCUpdateType type = socUpdate.getType();
+        List<DatapathId> dpids = socUpdate.getSwitches();
         Map<SecurityDimension, Float> securityPropertiesDifference = socUpdate.getSecurityPropertiesDifference();
 
-        if(type.equals(SOCUpdateType.THREAT_ACTIVATED_SWITCH)) {
+        List<IOFSwitch> switches = new ArrayList<>();
+        if(type.equals(SOCUpdateType.THREAT_ACTIVATED)) {
 
-            IOFSwitch s = switchService.getSwitch(socUpdate.getSrc());
-            Float actualTrust = (Float) s.getAttributes().get(SecurityDimension.TRUST);
-            Float trustDifference = securityPropertiesDifference.get(SecurityDimension.TRUST);
-            if(trustDifference > actualTrust) {
-                log.warn("New threat TRUST difference more than actual TRUST for switch {}. Setting TRUST to 0.", socUpdate.getSrc());
-                s.getAttributes().put(SecurityDimension.TRUST, 0.0f);
-            } else {
-                s.getAttributes().put(SecurityDimension.TRUST, actualTrust - trustDifference);
-                log.info("Set TRUST for switch {} to {}", socUpdate.getSrc(), s.getAttributes().get(SecurityDimension.TRUST));
+            for(DatapathId dpid: dpids) {
+
+                IOFSwitch s = switchService.getSwitch(dpid);
+                switches.add(s);
+                Float actualTrust = (Float) s.getAttributes().get(SecurityDimension.TRUST);
+                Float trustDifference = securityPropertiesDifference.get(SecurityDimension.TRUST);
+                if(trustDifference > actualTrust) {
+                    log.warn("New threat TRUST difference more than actual TRUST for switch {}. Setting TRUST to 0.", dpid);
+                    s.getAttributes().put(SecurityDimension.TRUST, 0.0f);
+                } else {
+                    s.getAttributes().put(SecurityDimension.TRUST, actualTrust - trustDifference);
+                    log.info("Set TRUST for switch {} to {}", dpid, s.getAttributes().get(SecurityDimension.TRUST));
+                }
+
+                Set<Link> links = linkService.getSwitchLinks().get(dpid);
+                for(Link link: links) {
+                    activateThreatOnLink(securityPropertiesDifference, link);
+                }
+
+                sendUpdates(SecurityPropertiesUpdateType.PROPERTIES_DOWN, switches);
             }
 
-            sendUpdates(s, null);
+        } else if(type.equals(SOCUpdateType.THREAT_ENDED)) {
 
-        } else if(type.equals(SOCUpdateType.THREAT_ACTIVATED_LINK)) {
+            for(DatapathId dpid: dpids) {
 
-            Link link = linkService.getLink(socUpdate.getSrc(), socUpdate.getSrcPort(), socUpdate.getDst(), socUpdate.getDstPort());
-            activateThreatOnLink(securityPropertiesDifference, link);
-            Link reverseLink = linkService.getLink(socUpdate.getDst(), socUpdate.getDstPort(), socUpdate.getSrc(), socUpdate.getSrcPort());
-            activateThreatOnLink(securityPropertiesDifference, reverseLink);
+                IOFSwitch s = switchService.getSwitch(dpid);
+                switches.add(s);
+                Float actualTrust = (Float) s.getAttributes().get(SecurityDimension.TRUST);
+                Float trustDifference = securityPropertiesDifference.get(SecurityDimension.TRUST);
+                if(actualTrust + trustDifference > 0.99) {
+                    log.warn("Threat ended TRUST plus actual TRUST is more than 0.99 for switch {}. Setting TRUST to 0.99", dpid);
+                    s.getAttributes().put(SecurityDimension.TRUST, 0.99f);
+                } else {
+                    s.getAttributes().put(SecurityDimension.TRUST, actualTrust + trustDifference);
+                    log.info("Set TRUST for switch {} to {}", dpid, s.getAttributes().get(SecurityDimension.TRUST));
+                }
 
-            sendUpdates(null, link);
+                Set<Link> links = linkService.getSwitchLinks().get(dpid);
+                for(Link link: links) {
+                    deactivateThreatOnLink(securityPropertiesDifference, link);
+                }
 
-        } else if(type.equals(SOCUpdateType.THREAT_ENDED_SWITCH)) {
-
-            IOFSwitch s = switchService.getSwitch(socUpdate.getSrc());
-            Float actualTrust = (Float) s.getAttributes().get(SecurityDimension.TRUST);
-            Float trustDifference = securityPropertiesDifference.get(SecurityDimension.TRUST);
-            if(actualTrust + trustDifference > 0.99) {
-                log.warn("Threat ended TRUST plus actual TRUST is more than 0.99 for switch {}. Setting TRUST to 0.99", socUpdate.getSrc());
-                s.getAttributes().put(SecurityDimension.TRUST, 0.99f);
-            } else {
-                s.getAttributes().put(SecurityDimension.TRUST, actualTrust + trustDifference);
-                log.info("Set TRUST for switch {} to {}", socUpdate.getSrc(), s.getAttributes().get(SecurityDimension.TRUST));
+                sendUpdates(SecurityPropertiesUpdateType.PROPERTIES_UP, switches);
             }
 
-            sendUpdates(s, null);
-
-        } else if(type.equals(SOCUpdateType.THREAT_ENDED_LINK)) {
-
-            Link link = linkService.getLink(socUpdate.getSrc(), socUpdate.getSrcPort(), socUpdate.getDst(), socUpdate.getDstPort());
-            deactivateThreatOnLink(securityPropertiesDifference, link);
-            Link reverseLink = linkService.getLink(socUpdate.getDst(), socUpdate.getDstPort(), socUpdate.getSrc(), socUpdate.getSrcPort());
-            deactivateThreatOnLink(securityPropertiesDifference, reverseLink);
-
-            sendUpdates(null, link);
         }
 
     }
@@ -230,8 +233,6 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
         IOFSwitch s = switchService.getSwitch(DatapathId.of(properties.getSwitchDpid()));
         s.getAttributes().put(SecurityDimension.TRUST, properties.getTrust());
         log.info("Set TRUST for switch {} to {}",properties.getSwitchDpid(), s.getAttributes().get(SecurityDimension.TRUST));
-
-        sendUpdates(s, null);
     }
 
     @Override
@@ -249,8 +250,6 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
             log.info("Integrity = {}", link.getIntegrity());
             log.info("Availability = {}", link.getAvailability());
         }
-
-        sendUpdates(null, link);
     }
 
     @Override
@@ -326,11 +325,10 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
         log.info("Availability = {}", link.getAvailability());
     }
 
-    private void sendUpdates(IOFSwitch s, Link link) {
+    private void sendUpdates(SecurityPropertiesUpdateType type, List<IOFSwitch> switches) {
         SecurityPropertiesUpdate update = SecurityPropertiesUpdate.builder()
-                .iofSwitch(s)
-                .link(link)
-                .type(s != null ? SecurityPropertiesUpdateType.SWITCH : SecurityPropertiesUpdateType.LINK)
+                .type(type)
+                .switches(switches)
                 .build();
         log.info("Sending updates about security properties changed...");
         for(ISecurityPropertiesChangedListener l: listeners) {

@@ -66,7 +66,7 @@ public class SOCService implements IFloodlightModule, ISOCService, IThreatListen
         String calculator = configParameters.get("threat-influence-calculator");
         if(calculator == null || calculator.isEmpty()) {
             throw new FloodlightModuleException("Threat influence calculator not specified");
-        }else if(calculator.equals("random")) {
+        } else if(calculator.equals("random")) {
             String randomMinString = configParameters.get("random-min");
             String randomMaxString = configParameters.get("random-max");
             if(randomMinString == null || randomMaxString == null || randomMinString.isEmpty() || randomMaxString.isEmpty()) {
@@ -106,15 +106,8 @@ public class SOCService implements IFloodlightModule, ISOCService, IThreatListen
         log.info("Got info about threat {} started", threat);
 
         SOCUpdate update = new SOCUpdate();
-        update.setSrc(threat.getSrc());
-        if(threat.getDst() == null) {
-            update.setType(SOCUpdateType.THREAT_ACTIVATED_SWITCH);
-        } else {
-            update.setSrcPort(threat.getSrcPort());
-            update.setDst(threat.getDst());
-            update.setDstPort(threat.getDstPort());
-            update.setType(SOCUpdateType.THREAT_ACTIVATED_LINK);
-        }
+        update.setType(SOCUpdateType.THREAT_ACTIVATED);
+        update.setSwitches(threat.getSwitches());
         Map<SecurityDimension, Float> influence = threatInfluenceCalculator.calculateThreatInfluence(threat);
         update.setSecurityPropertiesDifference(influence);
 
@@ -131,15 +124,8 @@ public class SOCService implements IFloodlightModule, ISOCService, IThreatListen
         log.info("Got info about threat {} ended", threat);
 
         SOCUpdate update = new SOCUpdate();
-        update.setSrc(threat.getSrc());
-        if(threat.getDst() == null) {
-            update.setType(SOCUpdateType.THREAT_ENDED_SWITCH);
-        } else {
-            update.setSrcPort(threat.getSrcPort());
-            update.setDst(threat.getDst());
-            update.setDstPort(threat.getDstPort());
-            update.setType(SOCUpdateType.THREAT_ENDED_LINK);
-        }
+        update.setType(SOCUpdateType.THREAT_ENDED);
+        update.setSwitches(threat.getSwitches());
         update.setSecurityPropertiesDifference(actualThreats.get(threat));
 
         log.info("Sending SOCUpdate to listeners...");

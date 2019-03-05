@@ -5,12 +5,17 @@ import lombok.Data;
 import net.floodlightcontroller.core.internal.IOFSwitchService;
 import net.floodlightcontroller.linkdiscovery.ILinkDiscoveryService;
 import net.floodlightcontroller.linkdiscovery.Link;
+import net.floodlightcontroller.routing.IRoutingService;
+import net.floodlightcontroller.routing.Path;
 import org.projectfloodlight.openflow.types.DatapathId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.sszwaczyk.security.threat.IThreatService;
 import pl.sszwaczyk.security.threat.Threat;
+import pl.sszwaczyk.utils.PathUtils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
@@ -23,7 +28,7 @@ public class UniformThreatsGenerator {
 
     private IThreatService threatService;
     private IOFSwitchService switchService;
-    private ILinkDiscoveryService linkService;
+    private IRoutingService routingService;
 
     private int minGap;
     private int maxGap;
@@ -37,32 +42,36 @@ public class UniformThreatsGenerator {
         while(true) {
             Threat threat = new Threat();
 
-            int linkOrSwitch = random.nextInt(2);
-            int index = 0;
+            List<DatapathId> switches = new ArrayList<>();
+            List<DatapathId> dpids = new ArrayList<>(switchService.getAllSwitchDpids());
 
-            if(linkOrSwitch == 0) {
-                Set<Link> links = linkService.getLinks().keySet();
-                int linkIndex = random.nextInt(linkService.getLinks().size());
-                for(Link l: links) {
-                    if(index == linkIndex) {
-                        threat.setSrc(l.getSrc());
-                        threat.setSrcPort(l.getSrcPort());
-                        threat.setDst(l.getDst());
-                        threat.setDstPort(l.getDstPort());
-                        break;
-                    }
-                    index++;
-                }
+            int switchOrPath = random.nextInt(2);
+            if(switchOrPath == 0) {
+                //One switch attacked
+                int switchIndex = random.nextInt(dpids.size());
+                switches.add(dpids.get(switchIndex));
             } else {
-                Set<DatapathId> switchDpids = switchService.getAllSwitchDpids();
-                int switchIndex = random.nextInt(switchDpids.size());
-                for(DatapathId dpid: switchDpids) {
-                    if(index == switchIndex) {
-                        threat.setSrc(dpid);
+                //Path attacked
+                boolean pathFound = false;
+                while (!pathFound) {
+                    int startSwitchIndex = random.nextInt(dpids.size());
+                    int endSwitchIndex = random.nextInt(dpids.size());
+
+                    DatapathId start = dpids.get(startSwitchIndex);
+                    DatapathId end = dpids.get(endSwitchIndex);
+
+                    List<Path> paths = routingService.getPathsSlow(start, end, 10);
+                    if(paths.size() == 0) {
+                        log.warn("Path between " + start + " and " + end + " not found");
+                    } else {
+                        Path path = paths.get(random.nextInt(paths.size()));
+                        switches.addAll(PathUtils.getSwitchesFromPath(path));
+                        pathFound = true;
                     }
-                    index++;
                 }
+
             }
+            threat.setSwitches(switches);
 
             threat.setDuration(ThreadLocalRandom.current().nextLong(minDuration, maxDuration + 1));
 

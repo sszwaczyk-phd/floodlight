@@ -7,6 +7,7 @@ import net.floodlightcontroller.core.module.IFloodlightModule;
 import net.floodlightcontroller.core.module.IFloodlightService;
 import net.floodlightcontroller.linkdiscovery.ILinkDiscoveryService;
 import net.floodlightcontroller.restserver.IRestApiService;
+import net.floodlightcontroller.routing.IRoutingService;
 import net.floodlightcontroller.util.ParseUtils;
 import org.projectfloodlight.openflow.types.DatapathId;
 import org.slf4j.Logger;
@@ -23,7 +24,7 @@ public class ThreatService implements IFloodlightModule, IThreatService {
 
     private IRestApiService restApiService;
     private IOFSwitchService switchService;
-    private ILinkDiscoveryService linkService;
+    private IRoutingService routingService;
 
     private List<IThreatListener> listeners = new ArrayList<>();
 
@@ -49,7 +50,7 @@ public class ThreatService implements IFloodlightModule, IThreatService {
                 new ArrayList<Class<? extends IFloodlightService>>();
         l.add(IRestApiService.class);
         l.add(IOFSwitchService.class);
-        l.add(ILinkDiscoveryService.class);
+        l.add(IRoutingService.class);
         return l;
     }
 
@@ -57,7 +58,7 @@ public class ThreatService implements IFloodlightModule, IThreatService {
     public void init(FloodlightModuleContext context) throws FloodlightModuleException {
         restApiService = context.getServiceImpl(IRestApiService.class);
         switchService = context.getServiceImpl(IOFSwitchService.class);
-        linkService = context.getServiceImpl(ILinkDiscoveryService.class);
+        routingService = context.getServiceImpl(IRoutingService.class);
 
         Map<String, String> configParameters = context.getConfigParams(this);
         boolean enableThreatsGenerator = Boolean.parseBoolean(configParameters.get("enable-threats-generator"));
@@ -65,7 +66,7 @@ public class ThreatService implements IFloodlightModule, IThreatService {
             log.info("Threats generator enabled. Running threats generator...");
             UniformThreatsGenerator uniformThreatsGenerator = UniformThreatsGenerator.builder()
                     .threatService(this)
-                    .linkService(linkService)
+                    .routingService(routingService)
                     .switchService(switchService)
                     .minGap(Integer.parseInt(configParameters.get("min-gap")))
                     .maxGap(Integer.parseInt(configParameters.get("max-gap")))

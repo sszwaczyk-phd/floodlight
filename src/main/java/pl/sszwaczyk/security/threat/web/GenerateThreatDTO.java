@@ -5,16 +5,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class GenerateThreatDTO {
 
-    private String src;
-    private int srcPort;
-    private String dst;
-    private int dstPort;
+    private List<String> switches;
 
     private long duration; //seconds
 

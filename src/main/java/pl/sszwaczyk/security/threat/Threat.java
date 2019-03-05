@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import org.projectfloodlight.openflow.types.DatapathId;
 import org.projectfloodlight.openflow.types.OFPort;
 
+import java.util.List;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -14,11 +16,7 @@ import org.projectfloodlight.openflow.types.OFPort;
 public class Threat {
 
     private String id;
-    private ThreatType type;
-    private DatapathId src;
-    private OFPort srcPort;
-    private DatapathId dst;
-    private OFPort dstPort;
+    List<DatapathId> switches;
 
     private Long duration; //seconds
 }

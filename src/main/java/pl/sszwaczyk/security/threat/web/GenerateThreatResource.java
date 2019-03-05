@@ -10,6 +10,7 @@ import pl.sszwaczyk.security.threat.IThreatService;
 import pl.sszwaczyk.security.threat.Threat;
 
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class GenerateThreatResource extends ServerResource {
 
@@ -26,12 +27,7 @@ public class GenerateThreatResource extends ServerResource {
 
         Threat threat = new Threat();
         threat.setId(UUID.randomUUID().toString());
-        threat.setSrc(DatapathId.of(generateThreatDTO.getSrc()));
-        if(generateThreatDTO.getDst() != null) {
-            threat.setSrcPort(OFPort.of(generateThreatDTO.getSrcPort()));
-            threat.setDst(DatapathId.of(generateThreatDTO.getDst()));
-            threat.setDstPort(OFPort.of(generateThreatDTO.getDstPort()));
-        }
+        threat.setSwitches(generateThreatDTO.getSwitches().stream().map(DatapathId::of).collect(Collectors.toList()));
         threat.setDuration(generateThreatDTO.getDuration());
 
         threatService.startThreat(threat);

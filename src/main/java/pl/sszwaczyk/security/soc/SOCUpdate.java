@@ -8,6 +8,7 @@ import org.projectfloodlight.openflow.types.DatapathId;
 import org.projectfloodlight.openflow.types.OFPort;
 import pl.sszwaczyk.security.SecurityDimension;
 
+import java.util.List;
 import java.util.Map;
 
 @Data
@@ -17,10 +18,7 @@ import java.util.Map;
 public class SOCUpdate {
 
     private SOCUpdateType type;
-    private DatapathId src;
-    private OFPort srcPort;
-    private DatapathId dst;
-    private OFPort dstPort;
+    private List<DatapathId> switches;
     private Map<SecurityDimension, Float> securityPropertiesDifference;
 
 }

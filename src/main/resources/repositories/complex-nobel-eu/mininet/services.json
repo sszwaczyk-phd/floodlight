@@ -3,30 +3,35 @@
     "id": "Service1",
     "ip": "10.0.0.1",
     "port": 8000,
-    "path": "/impl/1GB.zip"
+    "path": "/impl/1GB.zip",
+    "bandwidth": 10
   },
   {
     "id": "Service2",
     "ip": "10.0.0.2",
     "port": 8000,
-    "path": "/impl/512MB.zip"
+    "path": "/impl/512MB.zip",
+    "bandwidth": 10
   },
   {
     "id": "Service3",
     "ip": "10.0.0.3",
     "port": 8000,
-    "path": "/impl/100MB.zip"
+    "path": "/impl/100MB.zip",
+    "bandwidth": 10
   },
   {
     "id": "Service4",
     "ip": "10.0.0.4",
     "port": 8000,
-    "path": "/impl/50MB.zip"
+    "path": "/impl/50MB.zip",
+    "bandwidth": 1
   },
   {
     "id": "Service5",
     "ip": "10.0.0.5",
     "port": 8000,
-    "path": "/impl/20MB.zip"
+    "path": "/impl/20MB.zip",
+    "bandwidth": 1
   }
 ]
