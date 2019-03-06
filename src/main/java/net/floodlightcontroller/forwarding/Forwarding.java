@@ -17,15 +17,7 @@
 
 package net.floodlightcontroller.forwarding;
 
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
-
-import net.floodlightcontroller.core.FloodlightContext;
-import net.floodlightcontroller.core.IFloodlightProviderService;
-import net.floodlightcontroller.core.IOFSwitch;
-import net.floodlightcontroller.core.IOFSwitchListener;
-import net.floodlightcontroller.core.PortChangeType;
+import net.floodlightcontroller.core.*;
 import net.floodlightcontroller.core.internal.IOFSwitchService;
 import net.floodlightcontroller.core.module.FloodlightModuleContext;
 import net.floodlightcontroller.core.module.FloodlightModuleException;
@@ -38,18 +30,14 @@ import net.floodlightcontroller.devicemanager.IDevice;
 import net.floodlightcontroller.devicemanager.IDeviceListener;
 import net.floodlightcontroller.devicemanager.IDeviceService;
 import net.floodlightcontroller.devicemanager.SwitchPort;
-import pl.sszwaczyk.repository.ISecureFlowsRepository;
-import pl.sszwaczyk.repository.web.SecureFlowsRepositoryRoutable;
 import net.floodlightcontroller.linkdiscovery.ILinkDiscoveryListener;
 import net.floodlightcontroller.linkdiscovery.ILinkDiscoveryService;
-import net.floodlightcontroller.linkdiscovery.Link;
 import net.floodlightcontroller.packet.*;
 import net.floodlightcontroller.restserver.IRestApiService;
 import net.floodlightcontroller.routing.*;
 import net.floodlightcontroller.routing.web.RoutingWebRoutable;
 import net.floodlightcontroller.topology.ITopologyService;
 import net.floodlightcontroller.util.*;
-
 import org.projectfloodlight.openflow.protocol.*;
 import org.projectfloodlight.openflow.protocol.action.OFAction;
 import org.projectfloodlight.openflow.protocol.match.Match;
@@ -62,6 +50,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.sszwaczyk.filter.IDuplicatedPacketInFilter;
 import pl.sszwaczyk.path.IPathPropertiesService;
+import pl.sszwaczyk.repository.ISecureFlowsRepository;
+import pl.sszwaczyk.repository.web.SecureFlowsRepositoryRoutable;
 import pl.sszwaczyk.routing.ISecureRoutingService;
 import pl.sszwaczyk.security.SecurityDimension;
 import pl.sszwaczyk.security.dtsp.DTSP;
@@ -79,6 +69,9 @@ import pl.sszwaczyk.user.User;
 import pl.sszwaczyk.utils.AddressesAndPorts;
 
 import javax.annotation.Nonnull;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Forwarding extends ForwardingBase implements IFloodlightModule, IOFSwitchListener, ILinkDiscoveryListener,
         IRoutingDecisionChangedListener, IGatewayService, ISecurityPropertiesChangedListener {
@@ -644,7 +637,7 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
         if (isBroadcastOrMulticast(eth)) {
             doFlood(sw, pi, decision, cntx);
         } else {
-            doL2ForwardFlow(sw, pi, decision, cntx, false);
+            doL2ForwardFlow(sw, pi, decision, cntx, true);
         }
     }
 
