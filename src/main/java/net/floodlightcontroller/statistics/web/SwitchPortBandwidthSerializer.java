@@ -1,15 +1,14 @@
 package net.floodlightcontroller.statistics.web;
 
-import java.io.IOException;
-import java.util.Date;
-
-import net.floodlightcontroller.statistics.SwitchPortBandwidth;
-
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonGenerator.Feature;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import net.floodlightcontroller.statistics.SwitchPortBandwidth;
+
+import java.io.IOException;
+import java.util.Date;
 
 public class SwitchPortBandwidthSerializer extends JsonSerializer<SwitchPortBandwidth> {
 
@@ -26,8 +25,10 @@ public class SwitchPortBandwidthSerializer extends JsonSerializer<SwitchPortBand
 		jGen.writeStringField("bits-per-second-tx", spb.getBitsPerSecondTx().getBigInteger().toString());
 		jGen.writeNumberField("tx-utilization", spb.getTxUtilization());
 		jGen.writeNumberField("tx-utilization-percent", spb.getTxUtilizationPercent());
+		jGen.writeNumberField("tx-available-bandwidth", spb.getAvailableTxBandwidth());
 		jGen.writeNumberField("rx-utilization", spb.getRxUtilization());
 		jGen.writeNumberField("rx-utilization-percent", spb.getRxUtilizationPercent());
+		jGen.writeNumberField("rx-available-bandwidth", spb.getAvailableRxBandwidth());
 		jGen.writeEndObject();
 	}
 

@@ -5,15 +5,16 @@ import net.floodlightcontroller.core.module.FloodlightModuleException;
 import net.floodlightcontroller.core.module.IFloodlightService;
 import net.floodlightcontroller.routing.Path;
 import net.floodlightcontroller.routing.RoutingManager;
+import net.floodlightcontroller.statistics.IStatisticsService;
 import org.projectfloodlight.openflow.types.DatapathId;
 import org.projectfloodlight.openflow.types.OFPort;
 import org.python.google.common.collect.ImmutableList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.sszwaczyk.path.IPathPropertiesService;
+import pl.sszwaczyk.routing.solver.Decision;
 import pl.sszwaczyk.routing.solver.KShortestPathSolver;
 import pl.sszwaczyk.routing.solver.SolveRegion;
-import pl.sszwaczyk.routing.solver.SolveResult;
 import pl.sszwaczyk.routing.solver.Solver;
 import pl.sszwaczyk.security.dtsp.IDTSPService;
 import pl.sszwaczyk.security.risk.IRiskCalculationService;
@@ -35,6 +36,7 @@ public class SecureRoutingManager extends RoutingManager implements ISecureRouti
     private IRiskCalculationService riskService;
     private IDTSPService dtspService;
     private IPathPropertiesService pathPropertiesService;
+    private IStatisticsService statisticsService;
     private ISecureRoutingStatisticsService secureRoutingStatisticsService;
 
     //Solver
@@ -64,6 +66,7 @@ public class SecureRoutingManager extends RoutingManager implements ISecureRouti
         l.add(IRiskCalculationService.class);
         l.add(IPathPropertiesService.class);
         l.add(ISecureRoutingStatisticsService.class);
+        l.add(IStatisticsService.class);
         return l;
     }
 
@@ -74,6 +77,7 @@ public class SecureRoutingManager extends RoutingManager implements ISecureRouti
         dtspService = context.getServiceImpl(IDTSPService.class);
         pathPropertiesService = context.getServiceImpl(IPathPropertiesService.class);
         secureRoutingStatisticsService = context.getServiceImpl(ISecureRoutingStatisticsService.class);
+        statisticsService = context.getServiceImpl(IStatisticsService.class);
 
         Map<String, String> configParameters = context.getConfigParams(this);
         String stringSolver = configParameters.get("solver");
@@ -96,6 +100,7 @@ public class SecureRoutingManager extends RoutingManager implements ISecureRouti
                     .riskService(riskService)
                     .dtspService(dtspService)
                     .pathPropertiesService(pathPropertiesService)
+                    .statisticsService(statisticsService)
                     .k(k)
                     .build();
 
@@ -112,7 +117,7 @@ public class SecureRoutingManager extends RoutingManager implements ISecureRouti
 
     @Override
     public Path getSecurePath(User user, Service service, DatapathId src, OFPort srcPort, DatapathId dst, OFPort dstPort) {
-        SolveResult result = solver.solve(user, service, src, srcPort, dst, dstPort);
+        Decision result = solver.solve(user, service, src, srcPort, dst, dstPort);
 
         //update stats base on solve result
         if(!result.isSolved()) {

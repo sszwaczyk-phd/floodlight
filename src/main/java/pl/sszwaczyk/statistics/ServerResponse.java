@@ -2,7 +2,7 @@ package pl.sszwaczyk.statistics;
 
 import lombok.Builder;
 import lombok.Data;
-import pl.sszwaczyk.routing.solver.SolveResult;
+import pl.sszwaczyk.routing.solver.Decision;
 
 import java.time.LocalTime;
 
@@ -14,6 +14,6 @@ public class ServerResponse {
     private String userId;
     private String serviceId;
 
-    private SolveResult solveResult;
+    private Decision solveResult;
 
 }

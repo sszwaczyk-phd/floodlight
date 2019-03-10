@@ -1,8 +1,8 @@
 package pl.sszwaczyk.statistics;
 
 import lombok.Data;
+import pl.sszwaczyk.routing.solver.Decision;
 import pl.sszwaczyk.routing.solver.SolveRegion;
-import pl.sszwaczyk.routing.solver.SolveResult;
 import pl.sszwaczyk.service.Service;
 import pl.sszwaczyk.user.User;
 
@@ -27,7 +27,7 @@ public class SecureRoutingStatistics {
 
     private Map<User, Map<Service, RelationStats>> relationStatsMap = new HashMap();
 
-    public void updateRealized(User user, Service service, SolveResult result) {
+    public void updateRealized(User user, Service service, Decision result) {
         total++;
         realized++;
 

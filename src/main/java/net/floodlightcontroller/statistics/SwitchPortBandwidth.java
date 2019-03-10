@@ -1,17 +1,14 @@
 package net.floodlightcontroller.statistics;
 
-import java.util.Date;
-
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import net.floodlightcontroller.statistics.web.SwitchPortBandwidthSerializer;
 import org.projectfloodlight.openflow.types.DatapathId;
 import org.projectfloodlight.openflow.types.OFPort;
 import org.projectfloodlight.openflow.types.U64;
-
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
-import net.floodlightcontroller.statistics.web.SwitchPortBandwidthSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.sszwaczyk.uneven.calculator.GapUnevenCalculator;
+
+import java.util.Date;
 
 @JsonSerialize(using=SwitchPortBandwidthSerializer.class)
 public class SwitchPortBandwidth {
@@ -20,13 +17,15 @@ public class SwitchPortBandwidth {
 
 	private DatapathId id;
 	private OFPort pt;
-	private U64 speed;
+	private U64 speed; //kb/s
 	private U64 rx;
 	private double rxUtilization;
 	private double rxUtilizationPercent;
+	private double availableRxBandwidth; //kb/s
 	private U64 tx;
 	private double txUtilization;
 	private double txUtilizationPercent;
+	private double availableTxBandwidth; //kb/s
 	private Date time;
 	private long starttime_ns;
 	private U64 rxValue;
@@ -49,10 +48,16 @@ public class SwitchPortBandwidth {
 			log.debug("Rx utilization is " + rxUtilization);
 			this.txUtilization = ((double) (tx.getValue() / 1000)) / (double) speed.getValue();
 			log.debug("Tx utilization is " + txUtilization);
+
 			this.rxUtilizationPercent = rxUtilization * 100;
 			log.debug("Rx utilization percent is " + rxUtilizationPercent + " %");
 			this.txUtilizationPercent = txUtilization * 100;
 			log.debug("Tx utilization percent is " + txUtilizationPercent + " %");
+
+			this.availableRxBandwidth = speed.getValue() - (speed.getValue() * rxUtilization);
+			log.debug("Available rx bandwidth is " + availableRxBandwidth);
+			this.availableTxBandwidth = speed.getValue() - (speed.getValue() * txUtilization);
+			log.debug("Available tx bandwidth is " + availableTxBandwidth);
 		}
 	}
 	
@@ -131,6 +136,14 @@ public class SwitchPortBandwidth {
 
 	public double getTxUtilizationPercent() {
 		return txUtilizationPercent;
+	}
+	
+	public double getAvailableRxBandwidth() {
+		return availableRxBandwidth;
+	}
+
+	public double getAvailableTxBandwidth() {
+		return availableTxBandwidth;
 	}
 
 	@Override

@@ -7,5 +7,5 @@ import pl.sszwaczyk.user.User;
 
 public interface Solver {
 
-    SolveResult solve(User user, Service service, DatapathId src, OFPort srcPort, DatapathId dst, OFPort dstPort);
+    Decision solve(User user, Service service, DatapathId src, OFPort srcPort, DatapathId dst, OFPort dstPort);
 }

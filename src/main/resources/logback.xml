@@ -13,5 +13,5 @@
   <logger name="org.sdnplatform" level="INFO"/>
   <logger name="pl.sszwaczyk" level="INFO" />
   <!--<logger name="net.floodlightcontroller.forwarding" level="DEBUG"/>-->
-  <!--<logger name="net.floodlightcontroller.statistics" level="DEBUG" />-->
+  <logger name="net.floodlightcontroller.statistics" level="DEBUG" />
 </configuration>

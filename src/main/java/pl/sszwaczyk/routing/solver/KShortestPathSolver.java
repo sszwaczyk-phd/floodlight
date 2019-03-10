@@ -6,6 +6,8 @@ import net.floodlightcontroller.core.types.NodePortTuple;
 import net.floodlightcontroller.routing.IRoutingService;
 import net.floodlightcontroller.routing.Path;
 import net.floodlightcontroller.routing.PathId;
+import net.floodlightcontroller.statistics.IStatisticsService;
+import net.floodlightcontroller.statistics.SwitchPortBandwidth;
 import org.projectfloodlight.openflow.types.DatapathId;
 import org.projectfloodlight.openflow.types.OFPort;
 import org.slf4j.Logger;
@@ -23,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Builder
 @AllArgsConstructor
@@ -34,11 +37,12 @@ public class KShortestPathSolver implements Solver {
     private IRiskCalculationService riskService;
     private IDTSPService dtspService;
     private IPathPropertiesService pathPropertiesService;
+    private IStatisticsService statisticsService;
 
     private int k;
 
     @Override
-    public SolveResult solve(User user, Service service, DatapathId src, OFPort srcPort, DatapathId dst, OFPort dstPort) {
+    public Decision solve(User user, Service service, DatapathId src, OFPort srcPort, DatapathId dst, OFPort dstPort) {
         DTSP dtsp = dtspService.getDTSPForService(service);
         Risks risks = calculateRisks(service);
         Map<SecurityDimension, Float> acceptableRisks = risks.getAcceptableRisks();
@@ -50,6 +54,7 @@ public class KShortestPathSolver implements Solver {
         Path rarRfPath = null;
         double rarRfPathDistance = Float.MAX_VALUE;
         Map<SecurityDimension, Float> rarRfPathRisks = null;
+        Reason reason = null;
 
         int lastSize = 0;
         int i = 0;
@@ -58,6 +63,12 @@ public class KShortestPathSolver implements Solver {
             if(paths.size() <= lastSize) {
                 break;
             }
+
+            paths = filterBandwidth(paths, dtsp.getService().getBandwidth());
+            if(paths.size() == 0) {
+                reason = Reason.CANNOT_FULFILL_BANDWIDTH;
+            }
+
             for(int j = lastSize; j < paths.size(); j++) {
                 log.info("Searching shortests paths between " + j + " and " + (k + i));
                 Path p = paths.get(j);
@@ -128,15 +139,16 @@ public class KShortestPathSolver implements Solver {
 
         if(rarBfPath == null && rarRfPath == null) {
             log.info("Cannot find path to realize service " + service.getId());
-            return SolveResult.builder()
+            return Decision.builder()
                 .solved(false)
+                .reason(reason)
                 .build();
         }
 
         if(rarBfPath != null) {
             path = addSrcAndDstToPath(srcPort, src, dstPort, dst, rarBfPath);
             log.info("Path {} in RAR-BF with distance {}", path, rarBfPathDistance);
-            return SolveResult.builder()
+            return Decision.builder()
                     .solved(true)
                     .region(SolveRegion.RAR_BF)
                     .path(path)
@@ -147,7 +159,7 @@ public class KShortestPathSolver implements Solver {
         } else {
             path = addSrcAndDstToPath(srcPort, src, dstPort, dst, rarRfPath);
             log.info("Path {} in RAR-RF with distance {}", path, rarRfPathDistance);
-            return SolveResult.builder()
+            return Decision.builder()
                     .solved(true)
                     .region(SolveRegion.RAR_RF)
                     .path(path)
@@ -157,6 +169,18 @@ public class KShortestPathSolver implements Solver {
                     .build();
         }
 
+    }
+
+    private List<Path> filterBandwidth(List<Path> paths, Double bandwidth) {
+        return paths.stream().filter(path -> {
+            for(NodePortTuple npt: path.getPath()) {
+                SwitchPortBandwidth bandwidthConsumption = statisticsService.getBandwidthConsumption(npt.getNodeId(), npt.getPortId());
+                if((bandwidthConsumption.getAvailableTxBandwidth() / 1000) < bandwidth) {
+                    return false;
+                }
+            }
+            return true;
+        }).collect(Collectors.toList());
     }
 
     private float aggregateRisk(Map<SecurityDimension, Float> rarBfPathRisks) {
