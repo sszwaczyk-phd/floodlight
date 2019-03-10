@@ -24,10 +24,7 @@ import pl.sszwaczyk.uneven.IUnevenService;
 import pl.sszwaczyk.uneven.UnevenMetric;
 import pl.sszwaczyk.user.User;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Builder
@@ -54,6 +51,7 @@ public class KShortestPathSolver implements Solver {
         Map<SecurityDimension, Float> maxRisks = risks.getMaxRisks();
         Map<NodePortTuple, SwitchPortBandwidth> actualBandwidthConsumption = statisticsService.getBandwidthConsumption();
         Double unevenBefore = unevenService.getUneven(unevenMetric);
+        Double unevenAfter = Double.MAX_VALUE;
 
         Path path = null;
         Path rarBfPath = null;
@@ -73,19 +71,18 @@ public class KShortestPathSolver implements Solver {
             }
 
             reason = null;
-            paths = filterBandwidth(paths, dtsp.getService().getBandwidth());
-            if(paths.size() == 0) {
+            List<Path> filteredPaths = filterBandwidth(paths, dtsp.getService().getBandwidth());
+            if(filteredPaths.size() == 0) {
                 reason = Reason.CANNOT_FULFILL_BANDWIDTH;
-                continue;
+                log.info("No path which fulfill bandwidth requirement.");
             }
 
-            for(int j = lastSize; j < paths.size(); j++) {
+            for(int j = lastSize; j < filteredPaths.size(); j++) {
                 log.info("Searching shortests paths between " + j + " and " + (k + i));
-                Path p = paths.get(j);
+                Path p = filteredPaths.get(j);
 
                 Map<SecurityDimension, Float> pathProperties = pathPropertiesService.calculatePathProperties(p);
                 Map<SecurityDimension, Float> pathRisks = riskService.calculateRisk(pathProperties, dtsp.getConsequences());
-
 
                 Map<NodePortTuple, SwitchPortBandwidth> predicateBandwidthConsumption = new HashMap<>();
                 List<NodePortTuple> npts = p.getPath();
@@ -109,9 +106,9 @@ public class KShortestPathSolver implements Solver {
                                 switchPortBandwidth.getPriorByteValueTx()));
                     }
                 });
-                Double unevenAfter = unevenService.getUneven(unevenMetric, predicateBandwidthConsumption);
+                Double pathUnevenAfter = unevenService.getUneven(unevenMetric, predicateBandwidthConsumption);
 
-                if(unevenAfter < dtsp.getService().getMaxUneven()) {
+                if(pathUnevenAfter < dtsp.getService().getMaxUneven()) {
                     if(isPathRiskInRange(acceptableRisks, pathRisks)) {
                         if(rarBfPath == null) {
                             rarBfPath = p;
@@ -120,6 +117,7 @@ public class KShortestPathSolver implements Solver {
                                     + Math.pow(pathRisks.get(SecurityDimension.AVAILABILITY), 2)
                                     + Math.pow(pathRisks.get(SecurityDimension.TRUST), 2));
                             rarBfPathRisks = pathRisks;
+                            unevenAfter = pathUnevenAfter;
                         } else {
                             double pathDistance = Math.sqrt(Math.pow(pathRisks.get(SecurityDimension.CONFIDENTIALITY), 2)
                                     + Math.pow(pathRisks.get(SecurityDimension.INTEGRITY), 2)
@@ -129,6 +127,7 @@ public class KShortestPathSolver implements Solver {
                                 rarBfPath = p;
                                 rarBfPathDistance = pathDistance;
                                 rarBfPathRisks = pathRisks;
+                                unevenAfter = pathUnevenAfter;
                             }
                         }
                     }
@@ -167,6 +166,7 @@ public class KShortestPathSolver implements Solver {
                                 rarRfPath = p;
                                 rarRfPathDistance = pathDistance;
                                 rarRfPathRisks = pathRisks;
+                                unevenAfter = pathUnevenAfter;
                             }
                         }
                     }
@@ -179,32 +179,55 @@ public class KShortestPathSolver implements Solver {
         if(rarBfPath == null && rarRfPath == null) {
             log.info("Cannot find path to realize service " + service.getId());
             return Decision.builder()
-                .solved(false)
-                .reason(reason == null ? Reason.CANNOT_FULFILL_DTSP : reason)
-                .build();
+                    .id(UUID.randomUUID().toString())
+                    .user(user)
+                    .service(service)
+                    .acceptableRisks(acceptableRisks)
+                    .maxRisks(maxRisks)
+                    .solved(false)
+                    .reason(reason == null ? Reason.CANNOT_FULFILL_DTSP : reason)
+                    .build();
         }
 
         if(rarBfPath != null) {
             path = addSrcAndDstToPath(srcPort, src, dstPort, dst, rarBfPath);
             log.info("Path {} in RAR-BF with distance {}", path, rarBfPathDistance);
             return Decision.builder()
+                    .id(UUID.randomUUID().toString())
+                    .user(user)
+                    .service(service)
+                    .acceptableRisks(acceptableRisks)
+                    .maxRisks(maxRisks)
                     .solved(true)
+                    .unevenBefore(unevenBefore)
+                    .unevenAfter(unevenAfter)
                     .region(SolveRegion.RAR_BF)
-                    .path(path)
                     .value(rarBfPathDistance)
                     .risks(rarBfPathRisks)
                     .risk(aggregateRisk(rarBfPathRisks))
+                    .date(new Date())
+                    .path(path)
+                    .pathLength(path.getHopCount())
                     .build();
         } else {
             path = addSrcAndDstToPath(srcPort, src, dstPort, dst, rarRfPath);
             log.info("Path {} in RAR-RF with distance {}", path, rarRfPathDistance);
             return Decision.builder()
+                    .id(UUID.randomUUID().toString())
+                    .user(user)
+                    .service(service)
+                    .acceptableRisks(acceptableRisks)
+                    .maxRisks(maxRisks)
                     .solved(true)
+                    .unevenBefore(unevenBefore)
+                    .unevenAfter(unevenAfter)
                     .region(SolveRegion.RAR_RF)
-                    .path(path)
                     .value(rarRfPathDistance)
                     .risks(rarRfPathRisks)
                     .risk(aggregateRisk(rarRfPathRisks))
+                    .date(new Date())
+                    .path(path)
+                    .pathLength(path.getHopCount())
                     .build();
         }
 

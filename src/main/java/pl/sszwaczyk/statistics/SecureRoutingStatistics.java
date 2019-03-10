@@ -15,6 +15,8 @@ import java.util.Map;
 @Data
 public class SecureRoutingStatistics {
 
+    List<Decision> decisions = new ArrayList<>();
+
     List<ServerResponse> realizedList = new ArrayList<>();
 
     private int total;
@@ -26,6 +28,10 @@ public class SecureRoutingStatistics {
     private int notRealized;
 
     private Map<User, Map<Service, RelationStats>> relationStatsMap = new HashMap();
+
+    public void addDecision(Decision decision) {
+        decisions.add(decision);
+    }
 
     public void updateRealized(User user, Service service, Decision result) {
         total++;

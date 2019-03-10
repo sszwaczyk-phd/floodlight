@@ -11,6 +11,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.sszwaczyk.routing.solver.Decision;
 import pl.sszwaczyk.security.SecurityDimension;
 import pl.sszwaczyk.service.Service;
 import pl.sszwaczyk.statistics.web.SecureRoutingStatisticsRoutable;
@@ -90,11 +91,13 @@ public class SecureRoutingStatisticsService implements IFloodlightModule, ISecur
         log.info("Saving secure routing statistics to file...");
         Workbook workbook = new XSSFWorkbook();
 
-        createGeneralStatisticsSheet(workbook);
+        createDecisionsStatitisticsSheet(workbook);
 
-        createRelationsStatisticsSheet(workbook);
-
-        createListStatitistcsSheet(workbook);
+//        createGeneralStatisticsSheet(workbook);
+//
+//        createRelationsStatisticsSheet(workbook);
+//
+//        createListStatitistcsSheet(workbook);
 
         try (FileOutputStream fos = new FileOutputStream(statsFile)) {
             workbook.write(fos);
@@ -105,6 +108,82 @@ public class SecureRoutingStatisticsService implements IFloodlightModule, ISecur
 
         log.info("Snapshot of secure routing statistics saved to " + statsFile);
         return statsFile;
+    }
+
+    private void createDecisionsStatitisticsSheet(Workbook workbook) {
+        Sheet sheet = workbook.createSheet("Decisions");
+
+        Row row0 = sheet.createRow(0);
+        row0.createCell(0).setCellValue("ID");
+        row0.createCell(1).setCellValue("User");
+        row0.createCell(2).setCellValue("Service");
+        row0.createCell(3).setCellValue("Acceptable Risk C");
+        row0.createCell(4).setCellValue("Acceptable Risk I");
+        row0.createCell(5).setCellValue("Acceptable Risk A");
+        row0.createCell(6).setCellValue("Acceptable Risk T");
+        row0.createCell(7).setCellValue("Max Risk C");
+        row0.createCell(8).setCellValue("Max Risk I");
+        row0.createCell(9).setCellValue("Max Risk A");
+        row0.createCell(10).setCellValue("Max Risk T");
+        row0.createCell(11).setCellValue("Date");
+        row0.createCell(12).setCellValue("Time [ms]");
+        row0.createCell(13).setCellValue("Solved");
+        row0.createCell(14).setCellValue("Reason");
+        row0.createCell(15).setCellValue("Uneven before");
+        row0.createCell(16).setCellValue("Uneven after");
+        row0.createCell(17).setCellValue("Region");
+        row0.createCell(18).setCellValue("Value");
+        row0.createCell(19).setCellValue("Risk C");
+        row0.createCell(20).setCellValue("Risk I");
+        row0.createCell(21).setCellValue("Risk A");
+        row0.createCell(22).setCellValue("Risk T");
+        row0.createCell(23).setCellValue("Aggregated Risk");
+        row0.createCell(24).setCellValue("Path length");
+        row0.createCell(25).setCellValue("Path");
+
+        List<Decision> decisions = statistics.getDecisions();
+        int i = 1;
+        for(Decision decision: decisions) {
+            Row row = sheet.createRow(i);
+            row.createCell(0).setCellValue(decision.getId());
+            row.createCell(1).setCellValue(decision.getUser().getId());
+            row.createCell(2).setCellValue(decision.getService().getId());
+
+            Map<SecurityDimension, Float> acceptableRisks = decision.getAcceptableRisks();
+            row.createCell(3).setCellValue(acceptableRisks.get(SecurityDimension.CONFIDENTIALITY));
+            row.createCell(4).setCellValue(acceptableRisks.get(SecurityDimension.INTEGRITY));
+            row.createCell(5).setCellValue(acceptableRisks.get(SecurityDimension.AVAILABILITY));
+            row.createCell(6).setCellValue(acceptableRisks.get(SecurityDimension.TRUST));
+
+            Map<SecurityDimension, Float> maxRisks = decision.getMaxRisks();
+            row.createCell(7).setCellValue(maxRisks.get(SecurityDimension.CONFIDENTIALITY));
+            row.createCell(8).setCellValue(maxRisks.get(SecurityDimension.INTEGRITY));
+            row.createCell(9).setCellValue(maxRisks.get(SecurityDimension.AVAILABILITY));
+            row.createCell(10).setCellValue(maxRisks.get(SecurityDimension.TRUST));
+
+            row.createCell(11).setCellValue(decision.getDate());
+            row.createCell(12).setCellValue(decision.getTime());
+
+            boolean solved = decision.isSolved();
+            row.createCell(13).setCellValue(solved);
+            if(!solved) {
+                row.createCell(14).setCellValue(decision.getReason().toString());
+                continue;
+            }
+
+            row.createCell(15).setCellValue(decision.getUnevenBefore());
+            row.createCell(16).setCellValue(decision.getUnevenAfter());
+            row.createCell(17).setCellValue(decision.getRegion().toString());
+            row.createCell(18).setCellValue(decision.getValue());
+            Map<SecurityDimension, Float> risks = decision.getRisks();
+            row.createCell(19).setCellValue(risks.get(SecurityDimension.CONFIDENTIALITY));
+            row.createCell(20).setCellValue(risks.get(SecurityDimension.INTEGRITY));
+            row.createCell(21).setCellValue(risks.get(SecurityDimension.AVAILABILITY));
+            row.createCell(22).setCellValue(risks.get(SecurityDimension.TRUST));
+            row.createCell(23).setCellValue(decision.getRisk());
+            row.createCell(24).setCellValue(decision.getPathLength());
+            row.createCell(25).setCellValue(decision.getPath().toString());
+        }
     }
 
     private void createGeneralStatisticsSheet(Workbook workbook) {

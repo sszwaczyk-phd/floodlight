@@ -26,21 +26,22 @@ public class Decision {
     private Map<SecurityDimension, Float> acceptableRisks;
     private Map<SecurityDimension, Float> maxRisks;
 
+    private Date date;
+    private long time; //ms
+
     private boolean solved;
 
     //if solved == false
     private Reason reason;
 
-    private float unevenBefore;
-    private float unevenAfter;
+    private double unevenBefore;
+    private double unevenAfter;
     private SolveRegion region;
     private double value;
     private Map<SecurityDimension, Float> risks;
     private float risk;
 
-    private Date date;
-    private long time; //ms
-
-    private Path path;
     private int pathLength;
+    private Path path;
+
 }
