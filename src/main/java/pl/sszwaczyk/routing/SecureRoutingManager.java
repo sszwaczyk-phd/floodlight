@@ -116,6 +116,27 @@ public class SecureRoutingManager extends RoutingManager implements ISecureRouti
                 }
                 log.info("Uneven metric set to " + unevenMetric);
             }
+
+            String rarRfUnevenEnabledString = configParameters.get("rar-rf-uneven-enabled");
+            boolean rarRfUnevenEnabled;
+            if(rarRfUnevenEnabledString == null || rarRfUnevenEnabledString.isEmpty()) {
+                rarRfUnevenEnabled = false;
+                log.info("RAR-RF Uneven enabled not set. Default to " + rarRfUnevenEnabled);
+            } else {
+                rarRfUnevenEnabled = Boolean.valueOf(rarRfUnevenEnabledString);
+                log.info("RAR-RF Uneven enabled set to " + rarRfUnevenEnabled);
+            }
+
+            String rarRfLatencyEnabledString = configParameters.get("rar-rf-latency-enabled");
+            boolean rarRfLatencyEnabled;
+            if(rarRfLatencyEnabledString == null || rarRfLatencyEnabledString.isEmpty()) {
+                rarRfLatencyEnabled = false;
+                log.info("RAR-RF Latency enabled not set. Default to " + rarRfLatencyEnabled);
+            } else {
+                rarRfLatencyEnabled = Boolean.valueOf(rarRfLatencyEnabledString);
+                log.info("RAR-RF Latency enabled set to " + rarRfLatencyEnabled);
+            }
+
             solver = KShortestPathSolver.builder()
                     .routingService(this)
                     .riskService(riskService)
@@ -125,6 +146,8 @@ public class SecureRoutingManager extends RoutingManager implements ISecureRouti
                     .unevenService(unevenService)
                     .k(k)
                     .unevenMetric(unevenMetric)
+                    .rarRfLatencyEnabled(rarRfLatencyEnabled)
+                    .rarRfLatencyEnabled(rarRfLatencyEnabled)
                     .build();
 
         } else {
