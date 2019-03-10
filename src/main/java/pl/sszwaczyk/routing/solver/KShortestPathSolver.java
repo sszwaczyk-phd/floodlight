@@ -108,7 +108,7 @@ public class KShortestPathSolver implements Solver {
                 });
                 Double pathUnevenAfter = unevenService.getUneven(unevenMetric, predicateBandwidthConsumption);
 
-                if(pathUnevenAfter < dtsp.getService().getMaxUneven()) {
+                if(pathUnevenAfter < dtsp.getService().getMaxUneven() && p.getLatency().getValue() < dtsp.getService().getMaxLatency()) {
                     if(isPathRiskInRange(acceptableRisks, pathRisks)) {
                         if(rarBfPath == null) {
                             rarBfPath = p;
@@ -208,6 +208,7 @@ public class KShortestPathSolver implements Solver {
                     .date(new Date())
                     .path(path)
                     .pathLength(path.getHopCount())
+                    .pathLatency(path.getLatency().getValue())
                     .build();
         } else {
             path = addSrcAndDstToPath(srcPort, src, dstPort, dst, rarRfPath);
@@ -228,6 +229,7 @@ public class KShortestPathSolver implements Solver {
                     .date(new Date())
                     .path(path)
                     .pathLength(path.getHopCount())
+                    .pathLatency(path.getLatency().getValue())
                     .build();
         }
 
@@ -254,16 +256,15 @@ public class KShortestPathSolver implements Solver {
     }
 
     private Path addSrcAndDstToPath(OFPort srcPort, DatapathId srcSw, OFPort dstPort, DatapathId dstSw, Path p) {
-        Path path;
-        List<NodePortTuple> nptList = new ArrayList<NodePortTuple>(p.getPath());
+        List<NodePortTuple> nptList = p.getPath();
         NodePortTuple npt = new NodePortTuple(srcSw, srcPort);
         nptList.add(0, npt); // add src port to the front
         npt = new NodePortTuple(dstSw, dstPort);
         nptList.add(npt); // add dst port to the end
 
         PathId id = new PathId(srcSw, dstSw);
-        path = new Path(id, nptList);
-        return path;
+        p.setId(id);
+        return p;
     }
 
     private boolean isPathRiskInRange(Map<SecurityDimension, Float> range, Map<SecurityDimension, Float> pathRisks) {

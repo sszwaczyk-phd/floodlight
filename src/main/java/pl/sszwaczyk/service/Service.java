@@ -13,5 +13,6 @@ public class Service {
     private String path;
     private Double bandwidth;
     private Double maxUneven;
+    private Long maxLatency;
 
 }

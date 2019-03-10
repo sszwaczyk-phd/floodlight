@@ -42,6 +42,7 @@ public class Decision {
     private float risk;
 
     private int pathLength;
+    private long pathLatency;
     private Path path;
 
 }
