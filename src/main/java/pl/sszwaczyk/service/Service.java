@@ -12,5 +12,6 @@ public class Service {
     private Integer port;
     private String path;
     private Double bandwidth;
+    private Double maxUneven;
 
 }

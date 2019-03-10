@@ -21,6 +21,8 @@ import pl.sszwaczyk.security.risk.IRiskCalculationService;
 import pl.sszwaczyk.service.IServiceService;
 import pl.sszwaczyk.service.Service;
 import pl.sszwaczyk.statistics.ISecureRoutingStatisticsService;
+import pl.sszwaczyk.uneven.IUnevenService;
+import pl.sszwaczyk.uneven.UnevenMetric;
 import pl.sszwaczyk.user.User;
 
 import java.util.Collection;
@@ -38,6 +40,7 @@ public class SecureRoutingManager extends RoutingManager implements ISecureRouti
     private IPathPropertiesService pathPropertiesService;
     private IStatisticsService statisticsService;
     private ISecureRoutingStatisticsService secureRoutingStatisticsService;
+    private IUnevenService unevenService;
 
     //Solver
     private Solver solver;
@@ -67,6 +70,7 @@ public class SecureRoutingManager extends RoutingManager implements ISecureRouti
         l.add(IPathPropertiesService.class);
         l.add(ISecureRoutingStatisticsService.class);
         l.add(IStatisticsService.class);
+        l.add(IUnevenService.class);
         return l;
     }
 
@@ -78,6 +82,7 @@ public class SecureRoutingManager extends RoutingManager implements ISecureRouti
         pathPropertiesService = context.getServiceImpl(IPathPropertiesService.class);
         secureRoutingStatisticsService = context.getServiceImpl(ISecureRoutingStatisticsService.class);
         statisticsService = context.getServiceImpl(IStatisticsService.class);
+        unevenService = context.getServiceImpl(IUnevenService.class);
 
         Map<String, String> configParameters = context.getConfigParams(this);
         String stringSolver = configParameters.get("solver");
@@ -95,13 +100,32 @@ public class SecureRoutingManager extends RoutingManager implements ISecureRouti
                 k = Integer.valueOf(kString);
                 log.info("K shortest path set to " + k);
             }
+            String unevenMetricString = configParameters.get("uneven-metric");
+            UnevenMetric unevenMetric;
+            if(unevenMetricString == null) {
+                unevenMetric = UnevenMetric.VARIATION_COEFFICIENT;
+                log.info("Uneven metric not set. Default to " + unevenMetric);
+            } else {
+                if(unevenMetricString.equals("gap")) {
+                    unevenMetric = UnevenMetric.GAP;
+                } else if(unevenMetricString.equals("variance")) {
+                    unevenMetric = UnevenMetric.VARIANCE;
+                } else if(unevenMetricString.equals("variation-coefficient")) {
+                    unevenMetric = UnevenMetric.VARIATION_COEFFICIENT;
+                } else {
+                    throw new FloodlightModuleException("Not recognized uneven metric set " + unevenMetricString);
+                }
+                log.info("Uneven metric set to " + unevenMetric);
+            }
             solver = KShortestPathSolver.builder()
                     .routingService(this)
                     .riskService(riskService)
                     .dtspService(dtspService)
                     .pathPropertiesService(pathPropertiesService)
                     .statisticsService(statisticsService)
+                    .unevenService(unevenService)
                     .k(k)
+                    .unevenMetric(unevenMetric)
                     .build();
 
         } else {

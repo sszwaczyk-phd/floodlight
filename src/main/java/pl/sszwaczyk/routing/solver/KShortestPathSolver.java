@@ -10,6 +10,7 @@ import net.floodlightcontroller.statistics.IStatisticsService;
 import net.floodlightcontroller.statistics.SwitchPortBandwidth;
 import org.projectfloodlight.openflow.types.DatapathId;
 import org.projectfloodlight.openflow.types.OFPort;
+import org.projectfloodlight.openflow.types.U64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.sszwaczyk.path.IPathPropertiesService;
@@ -19,6 +20,8 @@ import pl.sszwaczyk.security.dtsp.IDTSPService;
 import pl.sszwaczyk.security.risk.IRiskCalculationService;
 import pl.sszwaczyk.security.risk.Risks;
 import pl.sszwaczyk.service.Service;
+import pl.sszwaczyk.uneven.IUnevenService;
+import pl.sszwaczyk.uneven.UnevenMetric;
 import pl.sszwaczyk.user.User;
 
 import java.util.ArrayList;
@@ -38,8 +41,10 @@ public class KShortestPathSolver implements Solver {
     private IDTSPService dtspService;
     private IPathPropertiesService pathPropertiesService;
     private IStatisticsService statisticsService;
+    private IUnevenService unevenService;
 
     private int k;
+    private UnevenMetric unevenMetric;
 
     @Override
     public Decision solve(User user, Service service, DatapathId src, OFPort srcPort, DatapathId dst, OFPort dstPort) {
@@ -47,6 +52,9 @@ public class KShortestPathSolver implements Solver {
         Risks risks = calculateRisks(service);
         Map<SecurityDimension, Float> acceptableRisks = risks.getAcceptableRisks();
         Map<SecurityDimension, Float> maxRisks = risks.getMaxRisks();
+        Map<NodePortTuple, SwitchPortBandwidth> actualBandwidthConsumption = statisticsService.getBandwidthConsumption();
+        Double unevenBefore = unevenService.getUneven(unevenMetric);
+
         Path path = null;
         Path rarBfPath = null;
         double rarBfPathDistance = Float.MAX_VALUE;
@@ -64,33 +72,64 @@ public class KShortestPathSolver implements Solver {
                 break;
             }
 
+            reason = null;
             paths = filterBandwidth(paths, dtsp.getService().getBandwidth());
             if(paths.size() == 0) {
                 reason = Reason.CANNOT_FULFILL_BANDWIDTH;
+                continue;
             }
 
             for(int j = lastSize; j < paths.size(); j++) {
                 log.info("Searching shortests paths between " + j + " and " + (k + i));
                 Path p = paths.get(j);
+
                 Map<SecurityDimension, Float> pathProperties = pathPropertiesService.calculatePathProperties(p);
                 Map<SecurityDimension, Float> pathRisks = riskService.calculateRisk(pathProperties, dtsp.getConsequences());
-                if(isPathRiskInRange(acceptableRisks, pathRisks)) {
-                    if(rarBfPath == null) {
-                        rarBfPath = p;
-                        rarBfPathDistance = Math.sqrt(Math.pow(pathRisks.get(SecurityDimension.CONFIDENTIALITY), 2)
-                                + Math.pow(pathRisks.get(SecurityDimension.INTEGRITY), 2)
-                                + Math.pow(pathRisks.get(SecurityDimension.AVAILABILITY), 2)
-                                + Math.pow(pathRisks.get(SecurityDimension.TRUST), 2));
-                        rarBfPathRisks = pathRisks;
+
+
+                Map<NodePortTuple, SwitchPortBandwidth> predicateBandwidthConsumption = new HashMap<>();
+                List<NodePortTuple> npts = p.getPath();
+                actualBandwidthConsumption.forEach((nodePortTuple, switchPortBandwidth) -> {
+                    if(npts.contains(nodePortTuple)) {
+                        predicateBandwidthConsumption.put(nodePortTuple, SwitchPortBandwidth.of(switchPortBandwidth.getSwitchId(),
+                                switchPortBandwidth.getSwitchPort(),
+                                switchPortBandwidth.getLinkSpeedBitsPerSec(),
+                                switchPortBandwidth.getBitsPerSecondRx(),
+                                U64.of(switchPortBandwidth.getBitsPerSecondTx().getValue() + dtsp.getService().getBandwidth().longValue() * 1000000),
+                                switchPortBandwidth.getPriorByteValueRx(),
+                                switchPortBandwidth.getPriorByteValueTx()));
                     } else {
-                        double pathDistance = Math.sqrt(Math.pow(pathRisks.get(SecurityDimension.CONFIDENTIALITY), 2)
-                                + Math.pow(pathRisks.get(SecurityDimension.INTEGRITY), 2)
-                                + Math.pow(pathRisks.get(SecurityDimension.AVAILABILITY), 2)
-                                + Math.pow(pathRisks.get(SecurityDimension.TRUST), 2));
-                        if(pathDistance < rarBfPathDistance) {
+                        //copy actual
+                        predicateBandwidthConsumption.put(nodePortTuple, SwitchPortBandwidth.of(switchPortBandwidth.getSwitchId(),
+                                switchPortBandwidth.getSwitchPort(),
+                                switchPortBandwidth.getLinkSpeedBitsPerSec(),
+                                switchPortBandwidth.getBitsPerSecondRx(),
+                                switchPortBandwidth.getBitsPerSecondTx(),
+                                switchPortBandwidth.getPriorByteValueRx(),
+                                switchPortBandwidth.getPriorByteValueTx()));
+                    }
+                });
+                Double unevenAfter = unevenService.getUneven(unevenMetric, predicateBandwidthConsumption);
+
+                if(unevenAfter < dtsp.getService().getMaxUneven()) {
+                    if(isPathRiskInRange(acceptableRisks, pathRisks)) {
+                        if(rarBfPath == null) {
                             rarBfPath = p;
-                            rarBfPathDistance = pathDistance;
+                            rarBfPathDistance = Math.sqrt(Math.pow(pathRisks.get(SecurityDimension.CONFIDENTIALITY), 2)
+                                    + Math.pow(pathRisks.get(SecurityDimension.INTEGRITY), 2)
+                                    + Math.pow(pathRisks.get(SecurityDimension.AVAILABILITY), 2)
+                                    + Math.pow(pathRisks.get(SecurityDimension.TRUST), 2));
                             rarBfPathRisks = pathRisks;
+                        } else {
+                            double pathDistance = Math.sqrt(Math.pow(pathRisks.get(SecurityDimension.CONFIDENTIALITY), 2)
+                                    + Math.pow(pathRisks.get(SecurityDimension.INTEGRITY), 2)
+                                    + Math.pow(pathRisks.get(SecurityDimension.AVAILABILITY), 2)
+                                    + Math.pow(pathRisks.get(SecurityDimension.TRUST), 2));
+                            if(pathDistance < rarBfPathDistance) {
+                                rarBfPath = p;
+                                rarBfPathDistance = pathDistance;
+                                rarBfPathRisks = pathRisks;
+                            }
                         }
                     }
                 } else {
@@ -141,7 +180,7 @@ public class KShortestPathSolver implements Solver {
             log.info("Cannot find path to realize service " + service.getId());
             return Decision.builder()
                 .solved(false)
-                .reason(reason)
+                .reason(reason == null ? Reason.CANNOT_FULFILL_DTSP : reason)
                 .build();
         }
 

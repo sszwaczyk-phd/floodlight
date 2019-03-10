@@ -10,7 +10,6 @@ import net.floodlightcontroller.statistics.IStatisticsService;
 import net.floodlightcontroller.statistics.SwitchPortBandwidth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.sszwaczyk.statistics.ISecureRoutingStatisticsService;
 import pl.sszwaczyk.uneven.calculator.GapUnevenCalculator;
 import pl.sszwaczyk.uneven.calculator.VarianceUnevenCalculator;
 import pl.sszwaczyk.uneven.calculator.VariationCoefficientUnevenCalculator;
@@ -86,13 +85,18 @@ public class UnevenService implements IFloodlightModule, IUnevenService {
     @Override
     public Double getUneven(UnevenMetric metric) {
         Map<NodePortTuple, SwitchPortBandwidth> bandwidthConsumption = statisticsService.getBandwidthConsumption();
+        return getUneven(metric, bandwidthConsumption);
+    }
+
+    @Override
+    public Double getUneven(UnevenMetric metric, Map<NodePortTuple, SwitchPortBandwidth> bandwidthConsumption) {
         switch (metric) {
             case GAP:
                 return gapUnevenCalculator.calculateUneven(bandwidthConsumption);
             case GAP_PERCENT:
                 return 0d;
             case VARIANCE:
-                return variationCoefficientUnevenCalculator.calculateUneven(bandwidthConsumption);
+                return varianceUnevenCalculator.calculateUneven(bandwidthConsumption);
             case VARIATION_COEFFICIENT:
                 return variationCoefficientUnevenCalculator.calculateUneven(bandwidthConsumption);
         }

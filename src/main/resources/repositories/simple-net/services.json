@@ -4,6 +4,7 @@
     "ip": "10.0.0.100",
     "port": 8000,
     "path": "/impl/1GB.zip",
-    "bandwidth": 10
+    "bandwidth": 10,
+    "maxUneven": 0.1
   }
 ]

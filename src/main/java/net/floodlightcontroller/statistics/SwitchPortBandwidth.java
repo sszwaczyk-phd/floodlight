@@ -106,11 +106,11 @@ public class SwitchPortBandwidth {
 		return tx;
 	}
 	
-	protected U64 getPriorByteValueRx() {
+	public U64 getPriorByteValueRx() {
 		return rxValue;
 	}
 	
-	protected U64 getPriorByteValueTx() {
+	public U64 getPriorByteValueTx() {
 		return txValue;
 	}
 	
