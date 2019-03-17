@@ -1,14 +1,13 @@
 #!/usr/bin/python
 
-from mininet.net import Mininet
-from mininet.node import Controller, RemoteController, OVSController
-from mininet.node import CPULimitedHost, Host, Node
-from mininet.node import OVSKernelSwitch, UserSwitch
-from mininet.node import IVSSwitch
 from mininet.cli import CLI
+from mininet.link import TCLink
 from mininet.log import setLogLevel, info
-from mininet.link import TCLink, Intf
-from subprocess import call
+from mininet.net import Mininet
+from mininet.node import Host
+from mininet.node import OVSKernelSwitch
+from mininet.node import RemoteController
+
 
 def simpleNetwork():
 
@@ -19,7 +18,7 @@ def simpleNetwork():
     info( '*** Adding controller\n' )
     c0=net.addController(name='c0',
                          controller=RemoteController,
-                         ip='127.0.0.1',
+                         ip='172.17.0.1',
                          protocol='tcp',
                          port=6653)
 
@@ -56,7 +55,7 @@ def simpleNetwork():
     net.get('s4').start([c0])
 
     info( '*** Post configure switches and hosts\n')
-    serviceOneHost.cmdPrint('java -jar /impl/http-server/target/http-server-0.0.1-SNAPSHOT.jar --usersFile=/impl/floodlight/src/main/resources/repositories/simple-net/users.json &')
+    serviceOneHost.cmdPrint('java -jar /impl/http-server/target/http-server-0.0.1-SNAPSHOT.jar --usersFile=/impl/floodlight/scenarios/simple-net/users.json &')
 
     CLI(net)
     net.stop()

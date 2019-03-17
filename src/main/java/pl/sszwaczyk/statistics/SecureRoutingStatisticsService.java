@@ -207,11 +207,6 @@ public class SecureRoutingStatisticsService implements IFloodlightModule, ISecur
             row.createCell(13).setCellValue(solved);
             if(!solved) {
                 row.createCell(14).setCellValue(decision.getReason().toString());
-                Map<SecurityDimension, Float> risks = decision.getRisks();
-                row.createCell(19).setCellValue(risks.get(SecurityDimension.CONFIDENTIALITY));
-                row.createCell(20).setCellValue(risks.get(SecurityDimension.INTEGRITY));
-                row.createCell(21).setCellValue(risks.get(SecurityDimension.AVAILABILITY));
-                row.createCell(22).setCellValue(risks.get(SecurityDimension.TRUST));
                 continue;
             }
 
