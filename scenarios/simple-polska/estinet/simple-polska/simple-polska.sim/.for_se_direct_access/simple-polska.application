@@ -1,15 +1,14 @@
 #estinet traffic generator file
-$node_(1) 2.000000000000 7200.000000000000 java -Dlogback.configurationFile=/home/estinet/PhD/impl/floodlight/src/main/resources/repositories/simple-polska/estinet/logback.xml -jar /home/estinet/PhD/impl/floodlight/target/floodlight.jar -cf /home/estinet/PhD/impl/floodlight/src/main/resources/repositories/simple-polska/estinet/floodlightdefault.properties
-$node_(1) 7199.000000000000 7200.000000000000 curl -X POST http://localhost:8080/wm/security/stats/snapshot
-$node_(15) 2.000000000000 7200.000000000000 cd / && python -m SimpleHTTPServer 8000
-$node_(16) 2.000000000000 7200.000000000000 cd / && python -m SimpleHTTPServer 8000
-$node_(17) 2.000000000000 7200.000000000000 cd / && python -m SimpleHTTPServer 8000
-$node_(18) 2.000000000000 7200.000000000000 cd / && python -m SimpleHTTPServer 8000
-$node_(19) 2.000000000000 7200.000000000000 cd / && python -m SimpleHTTPServer 8000
-$node_(20) 15.000000000000 7200.000000000000 java -jar /home/estinet/PhD/impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /home/estinet/PhD/impl/floodlight/src/main/resources/repositories/simple-polska/services.json -g uniform -ming 5 -maxg 10 -st ./staty.xlsx
-$node_(21) 15.000000000000 7200.000000000000 java -jar /home/estinet/PhD/impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /home/estinet/PhD/impl/floodlight/src/main/resources/repositories/simple-polska/services.json -g uniform -ming 5 -maxg 10 -st ./staty.xlsx
-$node_(22) 15.000000000000 7200.000000000000 java -jar /home/estinet/PhD/impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /home/estinet/PhD/impl/floodlight/src/main/resources/repositories/simple-polska/services.json -g uniform -ming 5 -maxg 10 -st ./staty.xlsx
-$node_(23) 15.000000000000 7200.000000000000 java -jar /home/estinet/PhD/impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /home/estinet/PhD/impl/floodlight/src/main/resources/repositories/simple-polska/services.json -g uniform -ming 5 -maxg 10 -st ./staty.xlsx
-$node_(24) 15.000000000000 7200.000000000000 java -jar /home/estinet/PhD/impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /home/estinet/PhD/impl/floodlight/src/main/resources/repositories/simple-polska/services.json -g uniform -ming 5 -maxg 10 -st ./staty.xlsx
-$node_(25) 15.000000000000 7200.000000000000 java -jar /home/estinet/PhD/impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /home/estinet/PhD/impl/floodlight/src/main/resources/repositories/simple-polska/services.json -g uniform -ming 5 -maxg 10 -st ./staty.xlsx
-$node_(26) 15.000000000000 7200.000000000000 java -jar /home/estinet/PhD/impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /home/estinet/PhD/impl/floodlight/src/main/resources/repositories/simple-polska/services.json -g uniform -ming 5 -maxg 10 -st ./staty.xlsx
+$node_(1) 2.000000000000 600.000000000000 /home/estinet/PhD/impl/floodlight/scenarios/simple-polska/estinet/run-floodlight.sh
+$node_(1) 590.000000000000 591.000000000000 curl -X POST http://localhost:8080/wm/security/stats/snapshot
+$node_(15) 2.000000000000 600.000000000000 /home/estinet/PhD/impl/floodlight/scenarios/simple-polska/estinet/run-http-server.sh
+$node_(15) 590.000000000000 591.000000000000 curl -X POST http://localhost:8000/stats/snapshot?statsFile=stats.xlsx
+$node_(16) 2.000000000000 600.000000000000 /home/estinet/PhD/impl/floodlight/scenarios/simple-polska/estinet/run-http-server.sh
+$node_(16) 590.000000000000 591.000000000000 curl -X POST http://localhost:8000/stats/snapshot?statsFile=stats.xlsx
+$node_(17) 2.000000000000 600.000000000000 /home/estinet/PhD/impl/floodlight/scenarios/simple-polska/estinet/run-http-server.sh
+$node_(17) 590.000000000000 591.000000000000 curl -X POST http://localhost:8000/stats/snapshot?statsFile=stats.xlsx
+$node_(18) 2.000000000000 600.000000000000 /home/estinet/PhD/impl/floodlight/scenarios/simple-polska/estinet/run-http-server.sh
+$node_(18) 590.000000000000 591.000000000000 curl -X POST http://localhost:8000/stats/snapshot?statsFile=stats.xlsx
+$node_(19) 2.000000000000 600.000000000000 /home/estinet/PhD/impl/floodlight/scenarios/simple-polska/estinet/run-http-server.sh
+$node_(19) 590.000000000000 591.000000000000 curl -X POST http://localhost:8000/stats/snapshot?statsFile=stats.xlsx
+$node_(21) 100.000000000000 590.000000000000 java -jar /home/estinet/PhD/impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /home/estinet/PhD/impl/floodlight/scenarios/simple-polska/estinet/services.json -st ./stats-exit.xlsx -g uniform -ming 5 -maxg 10
