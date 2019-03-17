@@ -183,6 +183,7 @@ public class SecureRoutingStatisticsService implements IFloodlightModule, ISecur
             row.createCell(23).setCellValue(decision.getRisk());
             row.createCell(24).setCellValue(decision.getPathLength());
             row.createCell(25).setCellValue(decision.getPath().toString());
+            i++;
         }
     }
 
