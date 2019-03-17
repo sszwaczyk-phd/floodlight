@@ -2,7 +2,7 @@
 <EstiNet Version="0.4">
  <simulation>
   <GUI_Version>10</GUI_Version>
-  <GUIStage>0</GUIStage>
+  <GUIStage>2</GUIStage>
   <MaxTime>3600</MaxTime>
   <MaxX>3000</MaxX>
   <MaxY>3000</MaxY>
@@ -78,7 +78,7 @@
   <LandMarkType1Ration>0</LandMarkType1Ration>
   <LandMarkType2Ration>0</LandMarkType2Ration>
   <LandMarkType3Ration>0</LandMarkType3Ration>
-  <g_speed>AS_FAST_POSSIBLE</g_speed>
+  <g_speed>AS_FAST_REAL</g_speed>
   <CarProfile1># car profile (unit of speed: m/sec, unit of acceleration/deceleration: m/sec^2)
 MaxSpeed = 18
 MaxAcceleration = 1
