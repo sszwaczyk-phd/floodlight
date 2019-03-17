@@ -3,6 +3,9 @@ package pl.sszwaczyk.statistics;
 import lombok.Data;
 import pl.sszwaczyk.routing.solver.Decision;
 import pl.sszwaczyk.routing.solver.SolveRegion;
+import pl.sszwaczyk.security.SecurityDimension;
+import pl.sszwaczyk.security.threat.Threat;
+import pl.sszwaczyk.security.threat.ThreatWithInfluence;
 import pl.sszwaczyk.service.Service;
 import pl.sszwaczyk.user.User;
 
@@ -15,7 +18,9 @@ import java.util.Map;
 @Data
 public class SecureRoutingStatistics {
 
-    List<Decision> decisions = new ArrayList<>();
+    private List<Decision> decisions = new ArrayList<>();
+
+    private List<ThreatWithInfluence> threats = new ArrayList<>();
 
     List<ServerResponse> realizedList = new ArrayList<>();
 
@@ -31,6 +36,14 @@ public class SecureRoutingStatistics {
 
     public void addDecision(Decision decision) {
         decisions.add(decision);
+    }
+
+    public void addThreat(Threat threat, Map<SecurityDimension, Float> influence) {
+        ThreatWithInfluence threatWithInfluence = ThreatWithInfluence.builder()
+                .threat(threat)
+                .influence(influence)
+                .build();
+        threats.add(threatWithInfluence);
     }
 
     public void updateRealized(User user, Service service, Decision result) {
@@ -92,5 +105,4 @@ public class SecureRoutingStatistics {
             }
         }
     }
-
 }

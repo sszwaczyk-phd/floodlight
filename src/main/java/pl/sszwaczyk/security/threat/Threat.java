@@ -5,8 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.projectfloodlight.openflow.types.DatapathId;
-import org.projectfloodlight.openflow.types.OFPort;
 
+import java.time.LocalTime;
 import java.util.List;
 
 @NoArgsConstructor
@@ -18,5 +18,6 @@ public class Threat {
     private String id;
     List<DatapathId> switches;
 
+    private LocalTime startTime;
     private Long duration; //seconds
 }

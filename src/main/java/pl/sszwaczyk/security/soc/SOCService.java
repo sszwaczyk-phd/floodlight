@@ -14,6 +14,7 @@ import pl.sszwaczyk.security.soc.web.SOCWebRoutable;
 import pl.sszwaczyk.security.threat.IThreatListener;
 import pl.sszwaczyk.security.threat.IThreatService;
 import pl.sszwaczyk.security.threat.Threat;
+import pl.sszwaczyk.statistics.ISecureRoutingStatisticsService;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -26,6 +27,7 @@ public class SOCService implements IFloodlightModule, ISOCService, IThreatListen
 
     private IThreatService threatService;
     private IRestApiService restApiService;
+    private ISecureRoutingStatisticsService secureRoutingStatisticsService;
 
     private Map<Threat, Map<SecurityDimension, Float>> actualThreats = new ConcurrentHashMap<>();
 
@@ -53,6 +55,7 @@ public class SOCService implements IFloodlightModule, ISOCService, IThreatListen
                 new ArrayList<Class<? extends IFloodlightService>>();
         l.add(IThreatService.class);
         l.add(IRestApiService.class);
+        l.add(ISecureRoutingStatisticsService.class);
         return l;
     }
 
@@ -60,6 +63,7 @@ public class SOCService implements IFloodlightModule, ISOCService, IThreatListen
     public void init(FloodlightModuleContext context) throws FloodlightModuleException {
         this.threatService = context.getServiceImpl(IThreatService.class);
         this.restApiService = context.getServiceImpl(IRestApiService.class);
+        this.secureRoutingStatisticsService = context.getServiceImpl(ISecureRoutingStatisticsService.class);
 
         Map<String, String> configParameters = context.getConfigParams(this);
         String calculator = configParameters.get("threat-influence-calculator");
@@ -151,6 +155,7 @@ public class SOCService implements IFloodlightModule, ISOCService, IThreatListen
         }
 
         actualThreats.put(threat, influence);
+        secureRoutingStatisticsService.getSecureRoutingStatistics().addThreat(threat, influence);
     }
 
     @Override

@@ -5,17 +5,14 @@ import net.floodlightcontroller.core.module.FloodlightModuleContext;
 import net.floodlightcontroller.core.module.FloodlightModuleException;
 import net.floodlightcontroller.core.module.IFloodlightModule;
 import net.floodlightcontroller.core.module.IFloodlightService;
-import net.floodlightcontroller.linkdiscovery.ILinkDiscoveryService;
 import net.floodlightcontroller.restserver.IRestApiService;
 import net.floodlightcontroller.routing.IRoutingService;
-import net.floodlightcontroller.util.ParseUtils;
-import org.projectfloodlight.openflow.types.DatapathId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.sszwaczyk.security.soc.ISOCService;
 import pl.sszwaczyk.security.threat.generator.UniformThreatsGenerator;
 import pl.sszwaczyk.security.threat.web.ThreatWebRoutable;
 
+import java.time.LocalTime;
 import java.util.*;
 
 public class ThreatService implements IFloodlightModule, IThreatService {
@@ -99,6 +96,7 @@ public class ThreatService implements IFloodlightModule, IThreatService {
     @Override
     public void startThreat(Threat threat) {
         log.info("Starting threat {}", threat);
+        threat.setStartTime(LocalTime.now());
         for(IThreatListener listener: listeners) {
             listener.threatStarted(threat);
             scheduleThreatEnd(threat);

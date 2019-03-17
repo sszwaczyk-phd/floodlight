@@ -9,10 +9,12 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.projectfloodlight.openflow.types.DatapathId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.sszwaczyk.routing.solver.Decision;
 import pl.sszwaczyk.security.SecurityDimension;
+import pl.sszwaczyk.security.threat.ThreatWithInfluence;
 import pl.sszwaczyk.service.Service;
 import pl.sszwaczyk.statistics.web.SecureRoutingStatisticsRoutable;
 import pl.sszwaczyk.user.User;
@@ -93,6 +95,8 @@ public class SecureRoutingStatisticsService implements IFloodlightModule, ISecur
 
         createDecisionsStatitisticsSheet(workbook);
 
+        createThreatsStatisticsSheet(workbook);
+
 //        createGeneralStatisticsSheet(workbook);
 //
 //        createRelationsStatisticsSheet(workbook);
@@ -108,6 +112,40 @@ public class SecureRoutingStatisticsService implements IFloodlightModule, ISecur
 
         log.info("Snapshot of secure routing statistics saved to " + statsFile);
         return statsFile;
+    }
+
+    private void createThreatsStatisticsSheet(Workbook workbook) {
+        Sheet sheet = workbook.createSheet("Threats");
+
+        Row row0 = sheet.createRow(0);
+        row0.createCell(0).setCellValue("ID");
+        row0.createCell(1).setCellValue("Start time");
+        row0.createCell(2).setCellValue("Duration");
+        row0.createCell(3).setCellValue("Switches");
+        row0.createCell(4).setCellValue("C");
+        row0.createCell(5).setCellValue("I");
+        row0.createCell(6).setCellValue("A");
+        row0.createCell(7).setCellValue("T");
+
+
+        int i = 1;
+        for(ThreatWithInfluence twi: statistics.getThreats()) {
+            Row row = sheet.createRow(i);
+
+            row.createCell(0).setCellValue(twi.getThreat().getId());
+            row.createCell(1).setCellValue(twi.getThreat().getStartTime().toString());
+            row.createCell(2).setCellValue(twi.getThreat().getDuration());
+            StringBuilder sb = new StringBuilder();
+            for(DatapathId dpid: twi.getThreat().getSwitches()) {
+                sb.append(dpid + " ; ");
+            }
+            row.createCell(3).setCellValue(sb.toString());
+
+            row.createCell(4).setCellValue(twi.getInfluence().get(SecurityDimension.CONFIDENTIALITY));
+            row.createCell(5).setCellValue(twi.getInfluence().get(SecurityDimension.INTEGRITY));
+            row.createCell(6).setCellValue(twi.getInfluence().get(SecurityDimension.AVAILABILITY));
+            row.createCell(7).setCellValue(twi.getInfluence().get(SecurityDimension.TRUST));
+        }
     }
 
     private void createDecisionsStatitisticsSheet(Workbook workbook) {
