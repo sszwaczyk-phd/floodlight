@@ -14,7 +14,7 @@ public class SnapshotSecureRoutingStatisticsResource extends ServerResource {
                 (ISecureRoutingStatisticsService) getContext().getAttributes().
                         get(ISecureRoutingStatisticsService.class.getCanonicalName());
 
-        return statisticsService.snapshotStatisticsToFile("/tmp/" + UUID.randomUUID().toString() + ".xlsx");
+        return statisticsService.snapshotStatisticsToFile(UUID.randomUUID().toString() + ".xlsx");
     }
 
 }
