@@ -1,0 +1,2 @@
+#!/bin/bash
+java -Dlogback.configurationFile=/home/estinet/PhD/impl/floodlight/scenarios/simple-polska/estinet/logback.xml -jar /home/estinet/PhD/impl/floodlight/target/floodlight.jar -cf /home/estinet/PhD/impl/floodlight/scenarios/simple-polska/estinet/floodlightdefault.properties
