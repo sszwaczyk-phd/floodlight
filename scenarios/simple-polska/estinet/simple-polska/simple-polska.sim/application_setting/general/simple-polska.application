@@ -1,6 +1,4 @@
 #estinet traffic generator file
-$node_(1) 2.000000000000 600.000000000000 /home/estinet/PhD/impl/floodlight/scenarios/simple-polska/estinet/run-floodlight.sh
-$node_(1) 590.000000000000 591.000000000000 curl -X POST http://localhost:8080/wm/security/stats/snapshot
 $node_(15) 2.000000000000 600.000000000000 /home/estinet/PhD/impl/floodlight/scenarios/simple-polska/estinet/run-http-server.sh
 $node_(15) 590.000000000000 591.000000000000 curl -X POST http://localhost:8000/stats/snapshot?statsFile=stats.xlsx
 $node_(16) 2.000000000000 600.000000000000 /home/estinet/PhD/impl/floodlight/scenarios/simple-polska/estinet/run-http-server.sh
@@ -11,4 +9,3 @@ $node_(18) 2.000000000000 600.000000000000 /home/estinet/PhD/impl/floodlight/sce
 $node_(18) 590.000000000000 591.000000000000 curl -X POST http://localhost:8000/stats/snapshot?statsFile=stats.xlsx
 $node_(19) 2.000000000000 600.000000000000 /home/estinet/PhD/impl/floodlight/scenarios/simple-polska/estinet/run-http-server.sh
 $node_(19) 590.000000000000 591.000000000000 curl -X POST http://localhost:8000/stats/snapshot?statsFile=stats.xlsx
-$node_(21) 100.000000000000 590.000000000000 java -jar /home/estinet/PhD/impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /home/estinet/PhD/impl/floodlight/scenarios/simple-polska/estinet/services.json -st ./stats-exit.xlsx -g uniform -ming 5 -maxg 10
