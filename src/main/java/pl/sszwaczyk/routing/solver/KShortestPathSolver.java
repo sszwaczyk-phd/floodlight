@@ -80,8 +80,9 @@ public class KShortestPathSolver implements Solver {
                 log.info("No path which fulfill bandwidth requirement.");
             }
 
+            log.info("Searching shortests paths between " + lastSize + " and " + (k + i));
             for(int j = lastSize; j < filteredPaths.size(); j++) {
-                log.info("Searching shortests paths between " + j + " and " + (k + i));
+
                 Path p = filteredPaths.get(j);
                 log.debug("Checking path " + p);
 
