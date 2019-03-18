@@ -1965,7 +1965,7 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
 
     @Override
     public void securityPropertiesChanged(SecurityPropertiesUpdate update) {
-        log.info("Received security properties changed update {}", update);
+        log.debug("Received security properties changed update {}", update);
         Map<AddressesAndPorts, Path> paths = secureFlowsRepository.getFlows();
         if(update.getType().equals(SecurityPropertiesUpdateType.PROPERTIES_DOWN)) {
             List<IOFSwitch> affectedSwitches = update.getSwitches();
@@ -1991,7 +1991,7 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
                     Map<SecurityDimension, Float> pathRisks = riskService.calculateRisk(pathProperties, dtsp.getConsequences());
 
                     if(!isPathRiskInRange(maxRisks, pathRisks)) {
-                        log.info("Risk increased over DTSP range. Deleting path from switches");
+                        log.warn("Risk increased over DTSP range. Deleting path from switches");
                         for(IOFSwitch sw: switches) {
                             OFFlowDelete flowDelete = sw.getOFFactory().buildFlowDelete()
                                     .setMatch(sw.getOFFactory().buildMatch()

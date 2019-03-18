@@ -141,7 +141,7 @@ public class SOCService implements IFloodlightModule, ISOCService, IThreatListen
 
     @Override
     public void threatStarted(Threat threat) {
-        log.info("Got info about threat {} started", threat);
+        log.debug("Got info about threat {} started", threat);
 
         SOCUpdate update = new SOCUpdate();
         update.setType(SOCUpdateType.THREAT_ACTIVATED);
@@ -149,7 +149,7 @@ public class SOCService implements IFloodlightModule, ISOCService, IThreatListen
         Map<SecurityDimension, Float> influence = threatInfluenceCalculator.calculateThreatInfluence(threat);
         update.setSecurityPropertiesDifference(influence);
 
-        log.info("Sending SOCUpdate to listeners...");
+        log.debug("Sending SOCUpdate to listeners...");
         for(ISOCListener listener: listeners) {
             listener.socUpdate(update);
         }
@@ -160,14 +160,14 @@ public class SOCService implements IFloodlightModule, ISOCService, IThreatListen
 
     @Override
     public void threatEnded(Threat threat) {
-        log.info("Got info about threat {} ended", threat);
+        log.debug("Got info about threat {} ended", threat);
 
         SOCUpdate update = new SOCUpdate();
         update.setType(SOCUpdateType.THREAT_ENDED);
         update.setSwitches(threat.getSwitches());
         update.setSecurityPropertiesDifference(actualThreats.get(threat));
 
-        log.info("Sending SOCUpdate to listeners...");
+        log.debug("Sending SOCUpdate to listeners...");
         for(ISOCListener listener: listeners) {
             listener.socUpdate(update);
         }
