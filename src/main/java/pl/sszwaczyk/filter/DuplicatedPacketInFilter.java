@@ -8,7 +8,6 @@ import net.floodlightcontroller.core.module.FloodlightModuleContext;
 import net.floodlightcontroller.core.module.FloodlightModuleException;
 import net.floodlightcontroller.core.module.IFloodlightModule;
 import net.floodlightcontroller.core.module.IFloodlightService;
-import net.floodlightcontroller.routing.ForwardingBase;
 import org.projectfloodlight.openflow.protocol.OFMessage;
 import org.projectfloodlight.openflow.protocol.OFType;
 import org.slf4j.Logger;
@@ -85,11 +84,11 @@ public class DuplicatedPacketInFilter implements IFloodlightModule, IOFMessageLi
                     LocalTime time = buffered.get(addressesAndPorts);
                     if(time == null) {
                         time = LocalTime.now();
-                        log.info("Buffering " + addressesAndPorts + "on time " + time.format(DateTimeFormatter.ISO_LOCAL_TIME));
+                        log.debug("Buffering " + addressesAndPorts + "on time " + time.format(DateTimeFormatter.ISO_LOCAL_TIME));
                         buffered.put(addressesAndPorts, time);
                         return Command.CONTINUE;
                     } else {
-                        log.info("Stopping processing because of duplicate " + addressesAndPorts);
+                        log.debug("Stopping processing because of duplicate " + addressesAndPorts);
                         return Command.STOP;
                     }
                 }

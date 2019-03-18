@@ -83,6 +83,7 @@ public class KShortestPathSolver implements Solver {
             for(int j = lastSize; j < filteredPaths.size(); j++) {
                 log.info("Searching shortests paths between " + j + " and " + (k + i));
                 Path p = filteredPaths.get(j);
+                log.debug("Checking path " + p);
 
                 Map<SecurityDimension, Float> pathProperties = pathPropertiesService.calculatePathProperties(p);
                 Map<SecurityDimension, Float> pathRisks = riskService.calculateRisk(pathProperties, dtsp.getConsequences());
@@ -110,6 +111,8 @@ public class KShortestPathSolver implements Solver {
                     }
                 });
                 Double pathUnevenAfter = unevenService.getUneven(unevenMetric, predicateBandwidthConsumption);
+                long latency = p.getLatency().getValue();
+                log.debug("Uneven after = " + pathUnevenAfter + " and latency = " + latency);
 
                 if(pathUnevenAfter < dtsp.getService().getMaxUneven() && p.getLatency().getValue() < dtsp.getService().getMaxLatency()) {
                     if(isPathRiskInRange(acceptableRisks, pathRisks)) {
