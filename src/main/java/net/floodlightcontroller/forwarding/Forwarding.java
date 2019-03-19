@@ -756,6 +756,26 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
         Match m = createMatchFromPacket(sw, srcPort, pi, cntx);
 
         if (! path.getPath().isEmpty()) {
+            log.debug("Path to push " + path.getPath());
+            //Don't know why src npt and dst can be doubled so check it befour pushing
+            List<NodePortTuple> npts = path.getPath();
+            if(npts.size() >= 4) {
+                log.debug("Checking for duplicated src and dst npts");
+                NodePortTuple npt0 = npts.get(0);
+                NodePortTuple npt1 = npts.get(1);
+                if(npt0.equals(npt1)) {
+                    log.warn("Filtering duplicated src npt");
+                    npts.remove(0);
+                }
+
+                NodePortTuple oneBeforeLast = npts.get(npts.size() - 2);
+                NodePortTuple last = npts.get(npts.size() - 1);
+                if(oneBeforeLast.equals(last)) {
+                    log.warn("Filtering duplicated dst npt");
+                    npts.remove(npts.size() - 1);
+                }
+            }
+
             if (log.isDebugEnabled()) {
                 log.debug("pushRoute inPort={} route={} " +
                                 "destination={}:{}",

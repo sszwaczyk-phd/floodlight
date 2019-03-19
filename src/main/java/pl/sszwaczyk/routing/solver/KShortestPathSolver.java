@@ -24,7 +24,11 @@ import pl.sszwaczyk.uneven.IUnevenService;
 import pl.sszwaczyk.uneven.UnevenMetric;
 import pl.sszwaczyk.user.User;
 
-import java.util.*;
+import java.time.LocalTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Builder
@@ -200,6 +204,7 @@ public class KShortestPathSolver implements Solver {
                     .maxRisks(maxRisks)
                     .solved(false)
                     .reason(reason == null ? Reason.CANNOT_FULFILL_DTSP : reason)
+                    .date(LocalTime.now())
                     .build();
         }
 
@@ -219,7 +224,7 @@ public class KShortestPathSolver implements Solver {
                     .value(rarBfPathDistance)
                     .risks(rarBfPathRisks)
                     .risk(aggregateRisk(rarBfPathRisks))
-                    .date(new Date())
+                    .date(LocalTime.now())
                     .path(path)
                     .pathLength(path.getHopCount())
                     .pathLatency(path.getLatency().getValue())
@@ -240,7 +245,7 @@ public class KShortestPathSolver implements Solver {
                     .value(rarRfPathDistance)
                     .risks(rarRfPathRisks)
                     .risk(aggregateRisk(rarRfPathRisks))
-                    .date(new Date())
+                    .date(LocalTime.now())
                     .path(path)
                     .pathLength(path.getHopCount())
                     .pathLatency(path.getLatency().getValue())

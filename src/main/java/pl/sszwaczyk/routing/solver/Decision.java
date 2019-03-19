@@ -9,7 +9,7 @@ import pl.sszwaczyk.security.SecurityDimension;
 import pl.sszwaczyk.service.Service;
 import pl.sszwaczyk.user.User;
 
-import java.util.Date;
+import java.time.LocalTime;
 import java.util.Map;
 
 @Data
@@ -26,7 +26,7 @@ public class Decision {
     private Map<SecurityDimension, Float> acceptableRisks;
     private Map<SecurityDimension, Float> maxRisks;
 
-    private Date date;
+    private LocalTime date;
     private long time; //ms
 
     private boolean solved;
