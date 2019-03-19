@@ -88,6 +88,8 @@ public class SecureFlowsRepository implements IFloodlightModule, ISecureFlowsRep
         if(!decision.isSolved()) {
             decision.setPath(null);
             flow.setFlowStatus(FlowStatus.NOT_REALIZED);
+            flow.setEndTime(LocalTime.now());
+            flow.setDuration(ChronoUnit.MILLIS.between(flow.getStartTime(), flow.getEndTime()));
             finishedFlows.add(flow);
             log.debug("Decision was to not solved so flow registered as not realized");
         } else {

@@ -72,6 +72,7 @@ public class KShortestPathSolver implements Solver {
         int lastSize = 0;
         int i = 0;
         while(rarBfPath == null && rarRfPath == null) {
+            log.info("Searching shortests paths between " + lastSize + " and " + (k + i));
             List<Path> paths = routingService.getPathsSlow(src, dst, k + i);
             if(paths.size() <= lastSize) {
                 break;
@@ -84,7 +85,7 @@ public class KShortestPathSolver implements Solver {
                 log.info("No path which fulfill bandwidth requirement.");
             }
 
-            log.info("Searching shortests paths between " + lastSize + " and " + (k + i));
+
             for(int j = lastSize; j < filteredPaths.size(); j++) {
 
                 Path p = filteredPaths.get(j);
