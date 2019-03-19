@@ -18,12 +18,12 @@ class SimpleTopo(Topo):
         rightSwitch = self.addSwitch( 's4' )
 
         # Add links
-        self.addLink( userOneHost, leftSwitch, bw=10, delay='100ms' )
-        self.addLink( userTwoHost, upSwitch, bw=10, delay='100ms' )
-        self.addLink( leftSwitch, upSwitch, bw=10, delay='100ms' )
-        self.addLink( leftSwitch, downSwitch, bw=10, delay='50ms' )
-        self.addLink( upSwitch, rightSwitch, bw=10, delay='200ms' )
+        self.addLink( userOneHost, leftSwitch, bw=10, delay='10ms' )
+        self.addLink( userTwoHost, upSwitch, bw=10, delay='10ms' )
+        self.addLink( leftSwitch, upSwitch, bw=10, delay='10ms' )
+        self.addLink( leftSwitch, downSwitch, bw=10, delay='5ms' )
+        self.addLink( upSwitch, rightSwitch, bw=10, delay='20ms' )
         self.addLink( downSwitch, rightSwitch, bw=10, delay='20ms' )
-        self.addLink( rightSwitch, serviceOneHost, bw=10, delay='100ms' )
+        self.addLink( rightSwitch, serviceOneHost, bw=10, delay='10ms' )
 
 topos = { 'simpletopo': (lambda: SimpleTopo())}

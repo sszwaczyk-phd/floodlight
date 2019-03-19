@@ -23,6 +23,7 @@ import org.projectfloodlight.openflow.types.TransportPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.sszwaczyk.repository.web.SecureFlowsRepositoryRoutable;
+import pl.sszwaczyk.routing.solver.Decision;
 import pl.sszwaczyk.utils.AddressAndPort;
 import pl.sszwaczyk.utils.AddressesAndPorts;
 
@@ -36,7 +37,11 @@ public class SecureFlowsRepository implements IFloodlightModule, ISecureFlowsRep
     private IFloodlightProviderService floodlightProviderService;
     private IRestApiService restApiService;
 
-    private volatile Map<AddressesAndPorts, Path> paths = new ConcurrentHashMap<>();
+    private List<Flow> finishedFlows = new ArrayList<>();
+
+    private List<Flow> pendingFlows = new ArrayList<>();
+
+    private volatile Map<AddressesAndPorts, Path> actualPaths = new ConcurrentHashMap<>();
 
     @Override
     public Collection<Class<? extends IFloodlightService>> getModuleServices() {
@@ -75,18 +80,63 @@ public class SecureFlowsRepository implements IFloodlightModule, ISecureFlowsRep
     }
 
     @Override
-    public void registerFlow(AddressesAndPorts ap, Path path) {
-        paths.put(ap, path);
+    public void registerFlow(Flow flow) {
+        log.debug("Registering flow...");
+        Decision decision = flow.getDecisions().get(0);
+        if(!decision.isSolved()) {
+            decision.setPath(null);
+            flow.setFlowStatus(FlowStatus.NOT_REALIZED);
+            finishedFlows.add(flow);
+            log.debug("Decision was to not solved so flow registered as not realized");
+        } else {
+            pendingFlows.add(flow);
+            actualPaths.put(flow.getAp(), decision.getPath());
+            log.debug("Flow {} added to pending flows", flow);
+        }
     }
 
     @Override
-    public Map<AddressesAndPorts, Path> getFlows() {
-        return paths;
+    public List<Flow> getFinishedFlows() {
+        return finishedFlows;
+    }
+
+    public Flow getPendingFlow(AddressesAndPorts addressesAndPorts) {
+        return pendingFlows.stream().filter(flow -> flow.getAp().equals(addressesAndPorts)).findFirst().orElse(null);
     }
 
     @Override
-    public void deleteFlow(AddressesAndPorts ap) {
-        paths.remove(ap);
+    public List<Flow> getPendingFlows() {
+        return pendingFlows;
+    }
+
+    @Override
+    public void addDecision(AddressesAndPorts ap, Decision decision) {
+        Flow pendingFlow = getPendingFlow(ap);
+        List<Decision> decisions = pendingFlow.getDecisions();
+
+        if(decisions == null) {
+            decisions = new ArrayList<>();
+        }
+        decisions.add(decision);
+
+        if(decision.isSolved()) {
+            actualPaths.put(ap, decision.getPath());
+        } else {
+            decision.setPath(null);
+            pendingFlow.setFlowStatus(FlowStatus.NOT_REALIZED);
+            finishedFlows.add(pendingFlow);
+            pendingFlows.remove(pendingFlow);
+        }
+    }
+
+    @Override
+    public Map<AddressesAndPorts, Path> getActualPaths() {
+        return actualPaths;
+    }
+
+    @Override
+    public void deleteActualPath(AddressesAndPorts ap) {
+        actualPaths.remove(ap);
     }
 
     @Override
@@ -118,9 +168,13 @@ public class SecureFlowsRepository implements IFloodlightModule, ISecureFlowsRep
                                                 .port(dstPort.getPort())
                                                 .build())
                                         .build();
-                                Path remove = paths.remove(ap);
+                                Path remove = actualPaths.remove(ap);
                                 if(remove != null) {
                                     log.info("Path " + remove + " for " + ap + " removed because of FLOW_REMOVED message");
+                                    Flow pendingFlow = getPendingFlow(ap);
+                                    pendingFlow.setFlowStatus(FlowStatus.FINISHED);
+                                    pendingFlows.remove(pendingFlow);
+                                    finishedFlows.add(pendingFlow);
                                 }
                             }
                         }

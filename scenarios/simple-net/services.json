@@ -6,6 +6,6 @@
     "path": "/impl/1GB.zip",
     "bandwidth": 10,
     "maxUneven": 0.1,
-    "maxLatency": 100
+    "maxLatency": 1000
   }
 ]

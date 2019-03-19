@@ -10,7 +10,9 @@ public class SecureFlowsRepositoryRoutable implements RestletRoutable {
     @Override
     public Restlet getRestlet(Context context) {
         Router router = new Router(context);
-        router.attach("/json", SecureFlowsRepositoryResource.class);
+        router.attach("/actual-paths", ActualPathsResource.class);
+        router.attach("/pending-flows", PendingFlowsResource.class);
+        router.attach("/finished-flows", FinishedFlowsResource.class);
         return router;
     }
 

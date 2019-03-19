@@ -7,4 +7,6 @@ public interface IDuplicatedPacketInFilter extends IFloodlightService {
 
     void deleteFromBuffering(AddressesAndPorts ap);
 
+    void addToBuffering(AddressesAndPorts ap);
+
 }

@@ -16,28 +16,8 @@
 
 package net.floodlightcontroller.staticentry;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
-
-import net.floodlightcontroller.core.FloodlightContext;
-import net.floodlightcontroller.core.HAListenerTypeMarker;
-import net.floodlightcontroller.core.IFloodlightProviderService;
-import net.floodlightcontroller.core.IHAListener;
-import net.floodlightcontroller.core.IOFMessageListener;
-import net.floodlightcontroller.core.IOFSwitch;
-import net.floodlightcontroller.core.IOFSwitchListener;
-import net.floodlightcontroller.core.PortChangeType;
+import com.google.common.collect.ImmutableSet;
+import net.floodlightcontroller.core.*;
 import net.floodlightcontroller.core.internal.IOFSwitchService;
 import net.floodlightcontroller.core.module.FloodlightModuleContext;
 import net.floodlightcontroller.core.module.FloodlightModuleException;
@@ -52,23 +32,8 @@ import net.floodlightcontroller.storage.IResultSet;
 import net.floodlightcontroller.storage.IStorageSourceListener;
 import net.floodlightcontroller.storage.IStorageSourceService;
 import net.floodlightcontroller.storage.StorageException;
-import net.floodlightcontroller.util.ActionUtils;
-import net.floodlightcontroller.util.FlowModUtils;
-import net.floodlightcontroller.util.GroupUtils;
-import net.floodlightcontroller.util.InstructionUtils;
-import net.floodlightcontroller.util.MatchUtils;
-
-import org.projectfloodlight.openflow.protocol.OFFactories;
-import org.projectfloodlight.openflow.protocol.OFFlowAdd;
-import org.projectfloodlight.openflow.protocol.OFFlowMod;
-import org.projectfloodlight.openflow.protocol.OFFlowRemoved;
-import org.projectfloodlight.openflow.protocol.OFFlowRemovedReason;
-import org.projectfloodlight.openflow.protocol.OFGroupMod;
-import org.projectfloodlight.openflow.protocol.OFInstructionType;
-import org.projectfloodlight.openflow.protocol.OFPortDesc;
-import org.projectfloodlight.openflow.protocol.OFMessage;
-import org.projectfloodlight.openflow.protocol.OFType;
-import org.projectfloodlight.openflow.protocol.OFVersion;
+import net.floodlightcontroller.util.*;
+import org.projectfloodlight.openflow.protocol.*;
 import org.projectfloodlight.openflow.protocol.match.MatchFields;
 import org.projectfloodlight.openflow.types.DatapathId;
 import org.projectfloodlight.openflow.types.TableId;
@@ -77,7 +42,10 @@ import org.projectfloodlight.openflow.types.U64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ImmutableSet;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * This module is responsible for maintaining a set of static flows on
@@ -939,7 +907,7 @@ implements IOFSwitchListener, IFloodlightModule, IStaticEntryPusherService, ISto
             for (String entryName : sMap.keySet()) {
                 entry2dpid.remove(entryName);
                 // Delete from DB
-                deleteFlow(entryName);
+                deleteActualPath(entryName);
             }
             sMap.clear();
         } else {

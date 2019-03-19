@@ -1,5 +1,6 @@
 package pl.sszwaczyk.security.properties;
 
+import com.google.common.collect.Lists;
 import net.floodlightcontroller.core.IOFSwitch;
 import net.floodlightcontroller.core.IOFSwitchListener;
 import net.floodlightcontroller.core.PortChangeType;
@@ -137,7 +138,7 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
 
     @Override
     public void socUpdate(SOCUpdate socUpdate) {
-        log.info("SOC update {} received", socUpdate);
+        log.debug("SOC update {} received", socUpdate);
 
         SOCUpdateType type = socUpdate.getType();
         List<DatapathId> dpids = socUpdate.getSwitches();
@@ -157,7 +158,7 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
                     s.getAttributes().put(SecurityDimension.TRUST, 0.0f);
                 } else {
                     s.getAttributes().put(SecurityDimension.TRUST, actualTrust - trustDifference);
-                    log.info("Set TRUST for switch {} to {}", dpid, s.getAttributes().get(SecurityDimension.TRUST));
+                    log.debug("Set TRUST for switch {} to {}", dpid, s.getAttributes().get(SecurityDimension.TRUST));
                 }
 
                 Set<Link> links = linkService.getSwitchLinks().get(dpid);
@@ -183,7 +184,7 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
                     s.getAttributes().put(SecurityDimension.TRUST, 0.99f);
                 } else {
                     s.getAttributes().put(SecurityDimension.TRUST, actualTrust + trustDifference);
-                    log.info("Set TRUST for switch {} to {}", dpid, s.getAttributes().get(SecurityDimension.TRUST));
+                    log.debug("Set TRUST for switch {} to {}", dpid, s.getAttributes().get(SecurityDimension.TRUST));
                 }
 
                 Set<Link> links = linkService.getSwitchLinks().get(dpid);
@@ -237,8 +238,11 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
     @Override
     public void setSwitchSecurityProperties(SwitchSecurityProperties properties) {
         IOFSwitch s = switchService.getSwitch(DatapathId.of(properties.getSwitchDpid()));
-        s.getAttributes().put(SecurityDimension.TRUST, properties.getTrust());
-        log.info("Set TRUST for switch {} to {}",properties.getSwitchDpid(), s.getAttributes().get(SecurityDimension.TRUST));
+        Float oldTrust = (Float) s.getAttributes().get(SecurityDimension.TRUST);
+        Float newTrust = properties.getTrust();
+        s.getAttributes().put(SecurityDimension.TRUST, newTrust);
+        log.debug("Set TRUST for switch {} to {}",properties.getSwitchDpid(), newTrust);
+        sendUpdates(oldTrust > newTrust ? SecurityPropertiesUpdateType.PROPERTIES_DOWN : SecurityPropertiesUpdateType.PROPERTIES_UP, Lists.newArrayList(s));
     }
 
     @Override
@@ -251,10 +255,10 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
             link.setConfidentiality(properties.getConfidentiality());
             link.setIntegrity(properties.getIntegrity());
             link.setAvailability(properties.getAvailability());
-            log.info("Set new C, I, A for link {}", link);
-            log.info("Confidentiality = {}", link.getConfidentiality());
-            log.info("Integrity = {}", link.getIntegrity());
-            log.info("Availability = {}", link.getAvailability());
+            log.debug("Set new C, I, A for link {}", link);
+            log.debug("Confidentiality = {}", link.getConfidentiality());
+            log.debug("Integrity = {}", link.getIntegrity());
+            log.debug("Availability = {}", link.getAvailability());
         }
     }
 
@@ -291,10 +295,10 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
             link.setAvailability(actualAvailability - availabilityDifference);
         }
 
-        log.info("Set new C, I, A for link {}", link);
-        log.info("Confidentiality = {}", link.getConfidentiality());
-        log.info("Integrity = {}", link.getIntegrity());
-        log.info("Availability = {}", link.getAvailability());
+        log.debug("Set new C, I, A for link {}", link);
+        log.debug("Confidentiality = {}", link.getConfidentiality());
+        log.debug("Integrity = {}", link.getIntegrity());
+        log.debug("Availability = {}", link.getAvailability());
     }
 
     private void deactivateThreatOnLink(Map<SecurityDimension, Float> securityPropertiesDifference, Link link) {
@@ -325,10 +329,10 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
             link.setAvailability(actualAvailability + availabilityDifference);
         }
 
-        log.info("Set new C, I, A for link {}", link);
-        log.info("Confidentiality = {}", link.getConfidentiality());
-        log.info("Integrity = {}", link.getIntegrity());
-        log.info("Availability = {}", link.getAvailability());
+        log.debug("Set new C, I, A for link {}", link);
+        log.debug("Confidentiality = {}", link.getConfidentiality());
+        log.debug("Integrity = {}", link.getIntegrity());
+        log.debug("Availability = {}", link.getAvailability());
     }
 
     private void sendUpdates(SecurityPropertiesUpdateType type, List<IOFSwitch> switches) {
@@ -336,7 +340,7 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
                 .type(type)
                 .switches(switches)
                 .build();
-        log.info("Sending updates about security properties changed...");
+        log.debug("Sending updates about security properties changed...");
         for(ISecurityPropertiesChangedListener l: listeners) {
             l.securityPropertiesChanged(update);
         }

@@ -162,7 +162,7 @@ public class SecureRoutingManager extends RoutingManager implements ISecureRouti
     }
 
     @Override
-    public Path getSecurePath(User user, Service service, DatapathId src, OFPort srcPort, DatapathId dst, OFPort dstPort) {
+    public Decision getSecureDecision(User user, Service service, DatapathId src, OFPort srcPort, DatapathId dst, OFPort dstPort) {
         long start = System.currentTimeMillis();
         Decision decision = solver.solve(user, service, src, srcPort, dst, dstPort);
         decision.setTime(System.currentTimeMillis() - start);
@@ -183,11 +183,11 @@ public class SecureRoutingManager extends RoutingManager implements ISecureRouti
 //            secureRoutingStatisticsService.getSecureRoutingStatistics().updateRealized(user, service, decision);
 //        }
 
-        if(!decision.isSolved()) {
-            return new Path(null, ImmutableList.of());
+        if(decision.isSolved() == false) {
+            decision.setPath(new Path(null, ImmutableList.of()));
         }
 
-        return decision.getPath();
+        return decision;
     }
 
 

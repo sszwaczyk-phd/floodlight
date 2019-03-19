@@ -17,6 +17,7 @@
 
 package net.floodlightcontroller.forwarding;
 
+import com.google.common.collect.Lists;
 import net.floodlightcontroller.core.*;
 import net.floodlightcontroller.core.internal.IOFSwitchService;
 import net.floodlightcontroller.core.module.FloodlightModuleContext;
@@ -50,9 +51,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.sszwaczyk.filter.IDuplicatedPacketInFilter;
 import pl.sszwaczyk.path.IPathPropertiesService;
+import pl.sszwaczyk.repository.Flow;
+import pl.sszwaczyk.repository.FlowStatus;
 import pl.sszwaczyk.repository.ISecureFlowsRepository;
 import pl.sszwaczyk.repository.web.SecureFlowsRepositoryRoutable;
 import pl.sszwaczyk.routing.ISecureRoutingService;
+import pl.sszwaczyk.routing.solver.Decision;
 import pl.sszwaczyk.security.SecurityDimension;
 import pl.sszwaczyk.security.dtsp.DTSP;
 import pl.sszwaczyk.security.dtsp.IDTSPService;
@@ -69,6 +73,7 @@ import pl.sszwaczyk.user.User;
 import pl.sszwaczyk.utils.AddressesAndPorts;
 
 import javax.annotation.Nonnull;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
@@ -723,6 +728,7 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
         U64 flowSetId = flowSetIdRegistry.generateFlowSetId();
         U64 cookie = makeForwardingCookie(decision, flowSetId);
 
+        Decision secureDecison = null;
         Path path = new Path(null, ImmutableList.of());
         Service service = serviceService.getServiceFromCntx(cntx);
         if(service != null) {
@@ -732,12 +738,13 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
                 return;
             }
             log.info("Security routing for service {} to user {}", service, user);
-            path = routingEngineService.getSecurePath(user,
+            secureDecison = routingEngineService.getSecureDecision(user,
                     service,
                     srcSw,
                     srcPort,
                     dstAp.getNodeId(),
                     dstAp.getPortId());
+            path = secureDecison.getPath();
         } else {
             log.info("Standard routing...");
             path = routingEngineService.getPath(srcSw,
@@ -769,12 +776,27 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
             for (NodePortTuple npt : path.getPath()) {
                 flowSetIdRegistry.registerFlowSetId(npt, flowSetId);
             }
-
-            if(service != null) {
-                log.debug("Registering path to secure paths registry");
-                secureFlowsRepository.registerFlow(AddressesAndPorts.fromCntx(cntx), path);
-            }
         } /* else no path was found */
+
+        if(service != null) {
+            log.debug("Registering path to secure paths registry");
+            AddressesAndPorts ap = AddressesAndPorts.fromCntx(cntx);
+            Flow pendingFlow = secureFlowsRepository.getPendingFlow(ap);
+            if(pendingFlow == null) {
+                Flow flow = Flow.builder()
+                        .startTime(LocalTime.now())
+                        .service(service)
+                        .user(userService.getUserFromCntx(cntx))
+                        .ap(AddressesAndPorts.fromCntx(cntx))
+                        .flowStatus(FlowStatus.PENDING)
+                        .decisions(Lists.newArrayList(secureDecison))
+                        .build();
+                secureFlowsRepository.registerFlow(flow);
+            } else {
+                secureFlowsRepository.addDecision(ap, secureDecison);
+            }
+            duplicatedPacketInFilter.addToBuffering(ap);
+        }
     }
 
     /**
@@ -1966,7 +1988,7 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
     @Override
     public void securityPropertiesChanged(SecurityPropertiesUpdate update) {
         log.debug("Received security properties changed update {}", update);
-        Map<AddressesAndPorts, Path> paths = secureFlowsRepository.getFlows();
+        Map<AddressesAndPorts, Path> paths = secureFlowsRepository.getActualPaths();
         if(update.getType().equals(SecurityPropertiesUpdateType.PROPERTIES_DOWN)) {
             List<IOFSwitch> affectedSwitches = update.getSwitches();
 
@@ -1992,6 +2014,10 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
 
                     if(!isPathRiskInRange(maxRisks, pathRisks)) {
                         log.warn("Risk increased over DTSP range. Deleting path from switches");
+
+                        secureFlowsRepository.deleteActualPath(ap);
+                        duplicatedPacketInFilter.deleteFromBuffering(ap);
+
                         for(IOFSwitch sw: switches) {
                             OFFlowDelete flowDelete = sw.getOFFactory().buildFlowDelete()
                                     .setMatch(sw.getOFFactory().buildMatch()
@@ -2003,12 +2029,9 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
                                             .setExact(MatchField.TCP_DST, TransportPort.of(ap.getDst().getPort()))
                                             .build()
                                     ).build();
-
+                            log.debug("Sending flow delete to sw " + sw);
                             messageDamper.write(sw, flowDelete);
                         }
-
-                        secureFlowsRepository.deleteFlow(ap);
-                        duplicatedPacketInFilter.deleteFromBuffering(ap);
 
                     } else {
                         log.info("Risk still in DTSP range.");

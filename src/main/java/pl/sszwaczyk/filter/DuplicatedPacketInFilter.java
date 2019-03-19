@@ -17,7 +17,6 @@ import pl.sszwaczyk.service.Service;
 import pl.sszwaczyk.utils.AddressesAndPorts;
 
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
@@ -82,12 +81,7 @@ public class DuplicatedPacketInFilter implements IFloodlightModule, IOFMessageLi
                 if(service != null) {
                     AddressesAndPorts addressesAndPorts = AddressesAndPorts.fromCntx(cntx);
                     LocalTime time = buffered.get(addressesAndPorts);
-                    if(time == null) {
-                        time = LocalTime.now();
-                        log.debug("Buffering " + addressesAndPorts + "on time " + time.format(DateTimeFormatter.ISO_LOCAL_TIME));
-                        buffered.put(addressesAndPorts, time);
-                        return Command.CONTINUE;
-                    } else {
+                    if(time != null) {
                         log.debug("Stopping processing because of duplicate " + addressesAndPorts);
                         return Command.STOP;
                     }
@@ -116,7 +110,17 @@ public class DuplicatedPacketInFilter implements IFloodlightModule, IOFMessageLi
 
     @Override
     public void deleteFromBuffering(AddressesAndPorts ap) {
-        buffered.remove(ap);
+        log.debug("Deleting from buffering for " + ap);
+        LocalTime remove = buffered.remove(ap);
+        if(remove != null) {
+            log.debug("Deleted from buffering for " + ap);
+        }
+    }
+
+    @Override
+    public void addToBuffering(AddressesAndPorts ap) {
+        log.debug("Adding to buffering for " + ap);
+        buffered.put(ap, LocalTime.now());
     }
 
     class FlushExpired implements Runnable {

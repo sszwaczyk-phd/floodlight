@@ -42,4 +42,7 @@ RUN git clone https://github.com/sszwaczyk/requests-generator.git && cd requests
 #Http server
 RUN git clone https://github.com/sszwaczyk/http-server.git && cd http-server && mvn -DskipTests clean package
 
+#Wireshark
+RUN apt-get -y install wireshark
+
 CMD ovs-ctl start && bash
