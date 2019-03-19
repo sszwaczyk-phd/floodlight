@@ -15,6 +15,8 @@ import java.util.List;
 public class Flow {
 
     private LocalTime startTime;
+    private LocalTime endTime;
+    private Long duration; //ms
     private User user;
     private Service service;
     private AddressesAndPorts ap;

@@ -27,6 +27,8 @@ import pl.sszwaczyk.routing.solver.Decision;
 import pl.sszwaczyk.utils.AddressAndPort;
 import pl.sszwaczyk.utils.AddressesAndPorts;
 
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -124,6 +126,8 @@ public class SecureFlowsRepository implements IFloodlightModule, ISecureFlowsRep
         } else {
             decision.setPath(null);
             pendingFlow.setFlowStatus(FlowStatus.NOT_REALIZED);
+            pendingFlow.setEndTime(LocalTime.now());
+            pendingFlow.setDuration(ChronoUnit.MILLIS.between(pendingFlow.getStartTime(), pendingFlow.getEndTime()));
             finishedFlows.add(pendingFlow);
             pendingFlows.remove(pendingFlow);
         }
@@ -173,6 +177,8 @@ public class SecureFlowsRepository implements IFloodlightModule, ISecureFlowsRep
                                     log.info("Path " + remove + " for " + ap + " removed because of FLOW_REMOVED message");
                                     Flow pendingFlow = getPendingFlow(ap);
                                     pendingFlow.setFlowStatus(FlowStatus.FINISHED);
+                                    pendingFlow.setEndTime(LocalTime.now());
+                                    pendingFlow.setDuration(ChronoUnit.MILLIS.between(pendingFlow.getStartTime(), pendingFlow.getEndTime()));
                                     pendingFlows.remove(pendingFlow);
                                     finishedFlows.add(pendingFlow);
                                 }

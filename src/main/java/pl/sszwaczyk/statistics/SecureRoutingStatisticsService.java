@@ -12,6 +12,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.projectfloodlight.openflow.types.DatapathId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.sszwaczyk.repository.Flow;
+import pl.sszwaczyk.repository.ISecureFlowsRepository;
 import pl.sszwaczyk.routing.solver.Decision;
 import pl.sszwaczyk.security.SecurityDimension;
 import pl.sszwaczyk.security.threat.ThreatWithInfluence;
@@ -28,6 +30,7 @@ public class SecureRoutingStatisticsService implements IFloodlightModule, ISecur
 
     private Logger log = LoggerFactory.getLogger(ISecureRoutingStatisticsService.class);
 
+    private ISecureFlowsRepository secureFlowsRepository;
     private IRestApiService restApiService;
 
     private SecureRoutingStatistics statistics;
@@ -53,11 +56,13 @@ public class SecureRoutingStatisticsService implements IFloodlightModule, ISecur
         Collection<Class<? extends IFloodlightService>> l =
                 new ArrayList<Class<? extends IFloodlightService>>();
         l.add(IRestApiService.class);
+        l.add(ISecureFlowsRepository.class);
         return l;
     }
 
     @Override
     public void init(FloodlightModuleContext context) throws FloodlightModuleException {
+        secureFlowsRepository = context.getServiceImpl(ISecureFlowsRepository.class);
         restApiService = context.getServiceImpl(IRestApiService.class);
 
         statistics = new SecureRoutingStatistics();
@@ -97,6 +102,8 @@ public class SecureRoutingStatisticsService implements IFloodlightModule, ISecur
 
         createThreatsStatisticsSheet(workbook);
 
+        createFinishedFlowsSheet(workbook);
+
 //        createGeneralStatisticsSheet(workbook);
 //
 //        createRelationsStatisticsSheet(workbook);
@@ -112,6 +119,114 @@ public class SecureRoutingStatisticsService implements IFloodlightModule, ISecur
 
         log.info("Snapshot of secure routing statistics saved to " + statsFile);
         return statsFile;
+    }
+
+    private void createFinishedFlowsSheet(Workbook workbook) {
+        Sheet sheet = workbook.createSheet("Finished Flows");
+
+        Row row0 = sheet.createRow(0);
+
+        //FLOW
+        row0.createCell(0).setCellValue("Flow start time");
+        row0.createCell(1).setCellValue("Flow end time");
+        row0.createCell(2).setCellValue("Flow duration [ms]");
+        row0.createCell(3).setCellValue("Service");
+        row0.createCell(4).setCellValue("Service Addr");
+        row0.createCell(5).setCellValue("Service Port");
+        row0.createCell(6).setCellValue("User");
+        row0.createCell(7).setCellValue("User Addr");
+        row0.createCell(8).setCellValue("User Port");
+        row0.createCell(9).setCellValue("Status");
+
+        //DECISION
+        row0.createCell(10).setCellValue("ID");
+        row0.createCell(11).setCellValue("User");
+        row0.createCell(12).setCellValue("Service");
+        row0.createCell(13).setCellValue("Acceptable Risk C");
+        row0.createCell(14).setCellValue("Acceptable Risk I");
+        row0.createCell(15).setCellValue("Acceptable Risk A");
+        row0.createCell(16).setCellValue("Acceptable Risk T");
+        row0.createCell(17).setCellValue("Max Risk C");
+        row0.createCell(18).setCellValue("Max Risk I");
+        row0.createCell(19).setCellValue("Max Risk A");
+        row0.createCell(20).setCellValue("Max Risk T");
+        row0.createCell(21).setCellValue("Date");
+        row0.createCell(22).setCellValue("Time [ms]");
+        row0.createCell(23).setCellValue("Solved");
+        row0.createCell(24).setCellValue("Reason");
+        row0.createCell(25).setCellValue("Uneven before");
+        row0.createCell(26).setCellValue("Uneven after");
+        row0.createCell(27).setCellValue("Region");
+        row0.createCell(28).setCellValue("Value");
+        row0.createCell(29).setCellValue("Risk C");
+        row0.createCell(30).setCellValue("Risk I");
+        row0.createCell(31).setCellValue("Risk A");
+        row0.createCell(32).setCellValue("Risk T");
+        row0.createCell(33).setCellValue("Aggregated Risk");
+        row0.createCell(34).setCellValue("Path length");
+        row0.createCell(35).setCellValue("Path");
+
+        List<Flow> finishedFlows = secureFlowsRepository.getFinishedFlows();
+        int i = 1;
+        for(Flow flow: finishedFlows) {
+            Row row = sheet.createRow(i);
+            row.createCell(0).setCellValue(flow.getStartTime().toString());
+            row.createCell(1).setCellValue(flow.getEndTime().toString());
+            row.createCell(2).setCellValue(flow.getDuration());
+            row.createCell(3).setCellValue(flow.getService().getId());
+            row.createCell(4).setCellValue(flow.getAp().getSrc().getAddress());
+            row.createCell(5).setCellValue(flow.getAp().getSrc().getPort());
+            row.createCell(6).setCellValue(flow.getUser().getId());
+            row.createCell(7).setCellValue(flow.getAp().getDst().getAddress());
+            row.createCell(8).setCellValue(flow.getAp().getDst().getPort());
+            row.createCell(9).setCellValue(flow.getFlowStatus().toString());
+
+            List<Decision> decisions = flow.getDecisions();
+            for(Decision decision: decisions) {
+                Row decisionRow = sheet.createRow(i + 1);
+                decisionRow.createCell(10).setCellValue(decision.getId());
+                decisionRow.createCell(11).setCellValue(decision.getUser().getId());
+                decisionRow.createCell(12).setCellValue(decision.getService().getId());
+
+                Map<SecurityDimension, Float> acceptableRisks = decision.getAcceptableRisks();
+                decisionRow.createCell(13).setCellValue(acceptableRisks.get(SecurityDimension.CONFIDENTIALITY));
+                decisionRow.createCell(14).setCellValue(acceptableRisks.get(SecurityDimension.INTEGRITY));
+                decisionRow.createCell(15).setCellValue(acceptableRisks.get(SecurityDimension.AVAILABILITY));
+                decisionRow.createCell(16).setCellValue(acceptableRisks.get(SecurityDimension.TRUST));
+
+                Map<SecurityDimension, Float> maxRisks = decision.getMaxRisks();
+                decisionRow.createCell(17).setCellValue(maxRisks.get(SecurityDimension.CONFIDENTIALITY));
+                decisionRow.createCell(18).setCellValue(maxRisks.get(SecurityDimension.INTEGRITY));
+                decisionRow.createCell(19).setCellValue(maxRisks.get(SecurityDimension.AVAILABILITY));
+                decisionRow.createCell(20).setCellValue(maxRisks.get(SecurityDimension.TRUST));
+
+                decisionRow.createCell(21).setCellValue(decision.getDate().toString());
+                decisionRow.createCell(22).setCellValue(decision.getTime());
+
+                boolean solved = decision.isSolved();
+                decisionRow.createCell(23).setCellValue(solved);
+                if(!solved) {
+                    decisionRow.createCell(24).setCellValue(decision.getReason().toString());
+                    continue;
+                }
+
+                decisionRow.createCell(25).setCellValue(decision.getUnevenBefore());
+                decisionRow.createCell(26).setCellValue(decision.getUnevenAfter());
+                decisionRow.createCell(27).setCellValue(decision.getRegion().toString());
+                decisionRow.createCell(28).setCellValue(decision.getValue());
+                Map<SecurityDimension, Float> risks = decision.getRisks();
+                decisionRow.createCell(29).setCellValue(risks.get(SecurityDimension.CONFIDENTIALITY));
+                decisionRow.createCell(30).setCellValue(risks.get(SecurityDimension.INTEGRITY));
+                decisionRow.createCell(31).setCellValue(risks.get(SecurityDimension.AVAILABILITY));
+                decisionRow.createCell(32).setCellValue(risks.get(SecurityDimension.TRUST));
+                decisionRow.createCell(33).setCellValue(decision.getRisk());
+                decisionRow.createCell(34).setCellValue(decision.getPathLength());
+                decisionRow.createCell(35).setCellValue(decision.getPath().toString());
+                i++;
+            }
+            i++;
+        }
+
     }
 
     private void createThreatsStatisticsSheet(Workbook workbook) {
@@ -200,7 +315,7 @@ public class SecureRoutingStatisticsService implements IFloodlightModule, ISecur
             row.createCell(9).setCellValue(maxRisks.get(SecurityDimension.AVAILABILITY));
             row.createCell(10).setCellValue(maxRisks.get(SecurityDimension.TRUST));
 
-            row.createCell(11).setCellValue(decision.getDate());
+            row.createCell(11).setCellValue(decision.getDate().toString());
             row.createCell(12).setCellValue(decision.getTime());
 
             boolean solved = decision.isSolved();
