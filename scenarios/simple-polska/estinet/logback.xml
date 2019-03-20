@@ -20,8 +20,9 @@
   <logger name="LogService" level="WARN"/> <!-- Restlet access logging -->
   <logger name="net.floodlightcontroller" level="INFO"/>
   <logger name="org.sdnplatform" level="INFO"/>
-  <logger name="pl.sszwaczyk" level="DEBUG" />
-  <!--<logger name="net.floodlightcontroller.forwarding" level="DEBUG"/>-->
-  <logger name="net.floodlightcontroller.statistics" level="DEBUG" />
+  <logger name="pl.sszwaczyk" level="INFO" />
+  <logger name="net.floodlightcontroller.forwarding" level="TRACE"/>
+  <logger name="net.floodlightcontroller.routing.ForwardingBase" level="TRACE"/>
+  <!--<logger name="net.floodlightcontroller.statistics" level="DEBUG" />-->
 
 </configuration>

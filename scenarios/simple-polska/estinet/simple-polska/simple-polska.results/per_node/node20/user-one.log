@@ -1,0 +1,45 @@
+1970-01-01 08:01:50.3 INFO  [p.s.d.g.RequestsGenerator] Service Service1 drawn
+1970-01-01 08:01:50.3 INFO  [p.s.d.g.RequestsGenerator] Sending request to service Service1 for path /home/estinet/PhD/impl/100MB.zip
+1970-01-01 08:01:52.110 INFO  [p.s.d.g.RequestsGenerator] Response status = 200
+1970-01-01 08:01:52.110 INFO  [p.s.s.Statistics] Statitstics save to file ./user-one-every-request.xlsx
+1970-01-01 08:01:52.110 INFO  [p.s.d.g.RequestsGenerator] Downloading to /tmp/22664f45-e37b-426e-8c0e-24118fc36cd4...
+1970-01-01 08:04:39.388 INFO  [p.s.d.g.RequestsGenerator] File downloaded
+1970-01-01 08:04:39.388 INFO  [p.s.d.g.RequestsGenerator] Deleting file /tmp/22664f45-e37b-426e-8c0e-24118fc36cd4...
+1970-01-01 08:04:39.388 INFO  [p.s.d.g.RequestsGenerator] File deleted
+1970-01-01 08:04:39.388 INFO  [p.s.d.g.RequestsGenerator] Request for service Service1 completed successfully in 169385 ms.
+1970-01-01 08:04:39.388 INFO  [p.s.s.Statistics] Statitstics save to file ./user-one-every-request.xlsx
+1970-01-01 08:04:39.388 INFO  [p.s.d.g.RequestsGenerator] Generating next request in 8 seconds
+1970-01-01 08:04:47.388 INFO  [p.s.d.g.RequestsGenerator] Service Service5 drawn
+1970-01-01 08:04:47.388 INFO  [p.s.d.g.RequestsGenerator] Sending request to service Service5 for path /home/estinet/PhD/impl/20MB.zip
+1970-01-01 08:04:48.436 INFO  [p.s.d.g.RequestsGenerator] Response status = 200
+1970-01-01 08:04:48.436 INFO  [p.s.s.Statistics] Statitstics save to file ./user-one-every-request.xlsx
+1970-01-01 08:04:48.436 INFO  [p.s.d.g.RequestsGenerator] Downloading to /tmp/8af3e6f3-dcb5-4323-a2e2-41256b235fd4...
+1970-01-01 08:07:36.177 INFO  [p.s.d.g.RequestsGenerator] File downloaded
+1970-01-01 08:07:36.177 INFO  [p.s.d.g.RequestsGenerator] Deleting file /tmp/8af3e6f3-dcb5-4323-a2e2-41256b235fd4...
+1970-01-01 08:07:36.177 INFO  [p.s.d.g.RequestsGenerator] File deleted
+1970-01-01 08:07:36.177 INFO  [p.s.d.g.RequestsGenerator] Request for service Service5 completed successfully in 168789 ms.
+1970-01-01 08:07:36.177 INFO  [p.s.s.Statistics] Statitstics save to file ./user-one-every-request.xlsx
+1970-01-01 08:07:36.177 INFO  [p.s.d.g.RequestsGenerator] Generating next request in 9 seconds
+1970-01-01 08:07:45.177 INFO  [p.s.d.g.RequestsGenerator] Service Service1 drawn
+1970-01-01 08:07:45.177 INFO  [p.s.d.g.RequestsGenerator] Sending request to service Service1 for path /home/estinet/PhD/impl/100MB.zip
+1970-01-01 08:07:45.191 INFO  [p.s.d.g.RequestsGenerator] Response status = 200
+1970-01-01 08:07:45.191 INFO  [p.s.s.Statistics] Statitstics save to file ./user-one-every-request.xlsx
+1970-01-01 08:07:45.191 INFO  [p.s.d.g.RequestsGenerator] Downloading to /tmp/701fd2a5-5135-493c-b6c9-5f8fca22cec5...
+1970-01-01 08:09:14.380 INFO  [p.s.d.g.RequestsGenerator] File downloaded
+1970-01-01 08:09:14.380 INFO  [p.s.d.g.RequestsGenerator] Deleting file /tmp/701fd2a5-5135-493c-b6c9-5f8fca22cec5...
+1970-01-01 08:09:14.380 INFO  [p.s.d.g.RequestsGenerator] File deleted
+1970-01-01 08:09:14.380 INFO  [p.s.d.g.RequestsGenerator] Request for service Service1 completed successfully in 89203 ms.
+1970-01-01 08:09:14.380 INFO  [p.s.s.Statistics] Statitstics save to file ./user-one-every-request.xlsx
+1970-01-01 08:09:14.380 INFO  [p.s.d.g.RequestsGenerator] Generating next request in 6 seconds
+1970-01-01 08:09:20.380 INFO  [p.s.d.g.RequestsGenerator] Service Service1 drawn
+1970-01-01 08:09:20.380 INFO  [p.s.d.g.RequestsGenerator] Sending request to service Service1 for path /home/estinet/PhD/impl/100MB.zip
+1970-01-01 08:09:40.380 ERROR [p.s.d.g.RequestsGenerator] Request for service Service1 failed because of java.net.SocketTimeoutException: connect timed out
+1970-01-01 08:09:40.380 INFO  [p.s.s.Statistics] Statitstics save to file ./user-one-every-request.xlsx
+1970-01-01 08:09:40.380 INFO  [p.s.d.g.RequestsGenerator] Deleting file /tmp/4cb004c0-04f9-41c5-8fdb-7b81b8516490...
+1970-01-01 08:09:40.380 ERROR [p.s.d.g.RequestsGenerator] Cannot delete file becouse of /tmp/4cb004c0-04f9-41c5-8fdb-7b81b8516490
+1970-01-01 08:09:40.380 INFO  [p.s.d.g.RequestsGenerator] Generating next request in 7 seconds
+1970-01-01 08:09:47.380 INFO  [p.s.d.g.RequestsGenerator] Service Service5 drawn
+1970-01-01 08:09:47.380 INFO  [p.s.d.g.RequestsGenerator] Sending request to service Service5 for path /home/estinet/PhD/impl/20MB.zip
+1970-01-01 08:09:49.422 INFO  [p.s.d.g.RequestsGenerator] Response status = 200
+1970-01-01 08:09:49.422 INFO  [p.s.s.Statistics] Statitstics save to file ./user-one-every-request.xlsx
+1970-01-01 08:09:49.422 INFO  [p.s.d.g.RequestsGenerator] Downloading to /tmp/fb3677b0-542b-43d2-bdbd-0dc0bc898967...

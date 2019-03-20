@@ -1,11 +1,16 @@
 #estinet traffic generator file
-$node_(15) 2.000000000000 600.000000000000 /home/estinet/PhD/impl/floodlight/scenarios/simple-polska/estinet/run-http-server.sh
+$node_(1) 2.000000000000 600.000000000000 /home/estinet/PhD/impl/floodlight/scenarios/simple-polska/estinet/run-floodlight.sh
+$node_(1) 590.000000000000 591.000000000000 curl -X POST http://localhost:8080/wm/security/stats/snapshot
+$node_(15) 10.000000000000 600.000000000000 /home/estinet/PhD/impl/floodlight/scenarios/simple-polska/estinet/run-http-server.sh
 $node_(15) 590.000000000000 591.000000000000 curl -X POST http://localhost:8000/stats/snapshot?statsFile=stats.xlsx
-$node_(16) 2.000000000000 600.000000000000 /home/estinet/PhD/impl/floodlight/scenarios/simple-polska/estinet/run-http-server.sh
+$node_(16) 15.000000000000 600.000000000000 /home/estinet/PhD/impl/floodlight/scenarios/simple-polska/estinet/run-http-server.sh
 $node_(16) 590.000000000000 591.000000000000 curl -X POST http://localhost:8000/stats/snapshot?statsFile=stats.xlsx
-$node_(17) 2.000000000000 600.000000000000 /home/estinet/PhD/impl/floodlight/scenarios/simple-polska/estinet/run-http-server.sh
+$node_(17) 25.000000000000 600.000000000000 /home/estinet/PhD/impl/floodlight/scenarios/simple-polska/estinet/run-http-server.sh
 $node_(17) 590.000000000000 591.000000000000 curl -X POST http://localhost:8000/stats/snapshot?statsFile=stats.xlsx
-$node_(18) 2.000000000000 600.000000000000 /home/estinet/PhD/impl/floodlight/scenarios/simple-polska/estinet/run-http-server.sh
+$node_(18) 20.000000000000 600.000000000000 /home/estinet/PhD/impl/floodlight/scenarios/simple-polska/estinet/run-http-server.sh
 $node_(18) 590.000000000000 591.000000000000 curl -X POST http://localhost:8000/stats/snapshot?statsFile=stats.xlsx
-$node_(19) 2.000000000000 600.000000000000 /home/estinet/PhD/impl/floodlight/scenarios/simple-polska/estinet/run-http-server.sh
+$node_(19) 30.000000000000 600.000000000000 /home/estinet/PhD/impl/floodlight/scenarios/simple-polska/estinet/run-http-server.sh
 $node_(19) 590.000000000000 591.000000000000 curl -X POST http://localhost:8000/stats/snapshot?statsFile=stats.xlsx
+$node_(20) 110.000000000000 590.000000000000 /home/estinet/PhD/impl/floodlight/scenarios/simple-polska/estinet/run-request-generator.sh two
+$node_(21) 100.000000000000 590.000000000000 /home/estinet/PhD/impl/floodlight/scenarios/simple-polska/estinet/run-request-generator.sh one
+$node_(23) 130.000000000000 590.000000000000 /home/estinet/PhD/impl/floodlight/scenarios/simple-polska/estinet/run-request-generator.sh three
