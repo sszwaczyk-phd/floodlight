@@ -40,6 +40,8 @@ public class StatisticsCollector implements IFloodlightModule, IStatisticsServic
 
 	private static boolean isEnabled = false;
 
+	private final static int portStatsInitDelay = 30;
+
 	private static int portStatsInterval = 10; /* could be set by REST API, so not final */
 	private static int flowStatsInterval = 11;
 
@@ -50,6 +52,7 @@ public class StatisticsCollector implements IFloodlightModule, IStatisticsServic
 	private static final long BITS_PER_BYTE = 8;
 	private static final long MILLIS_PER_SEC = 1000;
 
+	private static final String PORT_STATS_INIT_DELAY_STR = "initCollectionIntervalPortStatsDelaySeconds";
 	private static final String INTERVAL_PORT_STATS_STR = "collectionIntervalPortStatsSeconds";
 	private static final String ENABLED_STR = "enable";
 
@@ -318,6 +321,15 @@ public class StatisticsCollector implements IFloodlightModule, IStatisticsServic
 		}
 		log.info("Statistics collection {}", isEnabled ? "enabled" : "disabled");
 
+		if (config.containsKey(PORT_STATS_INIT_DELAY_STR)) {
+			try {
+				portStatsInterval = Integer.parseInt(config.get(PORT_STATS_INIT_DELAY_STR).trim());
+			} catch (Exception e) {
+				log.error("Could not parse '{}'. Using default of {}", PORT_STATS_INIT_DELAY_STR, portStatsInitDelay);
+			}
+		}
+		log.info("Init Port statistics collection delay set to {}s", portStatsInitDelay);
+
 		if (config.containsKey(INTERVAL_PORT_STATS_STR)) {
 			try {
 				portStatsInterval = Integer.parseInt(config.get(INTERVAL_PORT_STATS_STR).trim());
@@ -418,10 +430,10 @@ public class StatisticsCollector implements IFloodlightModule, IStatisticsServic
 	 * Start all stats threads.
 	 */
 	private void startStatisticsCollection() {
-		portStatsCollector = threadPoolService.getScheduledExecutor().scheduleAtFixedRate(new PortStatsCollector(), portStatsInterval, portStatsInterval, TimeUnit.SECONDS);
+		portStatsCollector = threadPoolService.getScheduledExecutor().scheduleAtFixedRate(new PortStatsCollector(), portStatsInitDelay, portStatsInterval, TimeUnit.SECONDS);
 		tentativePortStats.clear(); /* must clear out, otherwise might have huge BW result if present and wait a long time before re-enabling stats */
-		flowStatsCollector = threadPoolService.getScheduledExecutor().scheduleAtFixedRate(new FlowStatsCollector(), flowStatsInterval, flowStatsInterval, TimeUnit.SECONDS);
-		portDescCollector = threadPoolService.getScheduledExecutor().scheduleAtFixedRate(new PortDescCollector(), portStatsInterval, portStatsInterval, TimeUnit.SECONDS);
+		flowStatsCollector = threadPoolService.getScheduledExecutor().scheduleAtFixedRate(new FlowStatsCollector(), portStatsInitDelay, flowStatsInterval, TimeUnit.SECONDS);
+		portDescCollector = threadPoolService.getScheduledExecutor().scheduleAtFixedRate(new PortDescCollector(), portStatsInitDelay, portStatsInterval, TimeUnit.SECONDS);
 		log.warn("Statistics collection thread(s) started");
 	}
 
