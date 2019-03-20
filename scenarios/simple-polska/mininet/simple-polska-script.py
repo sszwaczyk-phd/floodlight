@@ -1,17 +1,19 @@
 #!/usr/bin/python
+from mininet.net import Mininet
+from mininet.node import Controller, RemoteController, OVSController
+from mininet.node import CPULimitedHost, Host, Node
+from mininet.node import OVSKernelSwitch, UserSwitch
+from mininet.node import IVSSwitch
+from mininet.cli import CLI
+from mininet.log import setLogLevel, info
+from mininet.link import TCLink, Intf
+from subprocess import call
+
+from time import sleep
 
 import os
 import signal
 import subprocess
-from mininet.link import TCLink
-from mininet.log import setLogLevel, info
-from mininet.net import Mininet
-from mininet.node import Host
-from mininet.node import OVSKernelSwitch
-from mininet.node import RemoteController
-from time import sleep
-
-
 def simplePolska():
 
     net = Mininet( topo=None,
@@ -134,23 +136,23 @@ def simplePolska():
     pidString = serviceFiveHost.cmdPrint('java -jar /impl/http-server/target/http-server-0.0.1-SNAPSHOT.jar --usersFile=/impl/floodlight/scenarios/simple-polska/users.json --servicesFile=/impl/floodlight/scenarios/simple-polska/mininet/services.json --logging.file=./service-five.log --exitStatsFile=./service-five-exit.xlsx &')
     serviceFivePid = int( pidString.split(" ")[1] )
 
-    info( '*** Sleep 15 seconds to let services start...\n')
-    sleep(15)
+    info( '*** Sleep 10 seconds to let services start...\n')
+    sleep(10)
 
     info( '*** Starting requests generators...\n')
-    pidString = userOneHost.cmdPrint('java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-one -st ./user-one-exit.xlsx -er ./user-one-every-request.xlsx -g uniform -ming 5 -maxg 10 &')
+    pidString = userOneHost.cmdPrint('java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-one -st ./user-one-exit.xlsx -er ./user-one-every-request.xlsx -s 11111 -g uniform -ming 5 -maxg 10 &')
     userOnePid = int( pidString.split(" ")[1] )
-    pidString = userTwoHost.cmdPrint('java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-two -st ./user-two-exit.xlsx -er ./user-two-every-request.xlsx -g uniform -ming 5 -maxg 10 &')
+    pidString = userTwoHost.cmdPrint('java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-two -st ./user-two-exit.xlsx -er ./user-two-every-request.xlsx -s 22222 -g uniform -ming 5 -maxg 10 &')
     userTwoPid = int( pidString.split(" ")[1] )
-    pidString = userThreeHost.cmdPrint('java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-three -st ./user-three-exit.xlsx -er ./user-three-every-request.xlsx -g uniform -ming 5 -maxg 10 &')
+    pidString = userThreeHost.cmdPrint('java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-three -st ./user-three-exit.xlsx -er ./user-three-every-request.xlsx -s 33333 -g uniform -ming 5 -maxg 10 &')
     userThreePid = int( pidString.split(" ")[1] )
-    pidString = userFourHost.cmdPrint('java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-four -st ./user-four-exit.xlsx -er ./user-four-every-request.xlsx -g uniform -ming 5 -maxg 10 &')
+    pidString = userFourHost.cmdPrint('java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-four -st ./user-four-exit.xlsx -er ./user-four-every-request.xlsx -s 44444 -g uniform -ming 5 -maxg 10 &')
     userFourPid = int( pidString.split(" ")[1] )
-    pidString = userFiveHost.cmdPrint('java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-five -st ./user-five-exit.xlsx -er ./user-five-every-request.xlsx -g uniform -ming 5 -maxg 10 &')
+    pidString = userFiveHost.cmdPrint('java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-five -st ./user-five-exit.xlsx -er ./user-five-every-request.xlsx -s 55555 -g uniform -ming 5 -maxg 10 &')
     userFivePid = int( pidString.split(" ")[1] )
-    pidString = userSixHost.cmdPrint('java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-six -st ./user-six-exit.xlsx -er ./user-six-every-request.xlsx -g uniform -ming 5 -maxg 10 &')
+    pidString = userSixHost.cmdPrint('java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-six -st ./user-six-exit.xlsx -er ./user-six-every-request.xlsx -s 66666 -g uniform -ming 5 -maxg 10 &')
     userSixPid = int( pidString.split(" ")[1] )
-    pidString = userSevenHost.cmdPrint('java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-seven -st ./user-seven-exit.xlsx -er ./user-seven-every-request.xlsx -g uniform -ming 5 -maxg 10 &')
+    pidString = userSevenHost.cmdPrint('java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-seven -st ./user-seven-exit.xlsx -er ./user-seven-every-request.xlsx -s 77777 -g uniform -ming 5 -maxg 10 &')
     userSevenPid = int( pidString.split(" ")[1] )
 
     info( '*** Simulation...\n')
@@ -182,8 +184,8 @@ if __name__ == '__main__':
     cmd = "java -jar target/floodlight.jar -cf /impl/floodlight/scenarios/simple-polska/mininet/floodlightdefault.properties"
     proc = subprocess.Popen(cmd.split(), cwd='/impl/floodlight')
 
-    info( '*** Sleep 15 seconds to let controller start...\n')
-    sleep(15)
+    info( '*** Sleep 5 seconds to let controller start...\n')
+    sleep(5)
 
     simplePolska()
 
