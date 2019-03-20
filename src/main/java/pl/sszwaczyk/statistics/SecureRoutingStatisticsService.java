@@ -316,6 +316,7 @@ public class SecureRoutingStatisticsService implements IFloodlightModule, ISecur
                 decisionRow.createCell(23).setCellValue(solved);
                 if(!solved) {
                     decisionRow.createCell(24).setCellValue(decision.getReason().toString());
+                    i++;
                     continue;
                 }
 
