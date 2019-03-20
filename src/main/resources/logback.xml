@@ -4,18 +4,29 @@
       <pattern>%date{yyyy-MM-dd HH:mm:ss.S} %-5level [%logger{15}] %msg%n</pattern>
     </encoder>
   </appender>
+
+  <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+    <file>./floodlight.log</file>
+    <append>false</append>
+    <encoder>
+      <pattern>%date{yyyy-MM-dd HH:mm:ss.S} %-5level [%logger{15}] %msg%n</pattern>
+    </encoder>
+  </appender>
+
   <root level="INFO">
     <appender-ref ref="STDOUT" />
+    <appender-ref ref="FILE" />
   </root>
+
   <logger name="io" level="INFO"></logger> <!-- Netty logging -->
   <logger name="LogService" level="WARN"/> <!-- Restlet access logging -->
   <logger name="net.floodlightcontroller" level="INFO"/>
   <logger name="org.sdnplatform" level="INFO"/>
-  <logger name="pl.sszwaczyk" level="WARN" />
+  <logger name="pl.sszwaczyk" level="INFO" />
   <logger name="pl.sszwaczyk.routing" level="INFO" />
   <logger name="net.floodlightcontroller.forwarding" level="INFO" />
     <!--<logger name="pl.sszwaczyk.repository" level="DEBUG" />-->
-  <logger name="pl.sszwaczyk.filter" level="DEBUG" />
-  <logger name="net.floodlightcontroller.forwarding" level="DEBUG"/>
+  <!--<logger name="pl.sszwaczyk.filter" level="DEBUG" />-->
+  <!--<logger name="net.floodlightcontroller.forwarding" level="INFO"/>-->
   <!--<logger name="net.floodlightcontroller.statistics" level="DEBUG" />-->
 </configuration>

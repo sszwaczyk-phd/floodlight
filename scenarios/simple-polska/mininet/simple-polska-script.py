@@ -1,14 +1,16 @@
 #!/usr/bin/python
 
-from mininet.net import Mininet
-from mininet.node import Controller, RemoteController, OVSController
-from mininet.node import CPULimitedHost, Host, Node
-from mininet.node import OVSKernelSwitch, UserSwitch
-from mininet.node import IVSSwitch
-from mininet.cli import CLI
+import os
+import signal
+import subprocess
+from mininet.link import TCLink
 from mininet.log import setLogLevel, info
-from mininet.link import TCLink, Intf
-from subprocess import call
+from mininet.net import Mininet
+from mininet.node import Host
+from mininet.node import OVSKernelSwitch
+from mininet.node import RemoteController
+from time import sleep
+
 
 def simplePolska():
 
@@ -102,9 +104,6 @@ def simplePolska():
 
     info( '*** Starting network\n')
     net.build()
-    info( '*** Starting controllers\n')
-    for controller in net.controllers:
-        controller.start()
 
     info( '*** Starting switches\n')
     net.get('kolobrzeg').start([c0])
@@ -120,16 +119,73 @@ def simplePolska():
     net.get('krakow').start([c0])
     net.get('rzeszow').start([c0])
 
-    info( '*** Post configure switches and hosts\n')
-    serviceOneHost.cmdPrint('java -jar /impl/http-server/target/http-server-0.0.1-SNAPSHOT.jar --usersFile=/impl/floodlight/src/main/resources/repositories/simple-polska/users.json &')
-    serviceTwoHost.cmdPrint('java -jar /impl/http-server/target/http-server-0.0.1-SNAPSHOT.jar --usersFile=/impl/floodlight/src/main/resources/repositories/simple-polska/users.json &')
-    serviceThreeHost.cmdPrint('java -jar /impl/http-server/target/http-server-0.0.1-SNAPSHOT.jar --usersFile=/impl/floodlight/src/main/resources/repositories/simple-polska/users.json &')
-    serviceFourHost.cmdPrint('java -jar /impl/http-server/target/http-server-0.0.1-SNAPSHOT.jar --usersFile=/impl/floodlight/src/main/resources/repositories/simple-polska/users.json &')
-    serviceFiveHost.cmdPrint('java -jar /impl/http-server/target/http-server-0.0.1-SNAPSHOT.jar --usersFile=/impl/floodlight/src/main/resources/repositories/simple-polska/users.json &')
+    info( '*** Sleep 15 seconds to let controller get topology...\n')
+    sleep(15)
 
-    CLI(net)
+    info( '*** Starting services\n')
+    pidString = serviceOneHost.cmdPrint('java -jar /impl/http-server/target/http-server-0.0.1-SNAPSHOT.jar --usersFile=/impl/floodlight/scenarios/simple-polska/users.json --servicesFile=/impl/floodlight/scenarios/simple-polska/mininet/services.json --logging.file=./service-one.log --exitStatsFile=./service-one-exit.xlsx &')
+    serviceOnePid = int( pidString.split(" ")[1] )
+    pidString = serviceTwoHost.cmdPrint('java -jar /impl/http-server/target/http-server-0.0.1-SNAPSHOT.jar --usersFile=/impl/floodlight/scenarios/simple-polska/users.json --servicesFile=/impl/floodlight/scenarios/simple-polska/mininet/services.json --logging.file=./service-two.log --exitStatsFile=./service-two-exit.xlsx &')
+    serviceTwoPid = int( pidString.split(" ")[1] )
+    pidString = serviceThreeHost.cmdPrint('java -jar /impl/http-server/target/http-server-0.0.1-SNAPSHOT.jar --usersFile=/impl/floodlight/scenarios/simple-polska/users.json --servicesFile=/impl/floodlight/scenarios/simple-polska/mininet/services.json --logging.file=./service-three.log --exitStatsFile=./service-three-exit.xlsx &')
+    serviceThreePid = int( pidString.split(" ")[1] )
+    pidString = serviceFourHost.cmdPrint('java -jar /impl/http-server/target/http-server-0.0.1-SNAPSHOT.jar --usersFile=/impl/floodlight/scenarios/simple-polska/users.json --servicesFile=/impl/floodlight/scenarios/simple-polska/mininet/services.json --logging.file=./service-four.log --exitStatsFile=./service-four-exit.xlsx &')
+    serviceFourPid = int( pidString.split(" ")[1] )
+    pidString = serviceFiveHost.cmdPrint('java -jar /impl/http-server/target/http-server-0.0.1-SNAPSHOT.jar --usersFile=/impl/floodlight/scenarios/simple-polska/users.json --servicesFile=/impl/floodlight/scenarios/simple-polska/mininet/services.json --logging.file=./service-five.log --exitStatsFile=./service-five-exit.xlsx &')
+    serviceFivePid = int( pidString.split(" ")[1] )
+
+    info( '*** Sleep 15 seconds to let services start...\n')
+    sleep(15)
+
+    info( '*** Starting requests generators...\n')
+    pidString = userOneHost.cmdPrint('java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-one -st ./user-one-exit.xlsx -er ./user-one-every-request.xlsx -g uniform -ming 5 -maxg 10 &')
+    userOnePid = int( pidString.split(" ")[1] )
+    pidString = userTwoHost.cmdPrint('java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-two -st ./user-two-exit.xlsx -er ./user-two-every-request.xlsx -g uniform -ming 5 -maxg 10 &')
+    userTwoPid = int( pidString.split(" ")[1] )
+    pidString = userThreeHost.cmdPrint('java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-three -st ./user-three-exit.xlsx -er ./user-three-every-request.xlsx -g uniform -ming 5 -maxg 10 &')
+    userThreePid = int( pidString.split(" ")[1] )
+    pidString = userFourHost.cmdPrint('java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-four -st ./user-four-exit.xlsx -er ./user-four-every-request.xlsx -g uniform -ming 5 -maxg 10 &')
+    userFourPid = int( pidString.split(" ")[1] )
+    pidString = userFiveHost.cmdPrint('java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-five -st ./user-five-exit.xlsx -er ./user-five-every-request.xlsx -g uniform -ming 5 -maxg 10 &')
+    userFivePid = int( pidString.split(" ")[1] )
+    pidString = userSixHost.cmdPrint('java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-six -st ./user-six-exit.xlsx -er ./user-six-every-request.xlsx -g uniform -ming 5 -maxg 10 &')
+    userSixPid = int( pidString.split(" ")[1] )
+    pidString = userSevenHost.cmdPrint('java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-seven -st ./user-seven-exit.xlsx -er ./user-seven-every-request.xlsx -g uniform -ming 5 -maxg 10 &')
+    userSevenPid = int( pidString.split(" ")[1] )
+
+    info( '*** Simulation...\n')
+    sleep(60)
+
+    info( '*** Stopping requests generators...\n')
+    userOneHost.cmd('kill', userOnePid)
+    userTwoHost.cmd('kill', userTwoPid)
+    userThreeHost.cmd('kill', userThreePid)
+    userFourHost.cmd('kill', userFourPid)
+    userFiveHost.cmd('kill', userFivePid)
+    userSixHost.cmd('kill', userSixPid)
+    userSevenHost.cmd('kill', userSevenPid)
+
+    info( '*** Stopping services...\n')
+    serviceOneHost.cmd('kill', serviceOnePid)
+    serviceTwoHost.cmd('kill', serviceTwoPid)
+    serviceThreeHost.cmd('kill', serviceThreePid)
+    serviceFourHost.cmd('kill', serviceFourPid)
+    serviceFiveHost.cmd('kill', serviceFivePid)
+
+    info( '*** Stopping net...\n')
     net.stop()
 
 if __name__ == '__main__':
     setLogLevel( 'info' )
+
+    info( '*** Starting controller...\n')
+    cmd = "java -jar target/floodlight.jar -cf /impl/floodlight/scenarios/simple-polska/mininet/floodlightdefault.properties"
+    proc = subprocess.Popen(cmd.split(), cwd='/impl/floodlight')
+
+    info( '*** Sleep 15 seconds to let controller start...\n')
+    sleep(15)
+
     simplePolska()
+
+    info( '*** Stopping controller...\n')
+    os.kill(proc.pid, signal.SIGTERM)
