@@ -433,6 +433,7 @@ public class SecureRoutingStatisticsService implements IFloodlightModule, ISecur
             row.createCell(13).setCellValue(solved);
             if(!solved) {
                 row.createCell(14).setCellValue(decision.getReason().toString());
+                i++;
                 continue;
             }
 
