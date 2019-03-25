@@ -4,6 +4,7 @@ MAINTAINER Sebastian Szwaczyk <sebastian.szwaczyk@wat.edu.pl>
 
 RUN apt-get update && apt-get -y install apt-utils net-tools iputils-ping
 RUN DEBIAN_FRONTEND=noninteractive apt install -q -y iproute2 xorg xterm wget tcptraceroute nano
+RUN DEBIAN_FRONTEND=noninteractive apt-get install wireshark -y
 
 RUN mkdir impl
 WORKDIR /impl
@@ -41,8 +42,5 @@ RUN git clone https://github.com/sszwaczyk/requests-generator.git && cd requests
 
 #Http server
 RUN git clone https://github.com/sszwaczyk/http-server.git && cd http-server && mvn -DskipTests clean package
-
-#Wireshark
-RUN apt-get -y install wireshark
 
 CMD ovs-ctl start && bash

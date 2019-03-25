@@ -83,6 +83,18 @@ public class UnevenService implements IFloodlightModule, IUnevenService {
     }
 
     @Override
+    public Map<UnevenMetric, Double> getUneven(Map<NodePortTuple, SwitchPortBandwidth> bandwidthConsumption) {
+        log.debug("Calculating uneven use of resources...");
+        Map<UnevenMetric, Double> unevens = new HashMap<>();
+
+        unevens.put(gapUnevenCalculator.getMetric(), gapUnevenCalculator.calculateUneven(bandwidthConsumption));
+        unevens.put(varianceUnevenCalculator.getMetric(), varianceUnevenCalculator.calculateUneven(bandwidthConsumption));
+        unevens.put(variationCoefficientUnevenCalculator.getMetric(), variationCoefficientUnevenCalculator.calculateUneven(bandwidthConsumption));
+
+        return unevens;
+    }
+
+    @Override
     public Double getUneven(UnevenMetric metric) {
         Map<NodePortTuple, SwitchPortBandwidth> bandwidthConsumption = statisticsService.getBandwidthConsumption();
         return getUneven(metric, bandwidthConsumption);

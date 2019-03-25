@@ -1,4 +1,4 @@
-package pl.sszwaczyk.repository;
+package pl.sszwaczyk.repository.flow;
 
 public enum FlowStatus {
 

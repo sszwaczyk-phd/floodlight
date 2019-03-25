@@ -1,4 +1,4 @@
-package pl.sszwaczyk.repository.web;
+package pl.sszwaczyk.repository.flow.web;
 
 import net.floodlightcontroller.restserver.RestletRoutable;
 import org.restlet.Context;

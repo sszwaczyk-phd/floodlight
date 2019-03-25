@@ -5,6 +5,7 @@ import net.floodlightcontroller.core.module.FloodlightModuleException;
 import net.floodlightcontroller.core.module.IFloodlightModule;
 import net.floodlightcontroller.core.module.IFloodlightService;
 import net.floodlightcontroller.restserver.IRestApiService;
+import net.floodlightcontroller.statistics.SwitchPortBandwidth;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -12,13 +13,15 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.projectfloodlight.openflow.types.DatapathId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.sszwaczyk.repository.Flow;
-import pl.sszwaczyk.repository.ISecureFlowsRepository;
+import pl.sszwaczyk.repository.flow.Flow;
+import pl.sszwaczyk.repository.flow.ISecureFlowsRepository;
+import pl.sszwaczyk.repository.link.ILinkStatisticsRepository;
 import pl.sszwaczyk.routing.solver.Decision;
 import pl.sszwaczyk.security.SecurityDimension;
 import pl.sszwaczyk.security.threat.ThreatWithInfluence;
 import pl.sszwaczyk.service.Service;
 import pl.sszwaczyk.statistics.web.SecureRoutingStatisticsRoutable;
+import pl.sszwaczyk.uneven.UnevenMetric;
 import pl.sszwaczyk.user.User;
 
 import java.io.FileOutputStream;
@@ -31,6 +34,7 @@ public class SecureRoutingStatisticsService implements IFloodlightModule, ISecur
     private Logger log = LoggerFactory.getLogger(ISecureRoutingStatisticsService.class);
 
     private ISecureFlowsRepository secureFlowsRepository;
+    private ILinkStatisticsRepository linkStatisticsRepository;
     private IRestApiService restApiService;
 
     private SecureRoutingStatistics statistics;
@@ -63,6 +67,7 @@ public class SecureRoutingStatisticsService implements IFloodlightModule, ISecur
     @Override
     public void init(FloodlightModuleContext context) throws FloodlightModuleException {
         secureFlowsRepository = context.getServiceImpl(ISecureFlowsRepository.class);
+        linkStatisticsRepository = context.getServiceImpl(ILinkStatisticsRepository.class);
         restApiService = context.getServiceImpl(IRestApiService.class);
 
         statistics = new SecureRoutingStatistics();
@@ -106,11 +111,9 @@ public class SecureRoutingStatisticsService implements IFloodlightModule, ISecur
 
         createPendingFlowsSheet(workbook);
 
-//        createGeneralStatisticsSheet(workbook);
-//
-//        createRelationsStatisticsSheet(workbook);
-//
-//        createListStatitistcsSheet(workbook);
+        createLinksStatisticsSheet(workbook);
+
+        createUnevenStatisticsSheet(workbook);
 
         try (FileOutputStream fos = new FileOutputStream(statsFile)) {
             workbook.write(fos);
@@ -453,84 +456,42 @@ public class SecureRoutingStatisticsService implements IFloodlightModule, ISecur
         }
     }
 
-    private void createGeneralStatisticsSheet(Workbook workbook) {
-        Sheet sheet = workbook.createSheet("General");
-
-        sheet.createRow(0).createCell(0).setCellValue("Total");
-        sheet.createRow(1).createCell(0).setCellValue("Realized");
-        sheet.createRow(2).createCell(0).setCellValue("Realized RAR-BF");
-        sheet.createRow(3).createCell(0).setCellValue("Realized RAR-RF");
-        sheet.createRow(4).createCell(0).setCellValue("Not realized");
-
-        sheet.getRow(0).createCell(1).setCellValue(statistics.getTotal());
-        sheet.getRow(1).createCell(1).setCellValue(statistics.getRealized());
-        sheet.getRow(2).createCell(1).setCellValue(statistics.getRealizedInRarBf());
-        sheet.getRow(3).createCell(1).setCellValue(statistics.getRealizedInRarRf());
-        sheet.getRow(4).createCell(1).setCellValue(statistics.getNotRealized());
-    }
-
-    private void createRelationsStatisticsSheet(Workbook workbook) {
-        Sheet sheet = workbook.createSheet("Relations");
+    private void createLinksStatisticsSheet(Workbook workbook) {
+        Sheet sheet = workbook.createSheet("Links Stats");
 
         Row row0 = sheet.createRow(0);
-        row0.createCell(2).setCellValue("Realized");
-        row0.createCell(3).setCellValue("Realized RAR-BF");
-        row0.createCell(4).setCellValue("Realized RAR-RF");
-        row0.createCell(5).setCellValue("Not realized");
+        row0.createCell(0).setCellValue("Datapath ID");
+        row0.createCell(1).setCellValue("Port");
+        row0.createCell(2).setCellValue("Max TX Utilization");
+        row0.createCell(3).setCellValue("Max TX Utilization [%]");
 
         int i = 1;
-        Map<User, Map<Service, RelationStats>> relationStatsMap = statistics.getRelationStatsMap();
-        for(User u: relationStatsMap.keySet()) {
-            sheet.createRow(i).createCell(0).setCellValue(u.getId());
-            Map<Service, RelationStats> serviceRelationStatsMap = relationStatsMap.get(u);
-            for(Service s: serviceRelationStatsMap.keySet()) {
-                Row row = sheet.getRow(i);
-                if(row == null) {
-                    row = sheet.createRow(i);
-                }
-                row.createCell(1).setCellValue(s.getId());
-                RelationStats relationStats = serviceRelationStatsMap.get(s);
-                row.createCell(2).setCellValue(relationStats.getRealized());
-                row.createCell(3).setCellValue(relationStats.getRealizedInRarBf());
-                row.createCell(4).setCellValue(relationStats.getRealizedInRarRf());
-                row.createCell(5).setCellValue(relationStats.getNotRealized());
-                i++;
-            }
+        List<SwitchPortBandwidth> maxLinksBandwidth = linkStatisticsRepository.getMaxLinksBandwidth();
+        for(SwitchPortBandwidth spb: maxLinksBandwidth) {
+            Row row = sheet.createRow(i);
+            row.createCell(0).setCellValue(spb.getSwitchId().toString());
+            row.createCell(1).setCellValue(spb.getSwitchPort().getPortNumber());
+            row.createCell(2).setCellValue(spb.getTxUtilization());
+            row.createCell(3).setCellValue(spb.getTxUtilizationPercent());
+            i++;
         }
+
     }
 
-    private void createListStatitistcsSheet(Workbook workbook) {
-        Sheet sheet = workbook.createSheet("List");
+    private void createUnevenStatisticsSheet(Workbook workbook) {
+        Sheet sheet = workbook.createSheet("Uneven stats");
 
         Row row0 = sheet.createRow(0);
-        row0.createCell(0).setCellValue("Time");
-        row0.createCell(1).setCellValue("User");
-        row0.createCell(2).setCellValue("Service");
-        row0.createCell(3).setCellValue("Region");
-        row0.createCell(4).setCellValue("Value");
-        row0.createCell(5).setCellValue("Risk C");
-        row0.createCell(6).setCellValue("Risk I");
-        row0.createCell(7).setCellValue("Risk A");
-        row0.createCell(8).setCellValue("Risk T");
-        row0.createCell(9).setCellValue("Aggregated risk");
-        row0.createCell(10).setCellValue("Path");
+        row0.createCell(0).setCellValue("Metric");
+        row0.createCell(1).setCellValue("Max value");
 
-        List<ServerResponse> realizedList = statistics.getRealizedList();
-        for(int i = 0; i < realizedList.size(); i++) {
-            ServerResponse serverResponse = realizedList.get(i);
-            Row row = sheet.createRow(i + 1);
-            row.createCell(0).setCellValue(serverResponse.getTime().format(DateTimeFormatter.ISO_LOCAL_TIME));
-            row.createCell(1).setCellValue(serverResponse.getUserId());
-            row.createCell(2).setCellValue(serverResponse.getServiceId());
-            row.createCell(3).setCellValue(serverResponse.getSolveResult().getRegion().toString());
-            row.createCell(4).setCellValue(serverResponse.getSolveResult().getValue());
-            Map<SecurityDimension, Float> risks = serverResponse.getSolveResult().getRisks();
-            row.createCell(5).setCellValue(risks.get(SecurityDimension.CONFIDENTIALITY));
-            row.createCell(6).setCellValue(risks.get(SecurityDimension.INTEGRITY));
-            row.createCell(7).setCellValue(risks.get(SecurityDimension.AVAILABILITY));
-            row.createCell(8).setCellValue(risks.get(SecurityDimension.TRUST));
-            row.createCell(9).setCellValue(serverResponse.getSolveResult().getRisk());
-            row.createCell(10).setCellValue(serverResponse.getSolveResult().getPath().toString());
+        int i = 1;
+        Map<UnevenMetric, Double> maxUneven = linkStatisticsRepository.getMaxUneven();
+        for(Map.Entry<UnevenMetric, Double> entry: maxUneven.entrySet()) {
+            Row row = sheet.createRow(i);
+            row.createCell(0).setCellValue(entry.getKey().toString());
+            row.createCell(1).setCellValue(entry.getValue());
+            i++;
         }
     }
 }

@@ -1,4 +1,4 @@
-package pl.sszwaczyk.repository;
+package pl.sszwaczyk.repository.flow;
 
 import net.floodlightcontroller.core.FloodlightContext;
 import net.floodlightcontroller.core.IFloodlightProviderService;
@@ -22,7 +22,7 @@ import org.projectfloodlight.openflow.types.IpProtocol;
 import org.projectfloodlight.openflow.types.TransportPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pl.sszwaczyk.repository.web.SecureFlowsRepositoryRoutable;
+import pl.sszwaczyk.repository.flow.web.SecureFlowsRepositoryRoutable;
 import pl.sszwaczyk.routing.solver.Decision;
 import pl.sszwaczyk.utils.AddressAndPort;
 import pl.sszwaczyk.utils.AddressesAndPorts;

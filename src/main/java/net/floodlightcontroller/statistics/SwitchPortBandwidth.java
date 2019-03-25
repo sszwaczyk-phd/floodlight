@@ -175,4 +175,15 @@ public class SwitchPortBandwidth {
 			return false;
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "SwitchPortBandwidth{" +
+				"id=" + id +
+				", pt=" + pt +
+				", speed=" + speed.getValue() +
+				", rxUtilization=" + rxUtilization +
+				", txUtilization=" + txUtilization +
+				'}';
+	}
 }

@@ -1,4 +1,4 @@
-package pl.sszwaczyk.repository;
+package pl.sszwaczyk.repository.flow;
 
 import net.floodlightcontroller.core.module.IFloodlightService;
 import net.floodlightcontroller.routing.Path;

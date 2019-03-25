@@ -1,4 +1,4 @@
-package pl.sszwaczyk.repository;
+package pl.sszwaczyk.repository.flow;
 
 import lombok.Builder;
 import lombok.Data;
