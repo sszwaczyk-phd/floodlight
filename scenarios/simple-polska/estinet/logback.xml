@@ -21,8 +21,9 @@
   <logger name="net.floodlightcontroller" level="INFO"/>
   <logger name="org.sdnplatform" level="INFO"/>
   <logger name="pl.sszwaczyk" level="INFO" />
-  <logger name="net.floodlightcontroller.forwarding" level="TRACE"/>
-  <logger name="net.floodlightcontroller.routing.ForwardingBase" level="TRACE"/>
+  <!--<logger name="net.floodlightcontroller.forwarding" level="TRACE"/>-->
+  <!--<logger name="net.floodlightcontroller.routing.ForwardingBase" level="TRACE"/>-->
   <!--<logger name="net.floodlightcontroller.statistics" level="DEBUG" />-->
+  <logger name="net.floodlightcontroller.linkdiscovery.internal.LinkDiscoveryManager" level="ERROR"/>
 
 </configuration>
