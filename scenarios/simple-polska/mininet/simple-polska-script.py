@@ -54,6 +54,13 @@ def simplePolska():
     userFiveHost = net.addHost( 'User5', cls=Host, ip='10.0.0.105/24' )
     userSixHost = net.addHost( 'User6', cls=Host, ip='10.0.0.106/24' )
     userSevenHost = net.addHost( 'User7', cls=Host, ip='10.0.0.107/24' )
+    userEightHost = net.addHost( 'User8', cls=Host, ip='10.0.0.108/24' )
+    userNineHost = net.addHost( 'User9', cls=Host, ip='10.0.0.109/24' )
+    userTenHost = net.addHost( 'User10', cls=Host, ip='10.0.0.110/24' )
+    userElevenHost = net.addHost( 'User11', cls=Host, ip='10.0.0.111/24' )
+    userTwelveHost = net.addHost( 'User12', cls=Host, ip='10.0.0.112/24' )
+    userThirteenHost = net.addHost( 'User13', cls=Host, ip='10.0.0.113/24' )
+    userFourteenHost = net.addHost( 'User14', cls=Host, ip='10.0.0.114/24' )
 
     serviceOneHost = net.addHost( 'Service1', cls=Host, ip='10.0.0.1/24' )
     serviceTwoHost = net.addHost( 'Service2', cls=Host, ip='10.0.0.2/24' )
@@ -63,50 +70,57 @@ def simplePolska():
 
     info( '*** Add links\n')
     # Add links between switches
-    net.addLink( kolobrzeg, gdansk, cls=TCLink , bw=1000 )
-    net.addLink( kolobrzeg, szczecin, cls=TCLink , bw=1000 )
-    net.addLink( kolobrzeg, bydgoszcz, cls=TCLink , bw=1000 )
+    net.addLink( kolobrzeg, gdansk, cls=TCLink , bw=100 )
+    net.addLink( kolobrzeg, szczecin, cls=TCLink , bw=100 )
+    net.addLink( kolobrzeg, bydgoszcz, cls=TCLink , bw=100 )
 
-    net.addLink( gdansk, bialystok, cls=TCLink , bw=1000 )
-    net.addLink( gdansk, warsaw, cls=TCLink , bw=1000 )
+    net.addLink( gdansk, bialystok, cls=TCLink , bw=100 )
+    net.addLink( gdansk, warsaw, cls=TCLink , bw=100 )
 
-    net.addLink( szczecin, poznan, cls=TCLink , bw=1000 )
+    net.addLink( szczecin, poznan, cls=TCLink , bw=100 )
 
-    net.addLink( bydgoszcz, poznan, cls=TCLink , bw=1000 )
-    net.addLink( bydgoszcz, warsaw, cls=TCLink , bw=1000 )
+    net.addLink( bydgoszcz, poznan, cls=TCLink , bw=100 )
+    net.addLink( bydgoszcz, warsaw, cls=TCLink , bw=100 )
 
-    net.addLink( bialystok, warsaw, cls=TCLink , bw=1000 )
-    net.addLink( bialystok, rzeszow, cls=TCLink , bw=1000 )
+    net.addLink( bialystok, warsaw, cls=TCLink , bw=100 )
+    net.addLink( bialystok, rzeszow, cls=TCLink , bw=100 )
 
-    net.addLink( poznan, wroclaw, cls=TCLink , bw=1000 )
+    net.addLink( poznan, wroclaw, cls=TCLink , bw=100 )
 
-    net.addLink( warsaw, lodz, cls=TCLink , bw=1000 )
-    net.addLink( warsaw, krakow, cls=TCLink , bw=1000 )
+    net.addLink( warsaw, lodz, cls=TCLink , bw=100 )
+    net.addLink( warsaw, krakow, cls=TCLink , bw=100 )
 
-    net.addLink( lodz, wroclaw, cls=TCLink , bw=1000 )
-    net.addLink( lodz, katowice, cls=TCLink , bw=1000 )
+    net.addLink( lodz, wroclaw, cls=TCLink , bw=100 )
+    net.addLink( lodz, katowice, cls=TCLink , bw=100 )
 
-    net.addLink( wroclaw, katowice, cls=TCLink , bw=1000 )
+    net.addLink( wroclaw, katowice, cls=TCLink , bw=100 )
 
-    net.addLink( katowice, krakow, cls=TCLink , bw=1000 )
+    net.addLink( katowice, krakow, cls=TCLink , bw=100 )
 
-    net.addLink( krakow, rzeszow, cls=TCLink , bw=1000 )
+    net.addLink( krakow, rzeszow, cls=TCLink , bw=100 )
 
     # Add links to services
-    net.addLink( kolobrzeg, serviceOneHost, cls=TCLink , bw=1000 )
-    net.addLink( bialystok, serviceTwoHost, cls=TCLink , bw=1000 )
-    net.addLink( warsaw, serviceThreeHost, cls=TCLink , bw=1000 )
-    net.addLink( wroclaw, serviceFourHost, cls=TCLink , bw=1000 )
-    net.addLink( rzeszow, serviceFiveHost, cls=TCLink , bw=1000 )
+    net.addLink( kolobrzeg, serviceOneHost, cls=TCLink , bw=100 )
+    net.addLink( bialystok, serviceTwoHost, cls=TCLink , bw=100 )
+    net.addLink( warsaw, serviceThreeHost, cls=TCLink , bw=100 )
+    net.addLink( wroclaw, serviceFourHost, cls=TCLink , bw=100 )
+    net.addLink( rzeszow, serviceFiveHost, cls=TCLink , bw=100 )
 
     #Add links to users
-    net.addLink( gdansk, userOneHost, cls=TCLink , bw=1000 )
-    net.addLink( szczecin, userTwoHost, cls=TCLink , bw=1000 )
-    net.addLink( bydgoszcz, userThreeHost, cls=TCLink , bw=1000 )
-    net.addLink( poznan, userFourHost, cls=TCLink , bw=1000 )
-    net.addLink( lodz, userFiveHost, cls=TCLink , bw=1000 )
-    net.addLink( katowice, userSixHost, cls=TCLink , bw=1000 )
-    net.addLink( krakow, userSevenHost, cls=TCLink , bw=1000 )
+    net.addLink( gdansk, userOneHost, cls=TCLink , bw=100 )
+    net.addLink( szczecin, userTwoHost, cls=TCLink , bw=100 )
+    net.addLink( bydgoszcz, userThreeHost, cls=TCLink , bw=100 )
+    net.addLink( poznan, userFourHost, cls=TCLink , bw=100 )
+    net.addLink( lodz, userFiveHost, cls=TCLink , bw=100 )
+    net.addLink( katowice, userSixHost, cls=TCLink , bw=100 )
+    net.addLink( krakow, userSevenHost, cls=TCLink , bw=100 )
+    net.addLink( gdansk, userEightHost, cls=TCLink , bw=100 )
+    net.addLink( szczecin, userNineHost, cls=TCLink , bw=100 )
+    net.addLink( bydgoszcz, userTenHost, cls=TCLink , bw=100 )
+    net.addLink( poznan, userElevenHost, cls=TCLink , bw=100 )
+    net.addLink( lodz, userTwelveHost, cls=TCLink , bw=100 )
+    net.addLink( katowice, userThirteenHost, cls=TCLink , bw=100 )
+    net.addLink( krakow, userFourteenHost, cls=TCLink , bw=100 )
 
     net.staticArp()
 
@@ -172,12 +186,40 @@ def simplePolska():
     popens[userFiveHost] = userFiveHost.popen(userFiveCommand.split())
 
     sleep(1)
-    userSixCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-six -st ./user-six-exit.xlsx -er ./user-six-every-request.xlsx -s 55555 -g uniform -ming 5 -maxg 10'
+    userSixCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-six -st ./user-six-exit.xlsx -er ./user-six-every-request.xlsx -s 66666 -g uniform -ming 5 -maxg 10'
     popens[userSixHost] = userSixHost.popen(userSixCommand.split())
 
     sleep(1)
-    userSevenCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-seven -st ./user-seven-exit.xlsx -er ./user-seven-every-request.xlsx -s 55555 -g uniform -ming 5 -maxg 10'
+    userSevenCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-seven -st ./user-seven-exit.xlsx -er ./user-seven-every-request.xlsx -s 77777 -g uniform -ming 5 -maxg 10'
     popens[userSevenHost] = userSevenHost.popen(userSevenCommand.split())
+
+    sleep(1)
+    userEightCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-eight -st ./user-eight-exit.xlsx -er ./user-eight-every-request.xlsx -s 88888 -g uniform -ming 5 -maxg 10'
+    popens[userEightHost] = userEightHost.popen(userEightCommand.split())
+
+    sleep(1)
+    userNineCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Nine -st ./user-Nine-exit.xlsx -er ./user-Nine-every-request.xlsx -s 99999 -g uniform -ming 5 -maxg 10'
+    popens[userNineHost] = userNineHost.popen(userNineCommand.split())
+
+    sleep(1)
+    userTenCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Ten -st ./user-Ten-exit.xlsx -er ./user-Ten-every-request.xlsx -s 1010101010 -g uniform -ming 5 -maxg 10'
+    popens[userTenHost] = userTenHost.popen(userTenCommand.split())
+
+    sleep(1)
+    userElevenCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Eleven -st ./user-Eleven-exit.xlsx -er ./user-Eleven-every-request.xlsx -s 1111111111 -g uniform -ming 5 -maxg 10'
+    popens[userElevenHost] = userElevenHost.popen(userElevenCommand.split())
+
+    sleep(1)
+    userTwelveCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Twelve -st ./user-Twelve-exit.xlsx -er ./user-Twelve-every-request.xlsx -s 1212121212 -g uniform -ming 5 -maxg 10'
+    popens[userTwelveHost] = userTwelveHost.popen(userTwelveCommand.split())
+
+    sleep(1)
+    userThirteenCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Thirteen -st ./user-Thirteen-exit.xlsx -er ./user-Thirteen-every-request.xlsx -s 1313131313 -g uniform -ming 5 -maxg 10'
+    popens[userThirteenHost] = userThirteenHost.popen(userThirteenCommand.split())
+
+    sleep(1)
+    userFourteenCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Fourteen -st ./user-Fourteen-exit.xlsx -er ./user-Fourteen-every-request.xlsx -s 1414141414 -g uniform -ming 5 -maxg 10'
+    popens[userFourteenHost] = userFourteenHost.popen(userFourteenCommand.split())
 
     info( "Simulating for", 120, "seconds\n" )
     endTime = time() + 120
