@@ -7,13 +7,18 @@ from mininet.node import IVSSwitch
 from mininet.cli import CLI
 from mininet.log import setLogLevel, info
 from mininet.link import TCLink, Intf
+from mininet.util import pmonitor
 from subprocess import call
 
 from time import sleep
+from time import time
+from signal import SIGINT
+from signal import SIGTERM
 
 import os
 import signal
 import subprocess
+
 def simplePolska():
 
     net = Mininet( topo=None,
@@ -23,7 +28,7 @@ def simplePolska():
     info( '*** Adding controller\n' )
     c0=net.addController(name='c0',
                          controller=RemoteController,
-                         ip='172.17.0.1',
+                         ip='127.0.0.1',
                          protocol='tcp',
                          port=6653)
 
@@ -58,50 +63,50 @@ def simplePolska():
 
     info( '*** Add links\n')
     # Add links between switches
-    net.addLink( kolobrzeg, gdansk, cls=TCLink , bw=10 )
-    net.addLink( kolobrzeg, szczecin, cls=TCLink , bw=10 )
-    net.addLink( kolobrzeg, bydgoszcz, cls=TCLink , bw=10 )
+    net.addLink( kolobrzeg, gdansk, cls=TCLink , bw=1000 )
+    net.addLink( kolobrzeg, szczecin, cls=TCLink , bw=1000 )
+    net.addLink( kolobrzeg, bydgoszcz, cls=TCLink , bw=1000 )
 
-    net.addLink( gdansk, bialystok, cls=TCLink , bw=10 )
-    net.addLink( gdansk, warsaw, cls=TCLink , bw=10 )
+    net.addLink( gdansk, bialystok, cls=TCLink , bw=1000 )
+    net.addLink( gdansk, warsaw, cls=TCLink , bw=1000 )
 
-    net.addLink( szczecin, poznan, cls=TCLink , bw=10 )
+    net.addLink( szczecin, poznan, cls=TCLink , bw=1000 )
 
-    net.addLink( bydgoszcz, poznan, cls=TCLink , bw=10 )
-    net.addLink( bydgoszcz, warsaw, cls=TCLink , bw=10 )
+    net.addLink( bydgoszcz, poznan, cls=TCLink , bw=1000 )
+    net.addLink( bydgoszcz, warsaw, cls=TCLink , bw=1000 )
 
-    net.addLink( bialystok, warsaw, cls=TCLink , bw=10 )
-    net.addLink( bialystok, rzeszow, cls=TCLink , bw=10 )
+    net.addLink( bialystok, warsaw, cls=TCLink , bw=1000 )
+    net.addLink( bialystok, rzeszow, cls=TCLink , bw=1000 )
 
-    net.addLink( poznan, wroclaw, cls=TCLink , bw=10 )
+    net.addLink( poznan, wroclaw, cls=TCLink , bw=1000 )
 
-    net.addLink( warsaw, lodz, cls=TCLink , bw=10 )
-    net.addLink( warsaw, krakow, cls=TCLink , bw=10 )
+    net.addLink( warsaw, lodz, cls=TCLink , bw=1000 )
+    net.addLink( warsaw, krakow, cls=TCLink , bw=1000 )
 
-    net.addLink( lodz, wroclaw, cls=TCLink , bw=10 )
-    net.addLink( lodz, katowice, cls=TCLink , bw=10 )
+    net.addLink( lodz, wroclaw, cls=TCLink , bw=1000 )
+    net.addLink( lodz, katowice, cls=TCLink , bw=1000 )
 
-    net.addLink( wroclaw, katowice, cls=TCLink , bw=10 )
+    net.addLink( wroclaw, katowice, cls=TCLink , bw=1000 )
 
-    net.addLink( katowice, krakow, cls=TCLink , bw=10 )
+    net.addLink( katowice, krakow, cls=TCLink , bw=1000 )
 
-    net.addLink( krakow, rzeszow, cls=TCLink , bw=10 )
+    net.addLink( krakow, rzeszow, cls=TCLink , bw=1000 )
 
     # Add links to services
-    net.addLink( kolobrzeg, serviceOneHost, cls=TCLink , bw=10 )
-    net.addLink( bialystok, serviceTwoHost, cls=TCLink , bw=10 )
-    net.addLink( warsaw, serviceThreeHost, cls=TCLink , bw=10 )
-    net.addLink( wroclaw, serviceFourHost, cls=TCLink , bw=10 )
-    net.addLink( rzeszow, serviceFiveHost, cls=TCLink , bw=10 )
+    net.addLink( kolobrzeg, serviceOneHost, cls=TCLink , bw=1000 )
+    net.addLink( bialystok, serviceTwoHost, cls=TCLink , bw=1000 )
+    net.addLink( warsaw, serviceThreeHost, cls=TCLink , bw=1000 )
+    net.addLink( wroclaw, serviceFourHost, cls=TCLink , bw=1000 )
+    net.addLink( rzeszow, serviceFiveHost, cls=TCLink , bw=1000 )
 
     #Add links to users
-    net.addLink( gdansk, userOneHost, cls=TCLink , bw=10 )
-    net.addLink( szczecin, userTwoHost, cls=TCLink , bw=10 )
-    net.addLink( bydgoszcz, userThreeHost, cls=TCLink , bw=10 )
-    net.addLink( poznan, userFourHost, cls=TCLink , bw=10 )
-    net.addLink( lodz, userFiveHost, cls=TCLink , bw=10 )
-    net.addLink( katowice, userSixHost, cls=TCLink , bw=10 )
-    net.addLink( krakow, userSevenHost, cls=TCLink , bw=10 )
+    net.addLink( gdansk, userOneHost, cls=TCLink , bw=1000 )
+    net.addLink( szczecin, userTwoHost, cls=TCLink , bw=1000 )
+    net.addLink( bydgoszcz, userThreeHost, cls=TCLink , bw=1000 )
+    net.addLink( poznan, userFourHost, cls=TCLink , bw=1000 )
+    net.addLink( lodz, userFiveHost, cls=TCLink , bw=1000 )
+    net.addLink( katowice, userSixHost, cls=TCLink , bw=1000 )
+    net.addLink( krakow, userSevenHost, cls=TCLink , bw=1000 )
 
     net.staticArp()
 
@@ -137,49 +142,53 @@ def simplePolska():
     serviceFiveHost.cmd('java -jar /impl/http-server/target/http-server-0.0.1-SNAPSHOT.jar --usersFile=/impl/floodlight/scenarios/simple-polska/users.json --servicesFile=/impl/floodlight/scenarios/simple-polska/mininet/services.json --logging.file=./service-five.log --exitStatsFile=./service-five-exit.xlsx &')
     serviceFivePid = int( serviceFiveHost.cmdPrint('echo $!') )
 
-    info( '*** Sleep 10 seconds to let services start...\n')
-    sleep(10)
+    info( '*** Sleep 30 seconds to let services start...\n')
+    sleep(30)
 
     info( '*** Starting wiresharks on requests generators...\n')
     userOneHost.cmd('tcpdump -i any -w user-one.pcap &')
 
-
     info( '*** Starting requests generators...\n')
-    sleep(70)
-    userOneHost.cmdPrint('java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-one -st ./user-one-exit.xlsx -er ./user-one-every-request.xlsx -s 11111 -g uniform -ming 5 -maxg 10 &')
-    userOnePid = int( userOneHost.cmdPrint('echo $!') )
-    sleep(10)
-    userTwoHost.cmdPrint('java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-two -st ./user-two-exit.xlsx -er ./user-two-every-request.xlsx -s 22222 -g uniform -ming 5 -maxg 10 &')
-    userTwoPid = int( userTwoHost.cmdPrint('echo $!') )
-    sleep(10)
-    userThreeHost.cmdPrint('java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-three -st ./user-three-exit.xlsx -er ./user-three-every-request.xlsx -s 33333 -g uniform -ming 5 -maxg 10 &')
-    userThreePid = int( userThreeHost.cmdPrint('echo $!') )
-    sleep(10)
-    userFourHost.cmdPrint('java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-four -st ./user-four-exit.xlsx -er ./user-four-every-request.xlsx -s 44444 -g uniform -ming 5 -maxg 10 &')
-    userFourPid = int( userFourHost.cmdPrint('echo $!') )
-    sleep(10)
-    userFiveHost.cmdPrint('java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-five -st ./user-five-exit.xlsx -er ./user-five-every-request.xlsx -s 55555 -g uniform -ming 5 -maxg 10 &')
-    userFivePid = int( userFiveHost.cmdPrint('echo $!') )
-    sleep(10)
-    userSixHost.cmdPrint('java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-six -st ./user-six-exit.xlsx -er ./user-six-every-request.xlsx -s 66666 -g uniform -ming 5 -maxg 10 &')
-    userSixPid = int( userSixHost.cmdPrint('echo $!') )
-    sleep(10)
-    userSevenHost.cmdPrint('java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-seven -st ./user-seven-exit.xlsx -er ./user-seven-every-request.xlsx -s 77777 -g uniform -ming 5 -maxg 10 &')
-    userSevenPid = int( userSevenHost.cmdPrint('echo $!') )
 
-    # CLI(net)
+    popens = {}
 
-    info( '*** Simulation...\n')
-    sleep(600)
+    userOneCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-one -st ./user-one-exit.xlsx -er ./user-one-every-request.xlsx -s 11111 -g uniform -ming 5 -maxg 10'
+    popens[userOneHost] = userOneHost.popen(userOneCommand.split())
 
-    info( '*** Stopping requests generators...\n')
-    userOneHost.cmd('kill', userOnePid)
-    userTwoHost.cmd('kill', userTwoPid)
-    userThreeHost.cmd('kill', userThreePid)
-    userFourHost.cmd('kill', userFourPid)
-    userFiveHost.cmd('kill', userFivePid)
-    userSixHost.cmd('kill', userSixPid)
-    userSevenHost.cmd('kill', userSevenPid)
+    sleep(1)
+    userTwoCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-two -st ./user-two-exit.xlsx -er ./user-two-every-request.xlsx -s 22222 -g uniform -ming 5 -maxg 10'
+    popens[userTwoHost] = userTwoHost.popen(userTwoCommand.split())
+
+    sleep(1)
+    userThreeCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-three -st ./user-three-exit.xlsx -er ./user-three-every-request.xlsx -s 33333 -g uniform -ming 5 -maxg 10'
+    popens[userThreeHost] = userThreeHost.popen(userThreeCommand.split())
+
+    sleep(1)
+    userFourCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-four -st ./user-four-exit.xlsx -er ./user-four-every-request.xlsx -s 44444 -g uniform -ming 5 -maxg 10'
+    popens[userFourHost] = userFourHost.popen(userFourCommand.split())
+
+    sleep(1)
+    userFiveCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-five -st ./user-five-exit.xlsx -er ./user-five-every-request.xlsx -s 55555 -g uniform -ming 5 -maxg 10'
+    popens[userFiveHost] = userFiveHost.popen(userFiveCommand.split())
+
+    sleep(1)
+    userSixCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-six -st ./user-six-exit.xlsx -er ./user-six-every-request.xlsx -s 55555 -g uniform -ming 5 -maxg 10'
+    popens[userSixHost] = userSixHost.popen(userSixCommand.split())
+
+    sleep(1)
+    userSevenCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-seven -st ./user-seven-exit.xlsx -er ./user-seven-every-request.xlsx -s 55555 -g uniform -ming 5 -maxg 10'
+    popens[userSevenHost] = userSevenHost.popen(userSevenCommand.split())
+
+    info( "Simulating for", 120, "seconds\n" )
+    endTime = time() + 120
+
+    for h, line in pmonitor( popens, timeoutms=500 ):
+        if h:
+            info( '<%s>: %s' % ( h.name, line ) )
+        if time() >= endTime:
+            for p in popens.values():
+                info( '*** Stopping requests generators...\n')
+                p.send_signal( SIGTERM )
 
     info( '*** Stopping services...\n')
     serviceOneHost.cmd('kill', serviceOnePid)
@@ -194,14 +203,14 @@ def simplePolska():
 if __name__ == '__main__':
     setLogLevel( 'info' )
 
-    # info( '*** Starting controller...\n')
-    # cmd = "java -jar target/floodlight.jar -cf /impl/floodlight/scenarios/simple-polska/mininet/floodlightdefault.properties"
-    # proc = subprocess.Popen(cmd.split(), cwd='/impl/floodlight')
-    #
-    # info( '*** Sleep 5 seconds to let controller start...\n')
-    # sleep(5)
+    info( '*** Starting controller...\n')
+    cmd = "java -jar target/floodlight.jar -cf /impl/floodlight/scenarios/simple-polska/mininet/floodlightdefault.properties"
+    proc = subprocess.Popen(cmd.split(), cwd='/impl/floodlight')
+
+    info( '*** Sleep 5 seconds to let controller start...\n')
+    sleep(5)
 
     simplePolska()
 
-    # info( '*** Stopping controller...\n')
-    # os.kill(proc.pid, signal.SIGTERM)
+    info( '*** Stopping controller...\n')
+    os.kill(proc.pid, signal.SIGTERM)

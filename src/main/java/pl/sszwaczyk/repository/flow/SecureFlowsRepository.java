@@ -31,6 +31,7 @@ import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class SecureFlowsRepository implements IFloodlightModule, ISecureFlowsRepository, IOFMessageListener {
 
@@ -41,7 +42,7 @@ public class SecureFlowsRepository implements IFloodlightModule, ISecureFlowsRep
 
     private List<Flow> finishedFlows = new ArrayList<>();
 
-    private List<Flow> pendingFlows = new ArrayList<>();
+    private CopyOnWriteArrayList<Flow> pendingFlows =  new CopyOnWriteArrayList();
 
     private volatile Map<AddressesAndPorts, Path> actualPaths = new ConcurrentHashMap<>();
 

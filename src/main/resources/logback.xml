@@ -29,6 +29,6 @@
   <!--<logger name="pl.sszwaczyk.filter" level="DEBUG" />-->
   <!--<logger name="net.floodlightcontroller.forwarding" level="INFO"/>-->
   <!--<logger name="net.floodlightcontroller.statistics" level="DEBUG" />-->
-  <logger name="pl.sszwaczyk.repository.link" level="DEBUG" />
+  <!--<logger name="pl.sszwaczyk.repository.link" level="DEBUG" />-->
 
 </configuration>
