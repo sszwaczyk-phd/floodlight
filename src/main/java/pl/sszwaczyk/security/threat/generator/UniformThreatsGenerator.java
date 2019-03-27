@@ -30,6 +30,8 @@ public class UniformThreatsGenerator {
     private IOFSwitchService switchService;
     private IRoutingService routingService;
 
+    private long seed;
+
     private int minGap;
     private int maxGap;
 
@@ -37,7 +39,7 @@ public class UniformThreatsGenerator {
     private int maxDuration;
 
     public void start() {
-        Random random = new Random();
+        Random random = new Random(seed);
 
         while(true) {
             Threat threat = new Threat();
@@ -73,15 +75,15 @@ public class UniformThreatsGenerator {
             }
             threat.setSwitches(switches);
 
-            threat.setDuration(ThreadLocalRandom.current().nextLong(minDuration, maxDuration + 1));
+            threat.setDuration(random.nextInt((maxDuration - minDuration) + 1) + minDuration);
 
             log.info("Starting Threat {}", threat);
             threatService.startThreat(threat);
 
             try {
-                long gap = ThreadLocalRandom.current().nextLong(minGap * 1000, maxGap * 1000 + 1);
-                log.info("Sleeping between next threat generation for {} seconds", (gap / 1000));
-                Thread.sleep(gap);
+                int gap = random.nextInt((maxGap - minGap) + 1) + minGap;
+                log.info("Sleeping between next threat generation for {} seconds", gap);
+                Thread.sleep(gap * 1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

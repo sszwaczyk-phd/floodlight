@@ -65,6 +65,7 @@ public class ThreatService implements IFloodlightModule, IThreatService {
                     .threatService(this)
                     .routingService(routingService)
                     .switchService(switchService)
+                    .seed(Integer.parseInt(configParameters.get("random-seed")))
                     .minGap(Integer.parseInt(configParameters.get("min-gap")))
                     .maxGap(Integer.parseInt(configParameters.get("max-gap")))
                     .minDuration(Integer.parseInt(configParameters.get("min-duration")))

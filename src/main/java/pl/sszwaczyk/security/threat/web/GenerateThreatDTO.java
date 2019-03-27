@@ -15,6 +15,6 @@ public class GenerateThreatDTO {
 
     private List<String> switches;
 
-    private long duration; //seconds
+    private int duration; //seconds
 
 }

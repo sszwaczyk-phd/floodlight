@@ -19,5 +19,5 @@ public class Threat {
     List<DatapathId> switches;
 
     private LocalTime startTime;
-    private Long duration; //seconds
+    private Integer duration; //seconds
 }
