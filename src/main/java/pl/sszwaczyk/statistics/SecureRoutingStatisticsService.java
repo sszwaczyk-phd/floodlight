@@ -14,9 +14,11 @@ import org.projectfloodlight.openflow.types.DatapathId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.sszwaczyk.repository.flow.Flow;
+import pl.sszwaczyk.repository.flow.FlowStatus;
 import pl.sszwaczyk.repository.flow.ISecureFlowsRepository;
 import pl.sszwaczyk.repository.link.ILinkStatisticsRepository;
 import pl.sszwaczyk.routing.solver.Decision;
+import pl.sszwaczyk.routing.solver.SolveRegion;
 import pl.sszwaczyk.security.SecurityDimension;
 import pl.sszwaczyk.security.threat.ThreatWithInfluence;
 import pl.sszwaczyk.service.Service;
@@ -26,8 +28,8 @@ import pl.sszwaczyk.user.User;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class SecureRoutingStatisticsService implements IFloodlightModule, ISecureRoutingStatisticsService {
 
@@ -61,6 +63,7 @@ public class SecureRoutingStatisticsService implements IFloodlightModule, ISecur
                 new ArrayList<Class<? extends IFloodlightService>>();
         l.add(IRestApiService.class);
         l.add(ISecureFlowsRepository.class);
+        l.add(ILinkStatisticsRepository.class);
         return l;
     }
 
@@ -115,6 +118,8 @@ public class SecureRoutingStatisticsService implements IFloodlightModule, ISecur
 
         createUnevenStatisticsSheet(workbook);
 
+        createGeneralAndRelationsStatisticsSheet(workbook);
+
         try (FileOutputStream fos = new FileOutputStream(statsFile)) {
             workbook.write(fos);
         } catch (IOException e) {
@@ -124,6 +129,98 @@ public class SecureRoutingStatisticsService implements IFloodlightModule, ISecur
 
         log.info("Snapshot of secure routing statistics saved to " + statsFile);
         return statsFile;
+    }
+
+    private void createGeneralAndRelationsStatisticsSheet(Workbook workbook) {
+        AtomicLong total = new AtomicLong();
+        AtomicLong realized = new AtomicLong();
+        AtomicLong realizedRarBf = new AtomicLong();
+        AtomicLong realizedRarRf = new AtomicLong();
+        AtomicLong notRealized = new AtomicLong();
+
+        Map<User, Map<Service, RelationStats>> relationStatsMap = new HashMap<>();
+
+        secureFlowsRepository.getFinishedFlows().forEach(flow -> {
+            User user = flow.getUser();
+            Service service = flow.getService();
+            Map<Service, RelationStats> serviceRelationStatsMap = relationStatsMap.get(user);
+            RelationStats relationStats;
+            if(serviceRelationStatsMap == null) {
+                serviceRelationStatsMap = new HashMap<>();
+                relationStats = new RelationStats();
+            } else {
+                relationStats = serviceRelationStatsMap.get(service);
+                if(relationStats == null) {
+                    relationStats = new RelationStats();
+                }
+            }
+            serviceRelationStatsMap.put(service, relationStats);
+            relationStatsMap.put(user, serviceRelationStatsMap);
+
+            total.getAndIncrement();
+            if(flow.getFlowStatus().equals(FlowStatus.FINISHED)) {
+                realized.getAndIncrement();
+                Decision lastDecision = flow.getDecisions().get(flow.getDecisions().size() - 1);
+                if(lastDecision.getRegion().equals(SolveRegion.RAR_BF)) {
+                    realizedRarBf.getAndIncrement();
+                } else {
+                    realizedRarRf.getAndIncrement();
+                }
+                relationStats.updateRealized(lastDecision.getRegion());
+            } else if (flow.getFlowStatus().equals(FlowStatus.NOT_REALIZED)) {
+                notRealized.getAndIncrement();
+                relationStats.updateNotRealized();
+            }
+        });
+
+        //general
+        Sheet sheet = workbook.createSheet("General");
+
+        Row row0 = sheet.createRow(0);
+        row0.createCell(0).setCellValue("Total");
+        row0.createCell(1).setCellValue("Realized");
+        row0.createCell(2).setCellValue("Realized RAR-BF");
+        row0.createCell(3).setCellValue("Realized RAR-RF");
+        row0.createCell(4).setCellValue("Not realized");
+
+        Row row1 = sheet.createRow(1);
+        row1.createCell(0).setCellValue(total.get());
+        row1.createCell(1).setCellValue(realized.get());
+        row1.createCell(2).setCellValue(realizedRarBf.get());
+        row1.createCell(3).setCellValue(realizedRarRf.get());
+        row1.createCell(4).setCellValue(notRealized.get());
+
+        //relations
+        sheet = workbook.createSheet("Relations");
+
+        row0 = sheet.createRow(0);
+        row0.createCell(2).setCellValue("Realized");
+        row0.createCell(3).setCellValue("Realized RAR-BF");
+        row0.createCell(4).setCellValue("Realized RAR-RF");
+        row0.createCell(5).setCellValue("Not realized");
+
+        int i = 1;
+
+        for(User u: relationStatsMap.keySet()) {
+            log.debug("Saving stats for user " + u.getId());
+            sheet.createRow(i).createCell(0).setCellValue(u.getId());
+            Map<Service, RelationStats> serviceRelationStatsMap = relationStatsMap.get(u);
+            for(Service s: serviceRelationStatsMap.keySet()) {
+                log.debug("Saving stats for service " + s.getId());
+                Row row = sheet.getRow(i);
+                if(row == null) {
+                    row = sheet.createRow(i);
+                }
+                row.createCell(1).setCellValue(s.getId());
+                RelationStats relationStats = serviceRelationStatsMap.get(s);
+                row.createCell(2).setCellValue(relationStats.getRealized());
+                row.createCell(3).setCellValue(relationStats.getRealizedInRarBf());
+                row.createCell(4).setCellValue(relationStats.getRealizedInRarRf());
+                row.createCell(5).setCellValue(relationStats.getNotRealized());
+                i++;
+            }
+        }
+
     }
 
     private void createPendingFlowsSheet(Workbook workbook) {

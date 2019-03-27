@@ -19,11 +19,28 @@ import os
 import signal
 import subprocess
 
+import sys
+
 def simplePolska():
+
+    if len(sys.argv) < 2:
+        info( '*** Specify time [s] of simulation! --> python simple-polska-script.py <time>...\n')
+        return
+
+    simulationTime = int(sys.argv[1])
+
+    info( '*** Starting controller...\n')
+    cmd = "java -jar target/floodlight.jar -cf /impl/floodlight/scenarios/simple-polska/mininet/floodlightdefault.properties"
+    proc = subprocess.Popen(cmd.split(), cwd='/impl/floodlight')
+
+    info( '*** Sleep 5 seconds to let controller start...\n')
+    sleep(5)
 
     net = Mininet( topo=None,
                    build=False,
-                   ipBase='10.0.0.0/24')
+                   ipBase='10.0.0.0/24',
+                   autoSetMacs=True,
+                   autoStaticArp=True)
 
     info( '*** Adding controller\n' )
     c0=net.addController(name='c0',
@@ -61,6 +78,14 @@ def simplePolska():
     userTwelveHost = net.addHost( 'User12', cls=Host, ip='10.0.0.112/24' )
     userThirteenHost = net.addHost( 'User13', cls=Host, ip='10.0.0.113/24' )
     userFourteenHost = net.addHost( 'User14', cls=Host, ip='10.0.0.114/24' )
+    userFifteenHost = net.addHost( 'User15', cls=Host, ip='10.0.0.115/24' )
+    userSixteenHost = net.addHost( 'User16', cls=Host, ip='10.0.0.116/24' )
+    userSeventeenHost = net.addHost( 'User17', cls=Host, ip='10.0.0.117/24' )
+    userEighteenHost = net.addHost( 'User18', cls=Host, ip='10.0.0.118/24' )
+    userNineteenHost = net.addHost( 'User19', cls=Host, ip='10.0.0.119/24' )
+    userTwentyHost = net.addHost( 'User20', cls=Host, ip='10.0.0.120/24' )
+    userTwentyOneHost = net.addHost( 'User21', cls=Host, ip='10.0.0.121/24' )
+
 
     serviceOneHost = net.addHost( 'Service1', cls=Host, ip='10.0.0.1/24' )
     serviceTwoHost = net.addHost( 'Service2', cls=Host, ip='10.0.0.2/24' )
@@ -121,8 +146,15 @@ def simplePolska():
     net.addLink( lodz, userTwelveHost, cls=TCLink , bw=100 )
     net.addLink( katowice, userThirteenHost, cls=TCLink , bw=100 )
     net.addLink( krakow, userFourteenHost, cls=TCLink , bw=100 )
+    net.addLink( gdansk, userFifteenHost, cls=TCLink , bw=100 )
+    net.addLink( szczecin, userSixteenHost, cls=TCLink , bw=100 )
+    net.addLink( bydgoszcz, userSeventeenHost, cls=TCLink , bw=100 )
+    net.addLink( poznan, userEighteenHost, cls=TCLink , bw=100 )
+    net.addLink( lodz, userNineteenHost, cls=TCLink , bw=100 )
+    net.addLink( katowice, userTwentyHost, cls=TCLink , bw=100 )
+    net.addLink( krakow, userTwentyOneHost, cls=TCLink , bw=100 )
 
-    net.staticArp()
+    # net.staticArp()
 
     info( '*** Starting network\n')
     net.build()
@@ -144,27 +176,29 @@ def simplePolska():
     info( '*** Sleep 15 seconds to let controller get topology...\n')
     sleep(15)
 
+    popens = {}
+    
     info( '*** Starting services\n')
-    serviceOneHost.cmd('java -jar /impl/http-server/target/http-server-0.0.1-SNAPSHOT.jar --usersFile=/impl/floodlight/scenarios/simple-polska/users.json --servicesFile=/impl/floodlight/scenarios/simple-polska/mininet/services.json --logging.file=./service-one.log --exitStatsFile=./service-one-exit.xlsx &')
-    serviceOnePid = int( serviceOneHost.cmdPrint('echo $!') )
-    serviceTwoHost.cmd('java -jar /impl/http-server/target/http-server-0.0.1-SNAPSHOT.jar --usersFile=/impl/floodlight/scenarios/simple-polska/users.json --servicesFile=/impl/floodlight/scenarios/simple-polska/mininet/services.json --logging.file=./service-two.log --exitStatsFile=./service-two-exit.xlsx &')
-    serviceTwoPid = int( serviceTwoHost.cmdPrint('echo $!') )
-    serviceThreeHost.cmd('java -jar /impl/http-server/target/http-server-0.0.1-SNAPSHOT.jar --usersFile=/impl/floodlight/scenarios/simple-polska/users.json --servicesFile=/impl/floodlight/scenarios/simple-polska/mininet/services.json --logging.file=./service-three.log --exitStatsFile=./service-three-exit.xlsx &')
-    serviceThreePid = int( serviceThreeHost.cmdPrint('echo $!') )
-    serviceFourHost.cmd('java -jar /impl/http-server/target/http-server-0.0.1-SNAPSHOT.jar --usersFile=/impl/floodlight/scenarios/simple-polska/users.json --servicesFile=/impl/floodlight/scenarios/simple-polska/mininet/services.json --logging.file=./service-four.log --exitStatsFile=./service-four-exit.xlsx &')
-    serviceFourPid = int( serviceFourHost.cmdPrint('echo $!') )
-    serviceFiveHost.cmd('java -jar /impl/http-server/target/http-server-0.0.1-SNAPSHOT.jar --usersFile=/impl/floodlight/scenarios/simple-polska/users.json --servicesFile=/impl/floodlight/scenarios/simple-polska/mininet/services.json --logging.file=./service-five.log --exitStatsFile=./service-five-exit.xlsx &')
-    serviceFivePid = int( serviceFiveHost.cmdPrint('echo $!') )
+    
+    serviceOneCommand = 'java -jar /impl/http-server/target/http-server-0.0.1-SNAPSHOT.jar --usersFile=/impl/floodlight/scenarios/simple-polska/users.json --servicesFile=/impl/floodlight/scenarios/simple-polska/mininet/services.json --logging.file=./service-one.log --exitStatsFile=./service-one-exit.xlsx'
+    popens[serviceOneHost] = serviceOneHost.popen(serviceOneCommand.split())
+
+    serviceTwoCommand = 'java -jar /impl/http-server/target/http-server-0.0.1-SNAPSHOT.jar --usersFile=/impl/floodlight/scenarios/simple-polska/users.json --servicesFile=/impl/floodlight/scenarios/simple-polska/mininet/services.json --logging.file=./service-Two.log --exitStatsFile=./service-Two-exit.xlsx'
+    popens[serviceTwoHost] = serviceTwoHost.popen(serviceTwoCommand.split())
+
+    serviceThreeCommand = 'java -jar /impl/http-server/target/http-server-0.0.1-SNAPSHOT.jar --usersFile=/impl/floodlight/scenarios/simple-polska/users.json --servicesFile=/impl/floodlight/scenarios/simple-polska/mininet/services.json --logging.file=./service-Three.log --exitStatsFile=./service-Three-exit.xlsx'
+    popens[serviceThreeHost] = serviceThreeHost.popen(serviceThreeCommand.split())
+
+    serviceFourCommand = 'java -jar /impl/http-server/target/http-server-0.0.1-SNAPSHOT.jar --usersFile=/impl/floodlight/scenarios/simple-polska/users.json --servicesFile=/impl/floodlight/scenarios/simple-polska/mininet/services.json --logging.file=./service-Four.log --exitStatsFile=./service-Four-exit.xlsx'
+    popens[serviceFourHost] = serviceFourHost.popen(serviceFourCommand.split())
+
+    serviceFiveCommand = 'java -jar /impl/http-server/target/http-server-0.0.1-SNAPSHOT.jar --usersFile=/impl/floodlight/scenarios/simple-polska/users.json --servicesFile=/impl/floodlight/scenarios/simple-polska/mininet/services.json --logging.file=./service-Five.log --exitStatsFile=./service-Five-exit.xlsx'
+    popens[serviceFiveHost] = serviceFiveHost.popen(serviceFiveCommand.split())
 
     info( '*** Sleep 30 seconds to let services start...\n')
     sleep(30)
 
-    info( '*** Starting wiresharks on requests generators...\n')
-    userOneHost.cmd('tcpdump -i any -w user-one.pcap &')
-
     info( '*** Starting requests generators...\n')
-
-    popens = {}
 
     userOneCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-one -st ./user-one-exit.xlsx -er ./user-one-every-request.xlsx -s 11111 -g uniform -ming 5 -maxg 10'
     popens[userOneHost] = userOneHost.popen(userOneCommand.split())
@@ -221,38 +255,55 @@ def simplePolska():
     userFourteenCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Fourteen -st ./user-Fourteen-exit.xlsx -er ./user-Fourteen-every-request.xlsx -s 1414141414 -g uniform -ming 5 -maxg 10'
     popens[userFourteenHost] = userFourteenHost.popen(userFourteenCommand.split())
 
-    info( "Simulating for", 120, "seconds\n" )
-    endTime = time() + 120
+    sleep(1)
+    userFifteenCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Fifteen -st ./user-Fifteen-exit.xlsx -er ./user-Fifteen-every-request.xlsx -s 1515151515 -g uniform -ming 5 -maxg 10'
+    popens[userFifteenHost] = userFifteenHost.popen(userFifteenCommand.split())
+
+    sleep(1)
+    userSixteenCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Sixteen -st ./user-Sixteen-exit.xlsx -er ./user-Sixteen-every-request.xlsx -s 1616161616 -g uniform -ming 5 -maxg 10'
+    popens[userSixteenHost] = userSixteenHost.popen(userSixteenCommand.split())
+
+    sleep(1)
+    userSeventeenCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Seventeen -st ./user-Seventeen-exit.xlsx -er ./user-Seventeen-every-request.xlsx -s 1717171717 -g uniform -ming 5 -maxg 10'
+    popens[userSeventeenHost] = userSeventeenHost.popen(userSeventeenCommand.split())
+
+    sleep(1)
+    userEighteenCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Eighteen -st ./user-Eighteen-exit.xlsx -er ./user-Eighteen-every-request.xlsx -s 1818181818 -g uniform -ming 5 -maxg 10'
+    popens[userEighteenHost] = userEighteenHost.popen(userEighteenCommand.split())
+
+    sleep(1)
+    userNineteenCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Nineteen -st ./user-Nineteen-exit.xlsx -er ./user-Nineteen-every-request.xlsx -s 1919191919 -g uniform -ming 5 -maxg 10'
+    popens[userNineteenHost] = userNineteenHost.popen(userNineteenCommand.split())
+
+    sleep(1)
+    userTwentyCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Twenty -st ./user-Twenty-exit.xlsx -er ./user-Twenty-every-request.xlsx -s 2020202020 -g uniform -ming 5 -maxg 10'
+    popens[userTwentyHost] = userTwentyHost.popen(userTwentyCommand.split())
+
+    sleep(1)
+    userTwentyOneCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-TwentyOne -st ./user-TwentyOne-exit.xlsx -er ./user-TwentyOne-every-request.xlsx -s 2121212121 -g uniform -ming 5 -maxg 10'
+    popens[userTwentyOneHost] = userTwentyOneHost.popen(userTwentyOneCommand.split())
+
+    # CLI(net)
+
+    info( "Simulating for", simulationTime, "seconds\n" )
+    endTime = time() + simulationTime
 
     for h, line in pmonitor( popens, timeoutms=500 ):
         if h:
             info( '<%s>: %s' % ( h.name, line ) )
         if time() >= endTime:
             for p in popens.values():
-                info( '*** Stopping requests generators...\n')
+                info( '*** Stopping requests generators and services...\n')
                 p.send_signal( SIGTERM )
-
-    info( '*** Stopping services...\n')
-    serviceOneHost.cmd('kill', serviceOnePid)
-    serviceTwoHost.cmd('kill', serviceTwoPid)
-    serviceThreeHost.cmd('kill', serviceThreePid)
-    serviceFourHost.cmd('kill', serviceFourPid)
-    serviceFiveHost.cmd('kill', serviceFivePid)
 
     info( '*** Stopping net...\n')
     net.stop()
 
+    info( '*** Stopping controller...\n')
+    os.kill(proc.pid, signal.SIGTERM)
+
 if __name__ == '__main__':
     setLogLevel( 'info' )
 
-    info( '*** Starting controller...\n')
-    cmd = "java -jar target/floodlight.jar -cf /impl/floodlight/scenarios/simple-polska/mininet/floodlightdefault.properties"
-    proc = subprocess.Popen(cmd.split(), cwd='/impl/floodlight')
-
-    info( '*** Sleep 5 seconds to let controller start...\n')
-    sleep(5)
-
     simplePolska()
 
-    info( '*** Stopping controller...\n')
-    os.kill(proc.pid, signal.SIGTERM)
