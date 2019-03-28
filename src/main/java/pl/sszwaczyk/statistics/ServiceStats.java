@@ -3,25 +3,32 @@ package pl.sszwaczyk.statistics;
 import lombok.Data;
 import pl.sszwaczyk.routing.solver.Reason;
 import pl.sszwaczyk.routing.solver.SolveRegion;
+import pl.sszwaczyk.service.Service;
 
 @Data
-public class RelationStats {
+public class ServiceStats {
 
-    int generated;
+    private Service service;
 
-    int realized;
+    public ServiceStats(Service service) {
+        this.service = service;
+    }
 
-    int realizedInRarBf;
-    float totalRiskInRarBf;
-    float riskPerReqInRarBf;
+    private int generated;
 
-    int realizedInRarRf;
-    float totalRiskInRarRf;
-    float riskPerReqInRarRf;
+    private int realized;
 
-    int notRealized;
-    int notRealizedBandwidth;
-    int notRealizedDTSP;
+    private int realizedInRarBf;
+    private float totalRiskInRarBf;
+    private float riskPerReqInRarBf;
+
+    private int realizedInRarRf;
+    private float totalRiskInRarRf;
+    private float riskPerReqInRarRf;
+
+    private int notRealized;
+    private int notRealizedDTSP;
+    private float notRealizedBandwidth;
 
     public void updateRealized(SolveRegion solveRegion, float risk) {
         generated++;
@@ -46,4 +53,5 @@ public class RelationStats {
             notRealizedDTSP++;
         }
     }
+
 }

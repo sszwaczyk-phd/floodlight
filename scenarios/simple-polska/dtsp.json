@@ -2,21 +2,21 @@
   {
     "serviceId": "Service1",
     "requirements": {
-      "CONFIDENTIALITY": 0.8,
-      "INTEGRITY": 0.7,
-      "AVAILABILITY": 0.6,
-      "TRUST": 0.5
+      "CONFIDENTIALITY": 0.9,
+      "INTEGRITY": 0.9,
+      "AVAILABILITY": 0.9,
+      "TRUST": 0.9
     },
     "consequences": {
       "CONFIDENTIALITY": 100,
-      "INTEGRITY": 75,
-      "AVAILABILITY": 50,
-      "TRUST": 25
+      "INTEGRITY": 100,
+      "AVAILABILITY": 75,
+      "TRUST": 100
     },
     "acceptableRiskIncrease": {
-      "CONFIDENTIALITY": 10,
-      "INTEGRITY": 20,
-      "AVAILABILITY": 30,
+      "CONFIDENTIALITY": 40,
+      "INTEGRITY": 40,
+      "AVAILABILITY": 40,
       "TRUST": 40
     }
   },
@@ -24,41 +24,41 @@
     "serviceId": "Service2",
     "requirements": {
       "CONFIDENTIALITY": 0.8,
-      "INTEGRITY": 0.7,
-      "AVAILABILITY": 0.6,
-      "TRUST": 0.5
+      "INTEGRITY": 0.8,
+      "AVAILABILITY": 0.8,
+      "TRUST": 0.8
     },
     "consequences": {
-      "CONFIDENTIALITY": 100,
+      "CONFIDENTIALITY": 75,
       "INTEGRITY": 75,
       "AVAILABILITY": 50,
-      "TRUST": 25
+      "TRUST": 75
     },
     "acceptableRiskIncrease": {
-      "CONFIDENTIALITY": 10,
-      "INTEGRITY": 20,
-      "AVAILABILITY": 30,
-      "TRUST": 40
+      "CONFIDENTIALITY": 50,
+      "INTEGRITY": 50,
+      "AVAILABILITY": 50,
+      "TRUST": 50
     }
   },
   {
     "serviceId": "Service3",
     "requirements": {
-      "CONFIDENTIALITY": 0.8,
-      "INTEGRITY": 0.7,
-      "AVAILABILITY": 0.6,
-      "TRUST": 0.5
+      "CONFIDENTIALITY": 0.9,
+      "INTEGRITY": 0.9,
+      "AVAILABILITY": 0.9,
+      "TRUST": 0.9
     },
     "consequences": {
       "CONFIDENTIALITY": 100,
-      "INTEGRITY": 75,
-      "AVAILABILITY": 50,
-      "TRUST": 25
+      "INTEGRITY": 100,
+      "AVAILABILITY": 75,
+      "TRUST": 100
     },
     "acceptableRiskIncrease": {
-      "CONFIDENTIALITY": 10,
-      "INTEGRITY": 20,
-      "AVAILABILITY": 30,
+      "CONFIDENTIALITY": 40,
+      "INTEGRITY": 40,
+      "AVAILABILITY": 40,
       "TRUST": 40
     }
   },
@@ -66,42 +66,42 @@
     "serviceId": "Service4",
     "requirements": {
       "CONFIDENTIALITY": 0.8,
-      "INTEGRITY": 0.7,
-      "AVAILABILITY": 0.6,
-      "TRUST": 0.5
+      "INTEGRITY": 0.8,
+      "AVAILABILITY": 0.8,
+      "TRUST": 0.8
     },
     "consequences": {
-      "CONFIDENTIALITY": 100,
+      "CONFIDENTIALITY": 75,
       "INTEGRITY": 75,
       "AVAILABILITY": 50,
-      "TRUST": 25
+      "TRUST": 75
     },
     "acceptableRiskIncrease": {
-      "CONFIDENTIALITY": 10,
-      "INTEGRITY": 20,
-      "AVAILABILITY": 30,
-      "TRUST": 40
+      "CONFIDENTIALITY": 50,
+      "INTEGRITY": 50,
+      "AVAILABILITY": 50,
+      "TRUST": 50
     }
   },
   {
     "serviceId": "Service5",
     "requirements": {
-      "CONFIDENTIALITY": 0.8,
-      "INTEGRITY": 0.7,
-      "AVAILABILITY": 0.6,
+      "CONFIDENTIALITY": 0.5,
+      "INTEGRITY": 0.5,
+      "AVAILABILITY": 0.5,
       "TRUST": 0.5
     },
     "consequences": {
-      "CONFIDENTIALITY": 100,
-      "INTEGRITY": 75,
+      "CONFIDENTIALITY": 50,
+      "INTEGRITY": 50,
       "AVAILABILITY": 50,
-      "TRUST": 25
+      "TRUST": 50
     },
     "acceptableRiskIncrease": {
-      "CONFIDENTIALITY": 10,
-      "INTEGRITY": 20,
-      "AVAILABILITY": 30,
-      "TRUST": 40
+      "CONFIDENTIALITY": 75,
+      "INTEGRITY": 75,
+      "AVAILABILITY": 75,
+      "TRUST": 75
     }
   }
 ]

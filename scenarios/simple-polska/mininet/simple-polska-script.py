@@ -154,8 +154,6 @@ def simplePolska():
     net.addLink( katowice, userTwentyHost, cls=TCLink , bw=100 )
     net.addLink( krakow, userTwentyOneHost, cls=TCLink , bw=100 )
 
-    # net.staticArp()
-
     info( '*** Starting network\n')
     net.build()
 

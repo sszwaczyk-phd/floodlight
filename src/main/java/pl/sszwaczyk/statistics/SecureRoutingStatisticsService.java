@@ -9,6 +9,7 @@ import net.floodlightcontroller.statistics.SwitchPortBandwidth;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.projectfloodlight.openflow.types.DatapathId;
 import org.slf4j.Logger;
@@ -18,6 +19,7 @@ import pl.sszwaczyk.repository.flow.FlowStatus;
 import pl.sszwaczyk.repository.flow.ISecureFlowsRepository;
 import pl.sszwaczyk.repository.link.ILinkStatisticsRepository;
 import pl.sszwaczyk.routing.solver.Decision;
+import pl.sszwaczyk.routing.solver.Reason;
 import pl.sszwaczyk.routing.solver.SolveRegion;
 import pl.sszwaczyk.security.SecurityDimension;
 import pl.sszwaczyk.security.threat.ThreatWithInfluence;
@@ -118,7 +120,7 @@ public class SecureRoutingStatisticsService implements IFloodlightModule, ISecur
 
         createUnevenStatisticsSheet(workbook);
 
-        createGeneralAndRelationsStatisticsSheet(workbook);
+        createGeneralAndUsersAndServicesStatisticsSheet(workbook);
 
         try (FileOutputStream fos = new FileOutputStream(statsFile)) {
             workbook.write(fos);
@@ -131,47 +133,77 @@ public class SecureRoutingStatisticsService implements IFloodlightModule, ISecur
         return statsFile;
     }
 
-    private void createGeneralAndRelationsStatisticsSheet(Workbook workbook) {
+    private void createGeneralAndUsersAndServicesStatisticsSheet(Workbook workbook) {
         AtomicLong total = new AtomicLong();
         AtomicLong realized = new AtomicLong();
         AtomicLong realizedRarBf = new AtomicLong();
+        float totalRiskRarBf = 0;
+        float riskPerReqRarBf = 0;
         AtomicLong realizedRarRf = new AtomicLong();
+        float totalRiskRarRf = 0;
+        float riskPerReqRarRf = 0;
         AtomicLong notRealized = new AtomicLong();
+        AtomicLong notRealizedBandwidth = new AtomicLong();
+        AtomicLong notRealizedDTSP = new AtomicLong();
 
         Map<User, Map<Service, RelationStats>> relationStatsMap = new HashMap<>();
+        List<ServiceStats> serviceStatsList = new ArrayList<>();
 
-        secureFlowsRepository.getFinishedFlows().forEach(flow -> {
+        for (Flow flow : secureFlowsRepository.getFinishedFlows()) {
             User user = flow.getUser();
             Service service = flow.getService();
             Map<Service, RelationStats> serviceRelationStatsMap = relationStatsMap.get(user);
             RelationStats relationStats;
-            if(serviceRelationStatsMap == null) {
+            if (serviceRelationStatsMap == null) {
                 serviceRelationStatsMap = new HashMap<>();
                 relationStats = new RelationStats();
             } else {
                 relationStats = serviceRelationStatsMap.get(service);
-                if(relationStats == null) {
+                if (relationStats == null) {
                     relationStats = new RelationStats();
                 }
             }
             serviceRelationStatsMap.put(service, relationStats);
             relationStatsMap.put(user, serviceRelationStatsMap);
 
+            ServiceStats serviceStats;
+            Optional<ServiceStats> optional = serviceStatsList.stream().filter(ss -> ss.getService().getId().equals(service.getId()))
+                    .findFirst();
+            if(optional.isPresent()) {
+                serviceStats = optional.get();
+            } else {
+                serviceStats = new ServiceStats(service);
+                serviceStatsList.add(serviceStats);
+            }
+
             total.getAndIncrement();
-            if(flow.getFlowStatus().equals(FlowStatus.FINISHED)) {
+            Decision lastDecision = flow.getDecisions().get(flow.getDecisions().size() - 1);
+            if (flow.getFlowStatus().equals(FlowStatus.FINISHED)) {
                 realized.getAndIncrement();
-                Decision lastDecision = flow.getDecisions().get(flow.getDecisions().size() - 1);
-                if(lastDecision.getRegion().equals(SolveRegion.RAR_BF)) {
+                float risk = lastDecision.getRisk();
+                if (lastDecision.getRegion().equals(SolveRegion.RAR_BF)) {
                     realizedRarBf.getAndIncrement();
+                    totalRiskRarBf += risk;
+                    riskPerReqRarBf = totalRiskRarBf / realizedRarBf.get();
                 } else {
                     realizedRarRf.getAndIncrement();
+                    totalRiskRarRf += risk;
+                    riskPerReqRarRf = totalRiskRarRf / realizedRarRf.get();
                 }
-                relationStats.updateRealized(lastDecision.getRegion());
+                relationStats.updateRealized(lastDecision.getRegion(), risk);
+                serviceStats.updateRealized(lastDecision.getRegion(), risk);
             } else if (flow.getFlowStatus().equals(FlowStatus.NOT_REALIZED)) {
                 notRealized.getAndIncrement();
-                relationStats.updateNotRealized();
+                Reason reason = lastDecision.getReason();
+                relationStats.updateNotRealized(reason);
+                serviceStats.updateNotRealized(reason);
+                if(reason.equals(Reason.CANNOT_FULFILL_BANDWIDTH)) {
+                    notRealizedBandwidth.getAndIncrement();
+                } else {
+                    notRealizedDTSP.getAndIncrement();
+                }
             }
-        });
+        }
 
         //general
         Sheet sheet = workbook.createSheet("General");
@@ -180,26 +212,53 @@ public class SecureRoutingStatisticsService implements IFloodlightModule, ISecur
         row0.createCell(0).setCellValue("Total");
         row0.createCell(1).setCellValue("Realized");
         row0.createCell(2).setCellValue("Realized RAR-BF");
-        row0.createCell(3).setCellValue("Realized RAR-RF");
-        row0.createCell(4).setCellValue("Not realized");
+        row0.createCell(3).setCellValue("Total Risk RAR-BF");
+        row0.createCell(4).setCellValue("Risk per req RAR-BF");
+        row0.createCell(5).setCellValue("Realized RAR-RF");
+        row0.createCell(6).setCellValue("Total risk RAR-RF");
+        row0.createCell(7).setCellValue("Risk per req RAR-RF");
+        row0.createCell(8).setCellValue("Not realized");
+        row0.createCell(9).setCellValue("Not realized - BANDWIDTH");
+        row0.createCell(10).setCellValue("Not realized - DTSP");
 
         Row row1 = sheet.createRow(1);
         row1.createCell(0).setCellValue(total.get());
         row1.createCell(1).setCellValue(realized.get());
         row1.createCell(2).setCellValue(realizedRarBf.get());
-        row1.createCell(3).setCellValue(realizedRarRf.get());
-        row1.createCell(4).setCellValue(notRealized.get());
+        row1.createCell(3).setCellValue(totalRiskRarBf);
+        row1.createCell(4).setCellValue(riskPerReqRarBf);
+        row1.createCell(5).setCellValue(realizedRarRf.get());
+        row1.createCell(6).setCellValue(totalRiskRarRf);
+        row1.createCell(7).setCellValue(riskPerReqRarRf);
+        row1.createCell(8).setCellValue(notRealized.get());
+        row1.createCell(9).setCellValue(notRealizedBandwidth.get());
+        row1.createCell(10).setCellValue(notRealizedDTSP.get());
 
-        //relations
-        sheet = workbook.createSheet("Relations");
+        //users
+        sheet = workbook.createSheet("Users");
 
+        sheet.addMergedRegion(new CellRangeAddress(0, 0, 4, 6));
+        sheet.addMergedRegion(new CellRangeAddress(0, 0, 7, 9));
+        sheet.addMergedRegion(new CellRangeAddress(0, 0, 10, 12));
         row0 = sheet.createRow(0);
-        row0.createCell(2).setCellValue("Realized");
-        row0.createCell(3).setCellValue("Realized RAR-BF");
-        row0.createCell(4).setCellValue("Realized RAR-RF");
-        row0.createCell(5).setCellValue("Not realized");
+        row0.createCell(4).setCellValue("RAR-BF");
+        row0.createCell(7).setCellValue("RAR-RF");
+        row0.createCell(10).setCellValue("Not realized");
 
-        int i = 1;
+        row1 = sheet.createRow(1);
+        row1.createCell(2).setCellValue("Generated");
+        row1.createCell(3).setCellValue("Total Realized");
+        row1.createCell(4).setCellValue("Realized");
+        row1.createCell(5).setCellValue("Total Risk");
+        row1.createCell(6).setCellValue("Risk per req");
+        row1.createCell(7).setCellValue("Realized");
+        row1.createCell(8).setCellValue("Total Risk");
+        row1.createCell(9).setCellValue("Risk per req");
+        row1.createCell(10).setCellValue("Total");
+        row1.createCell(11).setCellValue("DTSP");
+        row1.createCell(12).setCellValue("BANDWIDTH");
+
+        int i = 2;
 
         for(User u: relationStatsMap.keySet()) {
             log.debug("Saving stats for user " + u.getId());
@@ -213,14 +272,62 @@ public class SecureRoutingStatisticsService implements IFloodlightModule, ISecur
                 }
                 row.createCell(1).setCellValue(s.getId());
                 RelationStats relationStats = serviceRelationStatsMap.get(s);
-                row.createCell(2).setCellValue(relationStats.getRealized());
-                row.createCell(3).setCellValue(relationStats.getRealizedInRarBf());
-                row.createCell(4).setCellValue(relationStats.getRealizedInRarRf());
-                row.createCell(5).setCellValue(relationStats.getNotRealized());
+                row.createCell(2).setCellValue(relationStats.getGenerated());
+                row.createCell(3).setCellValue(relationStats.getRealized());
+                row.createCell(4).setCellValue(relationStats.getRealizedInRarBf());
+                row.createCell(5).setCellValue(relationStats.getTotalRiskInRarBf());
+                row.createCell(6).setCellValue(relationStats.getRiskPerReqInRarBf());
+                row.createCell(7).setCellValue(relationStats.getRealizedInRarRf());
+                row.createCell(8).setCellValue(relationStats.getTotalRiskInRarRf());
+                row.createCell(9).setCellValue(relationStats.getRiskPerReqInRarRf());
+                row.createCell(10).setCellValue(relationStats.getNotRealized());
+                row.createCell(11).setCellValue(relationStats.getNotRealizedDTSP());
+                row.createCell(12).setCellValue(relationStats.getNotRealizedBandwidth());
                 i++;
             }
         }
 
+        //services
+        sheet = workbook.createSheet("Services");
+
+        sheet.addMergedRegion(new CellRangeAddress(0, 0, 3, 5));
+        sheet.addMergedRegion(new CellRangeAddress(0, 0, 6, 8));
+        sheet.addMergedRegion(new CellRangeAddress(0, 0, 9, 11));
+        row0 = sheet.createRow(0);
+        row0.createCell(3).setCellValue("RAR-BF");
+        row0.createCell(6).setCellValue("RAR-RF");
+        row0.createCell(9).setCellValue("Not realized");
+
+        row1 = sheet.createRow(1);
+        row1.createCell(1).setCellValue("Generated");
+        row1.createCell(2).setCellValue("Total realized");
+        row1.createCell(3).setCellValue("Realized");
+        row1.createCell(4).setCellValue("Toal risk");
+        row1.createCell(5).setCellValue("Risk per req");
+        row1.createCell(6).setCellValue("Realized");
+        row1.createCell(7).setCellValue("Toal risk");
+        row1.createCell(8).setCellValue("Risk per req");
+        row1.createCell(9).setCellValue("Total");
+        row1.createCell(10).setCellValue("DTSP");
+        row1.createCell(11).setCellValue("BANDWIDTH");
+
+        i = 2;
+        for(ServiceStats serviceStats: serviceStatsList) {
+            Row row = sheet.createRow(i);
+            row.createCell(0).setCellValue(serviceStats.getService().getId());
+            row.createCell(1).setCellValue(serviceStats.getGenerated());
+            row.createCell(2).setCellValue(serviceStats.getRealized());
+            row.createCell(3).setCellValue(serviceStats.getRealizedInRarBf());
+            row.createCell(4).setCellValue(serviceStats.getTotalRiskInRarBf());
+            row.createCell(5).setCellValue(serviceStats.getRiskPerReqInRarBf());
+            row.createCell(6).setCellValue(serviceStats.getRealizedInRarRf());
+            row.createCell(7).setCellValue(serviceStats.getTotalRiskInRarRf());
+            row.createCell(8).setCellValue(serviceStats.getRiskPerReqInRarRf());
+            row.createCell(9).setCellValue(serviceStats.getNotRealized());
+            row.createCell(10).setCellValue(serviceStats.getNotRealizedDTSP());
+            row.createCell(11).setCellValue(serviceStats.getNotRealizedBandwidth());
+            i++;
+        }
     }
 
     private void createPendingFlowsSheet(Workbook workbook) {

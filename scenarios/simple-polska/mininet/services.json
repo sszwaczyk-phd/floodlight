@@ -5,26 +5,26 @@
     "port": 8000,
     "path": "/impl/512MB.zip",
     "bandwidth": 10,
-    "maxUneven": 1000,
+    "maxUneven": 4,
     "maxLatency": 1000
   },
   {
     "id": "Service2",
     "ip": "10.0.0.2",
     "port": 8000,
-    "path": "/impl/200MB.zip",
+    "path": "/impl/512MB.zip",
     "bandwidth": 10,
-    "maxUneven": 1000,
+    "maxUneven": 4,
     "maxLatency": 1000
   },
   {
     "id": "Service3",
     "ip": "10.0.0.3",
     "port": 8000,
-    "path": "/impl/100MB.zip",
+    "path": "/impl/20MB.zip",
     "bandwidth": 10,
-    "maxUneven": 1000,
-    "maxLatency": 1000
+    "maxUneven": 4,
+    "maxLatency": 150
   },
   {
     "id": "Service4",
@@ -32,8 +32,8 @@
     "port": 8000,
     "path": "/impl/20MB.zip",
     "bandwidth": 10,
-    "maxUneven": 1000,
-    "maxLatency": 1000
+    "maxUneven": 4,
+    "maxLatency": 150
   },
   {
     "id": "Service5",
@@ -41,7 +41,7 @@
     "port": 8000,
     "path": "/impl/5MB.zip",
     "bandwidth": 10,
-    "maxUneven": 1000,
+    "maxUneven": 4,
     "maxLatency": 1000
   }
 ]
