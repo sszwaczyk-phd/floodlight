@@ -380,13 +380,13 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
             Map<NodePortTuple, SwitchPortBandwidth> bandwidthConsumption = statisticsService.getBandwidthConsumption();
             for(Map.Entry<NodePortTuple, SwitchPortBandwidth> entry: bandwidthConsumption.entrySet()) {
                 NodePortTuple npt = entry.getKey();
-//                log.debug("Updating npt " + npt);
+                log.debug("Updating npt " + npt);
                 Link link = linkService.getLink(npt.getNodeId(), npt.getPortId());
                 if(link == null) {
-//                    log.debug("Link to not found");
+                    log.debug("Link to not found");
                     continue;
                 }
-//                log.debug("Updating link " + link);
+                log.debug("Updating link " + link);
                 SwitchPortBandwidth switchPortBandwidth = bandwidthConsumption.get(npt);
                 double txUtilization = switchPortBandwidth.getTxUtilization();
                 float linkAvailability = 0.99f - (float) txUtilization;

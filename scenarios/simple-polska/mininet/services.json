@@ -6,7 +6,7 @@
     "path": "/impl/512MB.zip",
     "bandwidth": 10,
     "maxUneven": 4,
-    "maxLatency": 1000
+    "maxLatency": 150
   },
   {
     "id": "Service2",

@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import pl.sszwaczyk.security.SecurityDimension;
 import pl.sszwaczyk.security.risk.calculator.LogRiskCalculator;
 import pl.sszwaczyk.security.risk.calculator.RiskCalculator;
-import pl.sszwaczyk.service.IServiceService;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -45,8 +44,19 @@ public class RiskCalculationService implements IFloodlightModule, IRiskCalculati
 
     @Override
     public void init(FloodlightModuleContext context) throws FloodlightModuleException {
-        riskCalculator = new LogRiskCalculator();
-        log.info("Risk calculation service initialized with LogRiskCalculator");
+        Map<String, String> configParameters = context.getConfigParams(this);
+        String tmp = configParameters.get("calculator");
+        if(tmp != null && !tmp.isEmpty()) {
+            if(tmp.equals("log")) {
+                riskCalculator = new LogRiskCalculator();
+                log.info("Risk calculation service initialized with LogRiskCalculator");
+            } else {
+                throw new FloodlightModuleException("Invalid risk calculator specified!");
+            }
+        } else {
+            throw new FloodlightModuleException("Risk calculator not specified!");
+        }
+
     }
 
     @Override
