@@ -61,11 +61,30 @@ public class ThreatService implements IFloodlightModule, IThreatService {
         boolean enableThreatsGenerator = Boolean.parseBoolean(configParameters.get("enable-threats-generator"));
         if(enableThreatsGenerator) {
             log.info("Threats generator enabled. Running threats generator...");
+            String onlySwitchString = configParameters.get("only-switch");
+            boolean onlySwitch;
+            if(onlySwitchString != null && !onlySwitchString.isEmpty()) {
+                onlySwitch = Boolean.parseBoolean(onlySwitchString);
+                log.info("Only switch configured to " + onlySwitch);
+            } else {
+                onlySwitch = false;
+                log.info("Only switch not configured. Set default to " + onlySwitch);
+            }
+            String onlyPathString = configParameters.get("only-path");
+            boolean onlyPath;
+            if(onlyPathString != null && !onlyPathString.isEmpty()) {
+                onlyPath = Boolean.parseBoolean(onlyPathString);
+            } else {
+                onlyPath = false;
+                log.info("Only path not configured. Set default to " + onlyPath);
+            }
             UniformThreatsGenerator uniformThreatsGenerator = UniformThreatsGenerator.builder()
                     .threatService(this)
                     .routingService(routingService)
                     .switchService(switchService)
                     .seed(Integer.parseInt(configParameters.get("random-seed")))
+                    .onlySwitch(onlySwitch)
+                    .onlyPath(onlyPath)
                     .minGap(Integer.parseInt(configParameters.get("min-gap")))
                     .maxGap(Integer.parseInt(configParameters.get("max-gap")))
                     .minDuration(Integer.parseInt(configParameters.get("min-duration")))
