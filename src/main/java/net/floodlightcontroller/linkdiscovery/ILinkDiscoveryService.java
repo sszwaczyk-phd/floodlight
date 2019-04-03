@@ -17,18 +17,17 @@
 
 package net.floodlightcontroller.linkdiscovery;
 
-import java.util.Map;
-import java.util.Set;
-
+import net.floodlightcontroller.core.IOFSwitch;
+import net.floodlightcontroller.core.module.IFloodlightService;
+import net.floodlightcontroller.core.types.NodePortTuple;
+import net.floodlightcontroller.linkdiscovery.internal.LinkInfo;
 import org.projectfloodlight.openflow.protocol.OFPacketOut;
 import org.projectfloodlight.openflow.types.DatapathId;
 import org.projectfloodlight.openflow.types.MacAddress;
 import org.projectfloodlight.openflow.types.OFPort;
 
-import net.floodlightcontroller.core.IOFSwitch;
-import net.floodlightcontroller.core.module.IFloodlightService;
-import net.floodlightcontroller.core.types.NodePortTuple;
-import net.floodlightcontroller.linkdiscovery.internal.LinkInfo;
+import java.util.Map;
+import java.util.Set;
 
 
 public interface ILinkDiscoveryService extends IFloodlightService {
@@ -45,6 +44,8 @@ public interface ILinkDiscoveryService extends IFloodlightService {
     public Map<Link, LinkInfo> getLinks();
 
     public Link getLink(DatapathId srcSw, OFPort srcPort, DatapathId dstSw, OFPort dstPort);
+
+    public Link getLink(DatapathId srcSw, OFPort srcPort);
 
     /**
      * Retrieves the link info for a given link

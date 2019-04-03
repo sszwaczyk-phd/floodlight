@@ -9,11 +9,15 @@ import net.floodlightcontroller.core.module.FloodlightModuleContext;
 import net.floodlightcontroller.core.module.FloodlightModuleException;
 import net.floodlightcontroller.core.module.IFloodlightModule;
 import net.floodlightcontroller.core.module.IFloodlightService;
+import net.floodlightcontroller.core.types.NodePortTuple;
 import net.floodlightcontroller.linkdiscovery.ILinkDiscoveryListener;
 import net.floodlightcontroller.linkdiscovery.ILinkDiscoveryService;
 import net.floodlightcontroller.linkdiscovery.Link;
 import net.floodlightcontroller.linkdiscovery.internal.LinkInfo;
 import net.floodlightcontroller.restserver.IRestApiService;
+import net.floodlightcontroller.statistics.IStatisticsService;
+import net.floodlightcontroller.statistics.SwitchPortBandwidth;
+import net.floodlightcontroller.threadpool.IThreadPoolService;
 import org.projectfloodlight.openflow.protocol.OFPortDesc;
 import org.projectfloodlight.openflow.types.DatapathId;
 import org.projectfloodlight.openflow.types.OFPort;
@@ -29,6 +33,7 @@ import pl.sszwaczyk.security.soc.SOCUpdate;
 import pl.sszwaczyk.security.soc.SOCUpdateType;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchListener, ILinkDiscoveryListener,
         ISOCListener, ISecurityPropertiesService {
@@ -39,8 +44,12 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
     private IOFSwitchService switchService;
     private ILinkDiscoveryService linkService;
     private ISOCService socService;
+    private IStatisticsService statisticsService;
+    private IThreadPoolService threadPoolService;
 
     private List<ISecurityPropertiesChangedListener> listeners = new ArrayList<>();
+
+    private boolean enableLinkAvaialabilityUtilizationActualization = false;
 
     @Override
     public Collection<Class<? extends IFloodlightService>> getModuleServices() {
@@ -66,6 +75,8 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
         l.add(IOFSwitchService.class);
         l.add(ILinkDiscoveryService.class);
         l.add(ISOCService.class);
+        l.add(IStatisticsService.class);
+        l.add(IThreadPoolService.class);
         return l;
     }
 
@@ -75,6 +86,18 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
         this.switchService = context.getServiceImpl(IOFSwitchService.class);
         this.linkService = context.getServiceImpl(ILinkDiscoveryService.class);
         this.socService = context.getServiceImpl(ISOCService.class);
+        this.statisticsService = context.getServiceImpl(IStatisticsService.class);
+        this.threadPoolService = context.getServiceImpl(IThreadPoolService.class);
+
+        Map<String, String> configParameters = context.getConfigParams(this);
+        String tmp = configParameters.get("enable-utilization-availability-actualization");
+        if(tmp != null && !tmp.isEmpty()) {
+            enableLinkAvaialabilityUtilizationActualization = Boolean.parseBoolean(tmp);
+            log.info("Link availability actualization based on utliization set to " + enableLinkAvaialabilityUtilizationActualization);
+        } else {
+            enableLinkAvaialabilityUtilizationActualization = false;
+            log.info("Link availability actualization based on utilization not set. Set default to " + enableLinkAvaialabilityUtilizationActualization);
+        }
     }
 
     @Override
@@ -83,6 +106,9 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
         switchService.addOFSwitchListener(this);
         linkService.addListener(this);
         socService.addListener(this);
+        if(enableLinkAvaialabilityUtilizationActualization) {
+            threadPoolService.getScheduledExecutor().scheduleAtFixedRate(new LinkAvailabilityUtilizationActualizator(), 10, 10, TimeUnit.SECONDS);
+        }
     }
 
     @Override
@@ -344,5 +370,31 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
         for(ISecurityPropertiesChangedListener l: listeners) {
             l.securityPropertiesChanged(update);
         }
+    }
+
+    class LinkAvailabilityUtilizationActualizator implements Runnable {
+
+        @Override
+        public void run() {
+            log.debug("Updating link availability based on utilization...");
+            Map<NodePortTuple, SwitchPortBandwidth> bandwidthConsumption = statisticsService.getBandwidthConsumption();
+            for(Map.Entry<NodePortTuple, SwitchPortBandwidth> entry: bandwidthConsumption.entrySet()) {
+                NodePortTuple npt = entry.getKey();
+//                log.debug("Updating npt " + npt);
+                Link link = linkService.getLink(npt.getNodeId(), npt.getPortId());
+                if(link == null) {
+//                    log.debug("Link to not found");
+                    continue;
+                }
+//                log.debug("Updating link " + link);
+                SwitchPortBandwidth switchPortBandwidth = bandwidthConsumption.get(npt);
+                double txUtilization = switchPortBandwidth.getTxUtilization();
+                float linkAvailability = 0.99f - (float) txUtilization;
+                link.setAvailability(linkAvailability);
+                log.debug("Set link availability to " + linkAvailability + " due to utilization change");
+            }
+
+        }
+
     }
 }
