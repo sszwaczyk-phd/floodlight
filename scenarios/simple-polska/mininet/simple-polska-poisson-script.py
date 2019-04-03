@@ -17,11 +17,12 @@ from time import time
 
 def simplePolska():
 
-    if len(sys.argv) < 2:
-        info( '*** Specify time [s] of simulation! --> python simple-polska-script.py <time>...\n')
+    if len(sys.argv) < 3:
+        info( '*** Specify time [s] of simulation and lambda for poisson generators (requests/60s)! --> python simple-polska-script.py <time> <lambda>...\n')
         return
 
     simulationTime = int(sys.argv[1])
+    lam = float(sys.argv[2])
 
     info( '*** Starting controller...\n')
     cmd = "java -jar target/floodlight.jar -cf /impl/floodlight/scenarios/simple-polska/mininet/floodlightdefault.properties"
@@ -192,87 +193,87 @@ def simplePolska():
 
     info( '*** Starting requests generators...\n')
 
-    userOneCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-one -st ./user-one-exit.xlsx -er ./user-one-every-request.xlsx -s 11111 -g poisson -l 0.1'
+    userOneCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-one -st ./user-one-exit.xlsx -er ./user-one-every-request.xlsx -s 11111 -g poisson -l ' + str(lam)
     popens[userOneHost] = userOneHost.popen(userOneCommand.split())
 
     sleep(1)
-    userTwoCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-two -st ./user-two-exit.xlsx -er ./user-two-every-request.xlsx -s 22222 -g poisson -l 0.1'
+    userTwoCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-two -st ./user-two-exit.xlsx -er ./user-two-every-request.xlsx -s 22222 -g poisson -l ' + str(lam)
     popens[userTwoHost] = userTwoHost.popen(userTwoCommand.split())
 
     sleep(1)
-    userThreeCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-three -st ./user-three-exit.xlsx -er ./user-three-every-request.xlsx -s 33333 -g poisson -l 0.1'
+    userThreeCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-three -st ./user-three-exit.xlsx -er ./user-three-every-request.xlsx -s 33333 -g poisson -l ' + str(lam)
     popens[userThreeHost] = userThreeHost.popen(userThreeCommand.split())
 
     sleep(1)
-    userFourCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-four -st ./user-four-exit.xlsx -er ./user-four-every-request.xlsx -s 44444 -g poisson -l 0.1'
+    userFourCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-four -st ./user-four-exit.xlsx -er ./user-four-every-request.xlsx -s 44444 -g poisson -l ' + str(lam)
     popens[userFourHost] = userFourHost.popen(userFourCommand.split())
 
     sleep(1)
-    userFiveCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-five -st ./user-five-exit.xlsx -er ./user-five-every-request.xlsx -s 55555 -g poisson -l 0.1'
+    userFiveCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-five -st ./user-five-exit.xlsx -er ./user-five-every-request.xlsx -s 55555 -g poisson -l ' + str(lam)
     popens[userFiveHost] = userFiveHost.popen(userFiveCommand.split())
 
     sleep(1)
-    userSixCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-six -st ./user-six-exit.xlsx -er ./user-six-every-request.xlsx -s 66666 -g poisson -l 0.1'
+    userSixCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-six -st ./user-six-exit.xlsx -er ./user-six-every-request.xlsx -s 66666 -g poisson -l ' + str(lam)
     popens[userSixHost] = userSixHost.popen(userSixCommand.split())
 
     sleep(1)
-    userSevenCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-seven -st ./user-seven-exit.xlsx -er ./user-seven-every-request.xlsx -s 77777 -g poisson -l 0.1'
+    userSevenCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-seven -st ./user-seven-exit.xlsx -er ./user-seven-every-request.xlsx -s 77777 -g poisson -l ' + str(lam)
     popens[userSevenHost] = userSevenHost.popen(userSevenCommand.split())
 
     sleep(1)
-    userEightCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-eight -st ./user-eight-exit.xlsx -er ./user-eight-every-request.xlsx -s 88888 -g poisson -l 0.1'
+    userEightCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-eight -st ./user-eight-exit.xlsx -er ./user-eight-every-request.xlsx -s 88888 -g poisson -l ' + str(lam)
     popens[userEightHost] = userEightHost.popen(userEightCommand.split())
 
     sleep(1)
-    userNineCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Nine -st ./user-Nine-exit.xlsx -er ./user-Nine-every-request.xlsx -s 99999 -g poisson -l 0.1'
+    userNineCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Nine -st ./user-Nine-exit.xlsx -er ./user-Nine-every-request.xlsx -s 99999 -g poisson -l ' + str(lam)
     popens[userNineHost] = userNineHost.popen(userNineCommand.split())
 
     sleep(1)
-    userTenCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Ten -st ./user-Ten-exit.xlsx -er ./user-Ten-every-request.xlsx -s 1010101010 -g poisson -l 0.1'
+    userTenCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Ten -st ./user-Ten-exit.xlsx -er ./user-Ten-every-request.xlsx -s 1010101010 -g poisson -l ' + str(lam)
     popens[userTenHost] = userTenHost.popen(userTenCommand.split())
 
     sleep(1)
-    userElevenCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Eleven -st ./user-Eleven-exit.xlsx -er ./user-Eleven-every-request.xlsx -s 1111111111 -g poisson -l 0.1'
+    userElevenCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Eleven -st ./user-Eleven-exit.xlsx -er ./user-Eleven-every-request.xlsx -s 1111111111 -g poisson -l ' + str(lam)
     popens[userElevenHost] = userElevenHost.popen(userElevenCommand.split())
 
     sleep(1)
-    userTwelveCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Twelve -st ./user-Twelve-exit.xlsx -er ./user-Twelve-every-request.xlsx -s 1212121212 -g poisson -l 0.1'
+    userTwelveCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Twelve -st ./user-Twelve-exit.xlsx -er ./user-Twelve-every-request.xlsx -s 1212121212 -g poisson -l ' + str(lam)
     popens[userTwelveHost] = userTwelveHost.popen(userTwelveCommand.split())
 
     sleep(1)
-    userThirteenCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Thirteen -st ./user-Thirteen-exit.xlsx -er ./user-Thirteen-every-request.xlsx -s 1313131313 -g poisson -l 0.1'
+    userThirteenCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Thirteen -st ./user-Thirteen-exit.xlsx -er ./user-Thirteen-every-request.xlsx -s 1313131313 -g poisson -l ' + str(lam)
     popens[userThirteenHost] = userThirteenHost.popen(userThirteenCommand.split())
 
     sleep(1)
-    userFourteenCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Fourteen -st ./user-Fourteen-exit.xlsx -er ./user-Fourteen-every-request.xlsx -s 1414141414 -g poisson -l 0.1'
+    userFourteenCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Fourteen -st ./user-Fourteen-exit.xlsx -er ./user-Fourteen-every-request.xlsx -s 1414141414 -g poisson -l ' + str(lam)
     popens[userFourteenHost] = userFourteenHost.popen(userFourteenCommand.split())
 
     sleep(1)
-    userFifteenCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Fifteen -st ./user-Fifteen-exit.xlsx -er ./user-Fifteen-every-request.xlsx -s 1515151515 -g poisson -l 0.1'
+    userFifteenCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Fifteen -st ./user-Fifteen-exit.xlsx -er ./user-Fifteen-every-request.xlsx -s 1515151515 -g poisson -l ' + str(lam)
     popens[userFifteenHost] = userFifteenHost.popen(userFifteenCommand.split())
 
     sleep(1)
-    userSixteenCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Sixteen -st ./user-Sixteen-exit.xlsx -er ./user-Sixteen-every-request.xlsx -s 1616161616 -g poisson -l 0.1'
+    userSixteenCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Sixteen -st ./user-Sixteen-exit.xlsx -er ./user-Sixteen-every-request.xlsx -s 1616161616 -g poisson -l ' + str(lam)
     popens[userSixteenHost] = userSixteenHost.popen(userSixteenCommand.split())
 
     sleep(1)
-    userSeventeenCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Seventeen -st ./user-Seventeen-exit.xlsx -er ./user-Seventeen-every-request.xlsx -s 1717171717 -g poisson -l 0.1'
+    userSeventeenCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Seventeen -st ./user-Seventeen-exit.xlsx -er ./user-Seventeen-every-request.xlsx -s 1717171717 -g poisson -l ' + str(lam)
     popens[userSeventeenHost] = userSeventeenHost.popen(userSeventeenCommand.split())
 
     sleep(1)
-    userEighteenCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Eighteen -st ./user-Eighteen-exit.xlsx -er ./user-Eighteen-every-request.xlsx -s 1818181818 -g poisson -l 0.1'
+    userEighteenCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Eighteen -st ./user-Eighteen-exit.xlsx -er ./user-Eighteen-every-request.xlsx -s 1818181818 -g poisson -l ' + str(lam)
     popens[userEighteenHost] = userEighteenHost.popen(userEighteenCommand.split())
 
     sleep(1)
-    userNineteenCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Nineteen -st ./user-Nineteen-exit.xlsx -er ./user-Nineteen-every-request.xlsx -s 1919191919 -g poisson -l 0.1'
+    userNineteenCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Nineteen -st ./user-Nineteen-exit.xlsx -er ./user-Nineteen-every-request.xlsx -s 1919191919 -g poisson -l ' + str(lam)
     popens[userNineteenHost] = userNineteenHost.popen(userNineteenCommand.split())
 
     sleep(1)
-    userTwentyCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Twenty -st ./user-Twenty-exit.xlsx -er ./user-Twenty-every-request.xlsx -s 2020202020 -g poisson -l 0.1'
+    userTwentyCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Twenty -st ./user-Twenty-exit.xlsx -er ./user-Twenty-every-request.xlsx -s 2020202020 -g poisson -l ' + str(lam)
     popens[userTwentyHost] = userTwentyHost.popen(userTwentyCommand.split())
 
     sleep(1)
-    userTwentyOneCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-TwentyOne -st ./user-TwentyOne-exit.xlsx -er ./user-TwentyOne-every-request.xlsx -s 2121212121 -g poisson -l 0.1'
+    userTwentyOneCommand = 'java -jar /impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-TwentyOne -st ./user-TwentyOne-exit.xlsx -er ./user-TwentyOne-every-request.xlsx -s 2121212121 -g poisson -l ' + str(lam)
     popens[userTwentyOneHost] = userTwentyOneHost.popen(userTwentyOneCommand.split())
 
     # CLI(net)
