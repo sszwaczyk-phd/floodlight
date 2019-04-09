@@ -99,17 +99,26 @@ public class SecureRoutingManager extends RoutingManager implements ISecureRouti
                 k = Integer.valueOf(kString);
                 log.info("K shortest path set to " + k);
             }
+
+            String chooseMinUnevenString = configParameters.get("min-uneven");
+            boolean chooseMinUneven;
+            UnevenMetric unevenMetric = null;
+            if(chooseMinUnevenString == null || chooseMinUnevenString.isEmpty()) {
+                throw new FloodlightModuleException("Choose min uneven option not set!");
+            }
+            chooseMinUneven = Boolean.parseBoolean(chooseMinUnevenString);
+            log.info("Choose min uneven option set to " + chooseMinUneven);
+
             String unevenMetricString = configParameters.get("uneven-metric");
-            UnevenMetric unevenMetric;
-            if(unevenMetricString == null) {
+            if (unevenMetricString == null) {
                 unevenMetric = UnevenMetric.VARIATION_COEFFICIENT;
                 log.info("Uneven metric not set. Default to " + unevenMetric);
             } else {
-                if(unevenMetricString.equals("gap")) {
+                if (unevenMetricString.equals("gap")) {
                     unevenMetric = UnevenMetric.GAP;
-                } else if(unevenMetricString.equals("variance")) {
+                } else if (unevenMetricString.equals("variance")) {
                     unevenMetric = UnevenMetric.VARIANCE;
-                } else if(unevenMetricString.equals("variation-coefficient")) {
+                } else if (unevenMetricString.equals("variation-coefficient")) {
                     unevenMetric = UnevenMetric.VARIATION_COEFFICIENT;
                 } else {
                     throw new FloodlightModuleException("Not recognized uneven metric set " + unevenMetricString);
@@ -145,6 +154,7 @@ public class SecureRoutingManager extends RoutingManager implements ISecureRouti
                     .statisticsService(statisticsService)
                     .unevenService(unevenService)
                     .k(k)
+                    .chooseMinUneven(chooseMinUneven)
                     .unevenMetric(unevenMetric)
                     .rarRfLatencyEnabled(rarRfLatencyEnabled)
                     .rarRfLatencyEnabled(rarRfLatencyEnabled)

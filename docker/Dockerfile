@@ -32,7 +32,7 @@ RUN wget http://ipv4.download.thinkbroadband.com/1GB.zip && wget http://ipv4.dow
 
 #Floodlight
 RUN apt-get -y install git build-essential maven
-RUN echo aaa
+RUN echo update
 RUN git clone https://github.com/sszwaczyk/floodlight.git
 RUN mkdir /var/lib/floodlight
 RUN chmod 777 /var/lib/floodlight
