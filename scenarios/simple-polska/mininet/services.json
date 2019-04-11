@@ -1,47 +1,42 @@
 [
   {
-    "id": "Service1",
+    "id": "HTTP_LS",
     "ip": "10.0.0.1",
     "port": 8000,
-    "path": "/impl/512MB.zip",
-    "bandwidth": 10,
-    "maxUneven": 4,
+    "path": "/home/sszwaczyk/WAT/PhD/impl/100MB.zip",
+    "bandwidth": 1,
     "maxLatency": 150
   },
   {
-    "id": "Service2",
+    "id": "HTTP_LR",
     "ip": "10.0.0.2",
     "port": 8000,
-    "path": "/impl/512MB.zip",
-    "bandwidth": 10,
-    "maxUneven": 4,
+    "path": "/home/sszwaczyk/WAT/PhD/impl/100MB.zip",
+    "bandwidth": 1,
     "maxLatency": 1000
   },
   {
-    "id": "Service3",
+    "id": "HTTP_SS",
     "ip": "10.0.0.3",
     "port": 8000,
-    "path": "/impl/20MB.zip",
-    "bandwidth": 10,
-    "maxUneven": 4,
+    "path": "/home/sszwaczyk/WAT/PhD/impl/20MB.zip",
+    "bandwidth": 1,
     "maxLatency": 150
   },
   {
-    "id": "Service4",
+    "id": "HTTP_SR",
     "ip": "10.0.0.4",
     "port": 8000,
-    "path": "/impl/20MB.zip",
-    "bandwidth": 10,
-    "maxUneven": 4,
+    "path": "/home/sszwaczyk/WAT/PhD/impl/20MB.zip",
+    "bandwidth": 1,
     "maxLatency": 150
   },
   {
-    "id": "Service5",
+    "id": "HTTP_SU",
     "ip": "10.0.0.5",
     "port": 8000,
-    "path": "/impl/5MB.zip",
-    "bandwidth": 10,
-    "maxUneven": 4,
+    "path": "/home/sszwaczyk/WAT/PhD/impl/5MB.zip",
+    "bandwidth": 1,
     "maxLatency": 1000
   }
 ]

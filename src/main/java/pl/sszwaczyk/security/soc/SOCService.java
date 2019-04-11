@@ -107,6 +107,7 @@ public class SOCService implements IFloodlightModule, ISOCService, IThreatListen
             Double maxA = Double.valueOf(randomMaxAString);
 
             threatInfluenceCalculator = RandomThreatInfluenceCalculator.builder()
+                    .seed(Integer.parseInt(configParameters.get("random-seed")))
                     .minT(minT)
                     .maxT(maxT)
                     .minC(minC)

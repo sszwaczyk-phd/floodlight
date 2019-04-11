@@ -1,25 +1,18 @@
 #!/usr/bin/python
-from mininet.net import Mininet
-from mininet.node import Controller, RemoteController, OVSController
-from mininet.node import CPULimitedHost, Host, Node
-from mininet.node import OVSKernelSwitch, UserSwitch
-from mininet.node import IVSSwitch
-from mininet.cli import CLI
-from mininet.log import setLogLevel, info
-from mininet.link import TCLink, Intf
-from mininet.util import pmonitor
-from subprocess import call
-
-from time import sleep
-from time import time
-from signal import SIGINT
-from signal import SIGTERM
-
 import os
 import signal
 import subprocess
-
 import sys
+from mininet.link import TCLink
+from mininet.log import setLogLevel, info
+from mininet.net import Mininet
+from mininet.node import Host
+from mininet.node import OVSKernelSwitch
+from mininet.node import RemoteController
+from mininet.util import pmonitor
+from signal import SIGTERM
+from time import sleep
+from time import time
 
 
 def simplePolska():
@@ -89,72 +82,72 @@ def simplePolska():
     userTwentyOneHost = net.addHost( 'User21', cls=Host, ip='10.0.0.121/24' )
 
 
-    serviceOneHost = net.addHost( 'Service1', cls=Host, ip='10.0.0.1/24' )
-    serviceTwoHost = net.addHost( 'Service2', cls=Host, ip='10.0.0.2/24' )
-    serviceThreeHost = net.addHost( 'Service3', cls=Host, ip='10.0.0.3/24' )
-    serviceFourHost = net.addHost( 'Service4', cls=Host, ip='10.0.0.4/24' )
-    serviceFiveHost = net.addHost( 'Service5', cls=Host, ip='10.0.0.5/24' )
+    httpLsHost = net.addHost( 'HTTP_LS', cls=Host, ip='10.0.0.1/24' )
+    httpLrHost = net.addHost( 'HTTP_LR', cls=Host, ip='10.0.0.2/24' )
+    httpSsHost = net.addHost( 'HTTP_SS', cls=Host, ip='10.0.0.3/24' )
+    httpSrHost = net.addHost( 'HTTP_SR', cls=Host, ip='10.0.0.4/24' )
+    httpSuHost = net.addHost( 'HTTP_SU', cls=Host, ip='10.0.0.5/24' )
 
     info( '*** Add links\n')
     # Add links between switches
-    net.addLink( kolobrzeg, gdansk, cls=TCLink , bw=100 )
-    net.addLink( kolobrzeg, szczecin, cls=TCLink , bw=100 )
-    net.addLink( kolobrzeg, bydgoszcz, cls=TCLink , bw=100 )
+    net.addLink( kolobrzeg, gdansk, cls=TCLink , bw=10 )
+    net.addLink( kolobrzeg, szczecin, cls=TCLink , bw=10 )
+    net.addLink( kolobrzeg, bydgoszcz, cls=TCLink , bw=10 )
 
-    net.addLink( gdansk, bialystok, cls=TCLink , bw=100 )
-    net.addLink( gdansk, warsaw, cls=TCLink , bw=100 )
+    net.addLink( gdansk, bialystok, cls=TCLink , bw=10 )
+    net.addLink( gdansk, warsaw, cls=TCLink , bw=10 )
 
-    net.addLink( szczecin, poznan, cls=TCLink , bw=100 )
+    net.addLink( szczecin, poznan, cls=TCLink , bw=10 )
 
-    net.addLink( bydgoszcz, poznan, cls=TCLink , bw=100 )
-    net.addLink( bydgoszcz, warsaw, cls=TCLink , bw=100 )
+    net.addLink( bydgoszcz, poznan, cls=TCLink , bw=10 )
+    net.addLink( bydgoszcz, warsaw, cls=TCLink , bw=10 )
 
-    net.addLink( bialystok, warsaw, cls=TCLink , bw=100 )
-    net.addLink( bialystok, rzeszow, cls=TCLink , bw=100 )
+    net.addLink( bialystok, warsaw, cls=TCLink , bw=10 )
+    net.addLink( bialystok, rzeszow, cls=TCLink , bw=10 )
 
-    net.addLink( poznan, wroclaw, cls=TCLink , bw=100 )
+    net.addLink( poznan, wroclaw, cls=TCLink , bw=10 )
 
-    net.addLink( warsaw, lodz, cls=TCLink , bw=100 )
-    net.addLink( warsaw, krakow, cls=TCLink , bw=100 )
+    net.addLink( warsaw, lodz, cls=TCLink , bw=10 )
+    net.addLink( warsaw, krakow, cls=TCLink , bw=10 )
 
-    net.addLink( lodz, wroclaw, cls=TCLink , bw=100 )
-    net.addLink( lodz, katowice, cls=TCLink , bw=100 )
+    net.addLink( lodz, wroclaw, cls=TCLink , bw=10 )
+    net.addLink( lodz, katowice, cls=TCLink , bw=10 )
 
-    net.addLink( wroclaw, katowice, cls=TCLink , bw=100 )
+    net.addLink( wroclaw, katowice, cls=TCLink , bw=10 )
 
-    net.addLink( katowice, krakow, cls=TCLink , bw=100 )
+    net.addLink( katowice, krakow, cls=TCLink , bw=10 )
 
-    net.addLink( krakow, rzeszow, cls=TCLink , bw=100 )
+    net.addLink( krakow, rzeszow, cls=TCLink , bw=10 )
 
     # Add links to services
-    net.addLink( kolobrzeg, serviceOneHost, cls=TCLink , bw=100 )
-    net.addLink( bialystok, serviceTwoHost, cls=TCLink , bw=100 )
-    net.addLink( warsaw, serviceThreeHost, cls=TCLink , bw=100 )
-    net.addLink( wroclaw, serviceFourHost, cls=TCLink , bw=100 )
-    net.addLink( rzeszow, serviceFiveHost, cls=TCLink , bw=100 )
+    net.addLink( kolobrzeg, httpLsHost, cls=TCLink , bw=10 )
+    net.addLink( bialystok, httpLrHost, cls=TCLink , bw=10 )
+    net.addLink( warsaw, httpSsHost, cls=TCLink , bw=10 )
+    net.addLink( wroclaw, httpSrHost, cls=TCLink , bw=10 )
+    net.addLink( rzeszow, httpSuHost, cls=TCLink , bw=10 )
 
     #Add links to users
-    net.addLink( gdansk, userOneHost, cls=TCLink , bw=100 )
-    net.addLink( szczecin, userTwoHost, cls=TCLink , bw=100 )
-    net.addLink( bydgoszcz, userThreeHost, cls=TCLink , bw=100 )
-    net.addLink( poznan, userFourHost, cls=TCLink , bw=100 )
-    net.addLink( lodz, userFiveHost, cls=TCLink , bw=100 )
-    net.addLink( katowice, userSixHost, cls=TCLink , bw=100 )
-    net.addLink( krakow, userSevenHost, cls=TCLink , bw=100 )
-    net.addLink( gdansk, userEightHost, cls=TCLink , bw=100 )
-    net.addLink( szczecin, userNineHost, cls=TCLink , bw=100 )
-    net.addLink( bydgoszcz, userTenHost, cls=TCLink , bw=100 )
-    net.addLink( poznan, userElevenHost, cls=TCLink , bw=100 )
-    net.addLink( lodz, userTwelveHost, cls=TCLink , bw=100 )
-    net.addLink( katowice, userThirteenHost, cls=TCLink , bw=100 )
-    net.addLink( krakow, userFourteenHost, cls=TCLink , bw=100 )
-    net.addLink( gdansk, userFifteenHost, cls=TCLink , bw=100 )
-    net.addLink( szczecin, userSixteenHost, cls=TCLink , bw=100 )
-    net.addLink( bydgoszcz, userSeventeenHost, cls=TCLink , bw=100 )
-    net.addLink( poznan, userEighteenHost, cls=TCLink , bw=100 )
-    net.addLink( lodz, userNineteenHost, cls=TCLink , bw=100 )
-    net.addLink( katowice, userTwentyHost, cls=TCLink , bw=100 )
-    net.addLink( krakow, userTwentyOneHost, cls=TCLink , bw=100 )
+    net.addLink( gdansk, userOneHost, cls=TCLink , bw=10 )
+    net.addLink( szczecin, userTwoHost, cls=TCLink , bw=10 )
+    net.addLink( bydgoszcz, userThreeHost, cls=TCLink , bw=10 )
+    net.addLink( poznan, userFourHost, cls=TCLink , bw=10 )
+    net.addLink( lodz, userFiveHost, cls=TCLink , bw=10 )
+    net.addLink( katowice, userSixHost, cls=TCLink , bw=10 )
+    net.addLink( krakow, userSevenHost, cls=TCLink , bw=10 )
+    net.addLink( gdansk, userEightHost, cls=TCLink , bw=10 )
+    net.addLink( szczecin, userNineHost, cls=TCLink , bw=10 )
+    net.addLink( bydgoszcz, userTenHost, cls=TCLink , bw=10 )
+    net.addLink( poznan, userElevenHost, cls=TCLink , bw=10 )
+    net.addLink( lodz, userTwelveHost, cls=TCLink , bw=10 )
+    net.addLink( katowice, userThirteenHost, cls=TCLink , bw=10 )
+    net.addLink( krakow, userFourteenHost, cls=TCLink , bw=10 )
+    net.addLink( gdansk, userFifteenHost, cls=TCLink , bw=10 )
+    net.addLink( szczecin, userSixteenHost, cls=TCLink , bw=10 )
+    net.addLink( bydgoszcz, userSeventeenHost, cls=TCLink , bw=10 )
+    net.addLink( poznan, userEighteenHost, cls=TCLink , bw=10 )
+    net.addLink( lodz, userNineteenHost, cls=TCLink , bw=10 )
+    net.addLink( katowice, userTwentyHost, cls=TCLink , bw=10 )
+    net.addLink( krakow, userTwentyOneHost, cls=TCLink , bw=10 )
 
     info( '*** Starting network\n')
     net.build()
@@ -177,23 +170,23 @@ def simplePolska():
     sleep(15)
 
     popens = {}
-    
+
     info( '*** Starting services\n')
-    
-    serviceOneCommand = 'java -jar /impl/http-server/target/http-server-0.0.1-SNAPSHOT.jar --usersFile=/impl/floodlight/scenarios/simple-polska/users.json --servicesFile=/impl/floodlight/scenarios/simple-polska/mininet/services.json --logging.file=./service-one.log --exitStatsFile=./service-one-exit.xlsx'
-    popens[serviceOneHost] = serviceOneHost.popen(serviceOneCommand.split())
 
-    serviceTwoCommand = 'java -jar /impl/http-server/target/http-server-0.0.1-SNAPSHOT.jar --usersFile=/impl/floodlight/scenarios/simple-polska/users.json --servicesFile=/impl/floodlight/scenarios/simple-polska/mininet/services.json --logging.file=./service-Two.log --exitStatsFile=./service-Two-exit.xlsx'
-    popens[serviceTwoHost] = serviceTwoHost.popen(serviceTwoCommand.split())
+    httpLsCommand = 'java -jar /impl/http-server/target/http-server-0.0.1-SNAPSHOT.jar --usersFile=/impl/floodlight/scenarios/simple-polska/users.json --servicesFile=/impl/floodlight/scenarios/simple-polska/mininet/services.json --logging.file=./http-ls.log --exitStatsFile=./http-ls-exit.xlsx'
+    popens[httpLsHost] = httpLsHost.popen(httpLsCommand.split())
 
-    serviceThreeCommand = 'java -jar /impl/http-server/target/http-server-0.0.1-SNAPSHOT.jar --usersFile=/impl/floodlight/scenarios/simple-polska/users.json --servicesFile=/impl/floodlight/scenarios/simple-polska/mininet/services.json --logging.file=./service-Three.log --exitStatsFile=./service-Three-exit.xlsx'
-    popens[serviceThreeHost] = serviceThreeHost.popen(serviceThreeCommand.split())
+    httpLrCommand = 'java -jar /impl/http-server/target/http-server-0.0.1-SNAPSHOT.jar --usersFile=/impl/floodlight/scenarios/simple-polska/users.json --servicesFile=/impl/floodlight/scenarios/simple-polska/mininet/services.json --logging.file=./http-lr.log --exitStatsFile=./http-lr-exit.xlsx'
+    popens[httpLrHost] = httpLrHost.popen(httpLrCommand.split())
 
-    serviceFourCommand = 'java -jar /impl/http-server/target/http-server-0.0.1-SNAPSHOT.jar --usersFile=/impl/floodlight/scenarios/simple-polska/users.json --servicesFile=/impl/floodlight/scenarios/simple-polska/mininet/services.json --logging.file=./service-Four.log --exitStatsFile=./service-Four-exit.xlsx'
-    popens[serviceFourHost] = serviceFourHost.popen(serviceFourCommand.split())
+    httpSsCommand = 'java -jar /impl/http-server/target/http-server-0.0.1-SNAPSHOT.jar --usersFile=/impl/floodlight/scenarios/simple-polska/users.json --servicesFile=/impl/floodlight/scenarios/simple-polska/mininet/services.json --logging.file=./http-ss.log --exitStatsFile=./http-ss-exit.xlsx'
+    popens[httpSsHost] = httpSsHost.popen(httpSsCommand.split())
 
-    serviceFiveCommand = 'java -jar /impl/http-server/target/http-server-0.0.1-SNAPSHOT.jar --usersFile=/impl/floodlight/scenarios/simple-polska/users.json --servicesFile=/impl/floodlight/scenarios/simple-polska/mininet/services.json --logging.file=./service-Five.log --exitStatsFile=./service-Five-exit.xlsx'
-    popens[serviceFiveHost] = serviceFiveHost.popen(serviceFiveCommand.split())
+    httpSrCommand = 'java -jar /impl/http-server/target/http-server-0.0.1-SNAPSHOT.jar --usersFile=/impl/floodlight/scenarios/simple-polska/users.json --servicesFile=/impl/floodlight/scenarios/simple-polska/mininet/services.json --logging.file=./http-sr.log --exitStatsFile=./http-sr-exit.xlsx'
+    popens[httpSrHost] = httpSrHost.popen(httpSrCommand.split())
+
+    httpSuCommand = 'java -jar /impl/http-server/target/http-server-0.0.1-SNAPSHOT.jar --usersFile=/impl/floodlight/scenarios/simple-polska/users.json --servicesFile=/impl/floodlight/scenarios/simple-polska/mininet/services.json --logging.file=./http-su.log --exitStatsFile=./http-su-exit.xlsx'
+    popens[httpSuHost] = httpSuHost.popen(httpSuCommand.split())
 
     info( '*** Sleep 30 seconds to let services start...\n')
     sleep(30)

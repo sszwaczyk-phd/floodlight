@@ -1,6 +1,6 @@
 [
   {
-    "serviceId": "Service1",
+    "serviceId": "HTTP_LS",
     "requirements": {
       "CONFIDENTIALITY": 0.9,
       "INTEGRITY": 0.9,
@@ -14,14 +14,14 @@
       "TRUST": 100
     },
     "acceptableRiskIncrease": {
-      "CONFIDENTIALITY": 40,
-      "INTEGRITY": 40,
-      "AVAILABILITY": 40,
-      "TRUST": 40
+      "CONFIDENTIALITY": 50,
+      "INTEGRITY": 50,
+      "AVAILABILITY": 50,
+      "TRUST": 50
     }
   },
   {
-    "serviceId": "Service2",
+    "serviceId": "HTTP_LR",
     "requirements": {
       "CONFIDENTIALITY": 0.8,
       "INTEGRITY": 0.8,
@@ -42,7 +42,7 @@
     }
   },
   {
-    "serviceId": "Service3",
+    "serviceId": "HTTP_SS",
     "requirements": {
       "CONFIDENTIALITY": 0.9,
       "INTEGRITY": 0.9,
@@ -56,14 +56,14 @@
       "TRUST": 100
     },
     "acceptableRiskIncrease": {
-      "CONFIDENTIALITY": 40,
-      "INTEGRITY": 40,
-      "AVAILABILITY": 40,
-      "TRUST": 40
+      "CONFIDENTIALITY": 50,
+      "INTEGRITY": 50,
+      "AVAILABILITY": 50,
+      "TRUST": 50
     }
   },
   {
-    "serviceId": "Service4",
+    "serviceId": "HTTP_SR",
     "requirements": {
       "CONFIDENTIALITY": 0.8,
       "INTEGRITY": 0.8,
@@ -84,7 +84,7 @@
     }
   },
   {
-    "serviceId": "Service5",
+    "serviceId": "HTTP_SU",
     "requirements": {
       "CONFIDENTIALITY": 0.5,
       "INTEGRITY": 0.5,
@@ -98,10 +98,10 @@
       "TRUST": 50
     },
     "acceptableRiskIncrease": {
-      "CONFIDENTIALITY": 75,
-      "INTEGRITY": 75,
-      "AVAILABILITY": 75,
-      "TRUST": 75
+      "CONFIDENTIALITY": 50,
+      "INTEGRITY": 50,
+      "AVAILABILITY": 50,
+      "TRUST": 50
     }
   }
 ]

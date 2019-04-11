@@ -48,9 +48,6 @@ public class KShortestPathSolver implements Solver {
     private boolean chooseMinUneven;
     private UnevenMetric unevenMetric;
 
-    private boolean rarRfUnevenEnabled;
-    private boolean rarRfLatencyEnabled;
-
     @Override
     public Decision solve(User user, Service service, DatapathId src, OFPort srcPort, DatapathId dst, OFPort dstPort) {
         DTSP dtsp = dtspService.getDTSPForService(service);
@@ -160,12 +157,6 @@ public class KShortestPathSolver implements Solver {
                 }
 
                 if(rarBfPath == null) {
-                    if(rarRfUnevenEnabled && pathUnevenAfter > dtsp.getService().getMaxUneven()) {
-                        continue;
-                    }
-                    if(rarRfLatencyEnabled && p.getLatency().getValue() > dtsp.getService().getMaxLatency()) {
-                        continue;
-                    }
 
                     if(isPathRiskInRange(maxRisks, pathRisks)) {
                         float pathConfidentialityRisk = pathRisks.get(SecurityDimension.CONFIDENTIALITY);
