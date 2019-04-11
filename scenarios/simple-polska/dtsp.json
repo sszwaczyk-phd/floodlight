@@ -14,10 +14,10 @@
       "TRUST": 100
     },
     "acceptableRiskIncrease": {
-      "CONFIDENTIALITY": 50,
-      "INTEGRITY": 50,
-      "AVAILABILITY": 50,
-      "TRUST": 50
+      "CONFIDENTIALITY": 0,
+      "INTEGRITY": 0,
+      "AVAILABILITY": 0,
+      "TRUST": 0
     }
   },
   {
@@ -35,10 +35,10 @@
       "TRUST": 75
     },
     "acceptableRiskIncrease": {
-      "CONFIDENTIALITY": 50,
-      "INTEGRITY": 50,
-      "AVAILABILITY": 50,
-      "TRUST": 50
+      "CONFIDENTIALITY": 0,
+      "INTEGRITY": 0,
+      "AVAILABILITY": 0,
+      "TRUST": 0
     }
   },
   {
@@ -56,10 +56,10 @@
       "TRUST": 100
     },
     "acceptableRiskIncrease": {
-      "CONFIDENTIALITY": 50,
-      "INTEGRITY": 50,
-      "AVAILABILITY": 50,
-      "TRUST": 50
+      "CONFIDENTIALITY": 0,
+      "INTEGRITY": 0,
+      "AVAILABILITY": 0,
+      "TRUST": 0
     }
   },
   {
@@ -77,10 +77,10 @@
       "TRUST": 75
     },
     "acceptableRiskIncrease": {
-      "CONFIDENTIALITY": 50,
-      "INTEGRITY": 50,
-      "AVAILABILITY": 50,
-      "TRUST": 50
+      "CONFIDENTIALITY": 0,
+      "INTEGRITY": 0,
+      "AVAILABILITY": 0,
+      "TRUST": 0
     }
   },
   {
@@ -98,10 +98,10 @@
       "TRUST": 50
     },
     "acceptableRiskIncrease": {
-      "CONFIDENTIALITY": 50,
-      "INTEGRITY": 50,
-      "AVAILABILITY": 50,
-      "TRUST": 50
+      "CONFIDENTIALITY": 0,
+      "INTEGRITY": 0,
+      "AVAILABILITY": 0,
+      "TRUST": 0
     }
   }
 ]
