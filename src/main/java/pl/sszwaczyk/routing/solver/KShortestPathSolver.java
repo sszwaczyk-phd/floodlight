@@ -303,19 +303,19 @@ public class KShortestPathSolver implements Solver {
     }
 
     private boolean isPathRiskInRange(Map<SecurityDimension, Float> range, Map<SecurityDimension, Float> pathRisks) {
-        if(range.get(SecurityDimension.CONFIDENTIALITY) <= pathRisks.get(SecurityDimension.CONFIDENTIALITY)) {
+        if(range.get(SecurityDimension.CONFIDENTIALITY) < pathRisks.get(SecurityDimension.CONFIDENTIALITY)) {
             return false;
         }
 
-        if(range.get(SecurityDimension.INTEGRITY) <= pathRisks.get(SecurityDimension.INTEGRITY)) {
+        if(range.get(SecurityDimension.INTEGRITY) < pathRisks.get(SecurityDimension.INTEGRITY)) {
             return false;
         }
 
-        if(range.get(SecurityDimension.AVAILABILITY) <= pathRisks.get(SecurityDimension.AVAILABILITY)) {
+        if(range.get(SecurityDimension.AVAILABILITY) < pathRisks.get(SecurityDimension.AVAILABILITY)) {
             return false;
         }
 
-        if(range.get(SecurityDimension.TRUST) <= pathRisks.get(SecurityDimension.TRUST)) {
+        if(range.get(SecurityDimension.TRUST) < pathRisks.get(SecurityDimension.TRUST)) {
             return false;
         }
 
