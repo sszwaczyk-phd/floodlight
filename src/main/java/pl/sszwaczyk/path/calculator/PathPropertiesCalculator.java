@@ -36,7 +36,9 @@ public abstract class PathPropertiesCalculator {
                     switches.add(s1);
                 }
                 switches.add(s2);
-                links.add(l);
+                if(l != null) {
+                    links.add(l);
+                }
             }
         } else {
             for(int i = 0; i < npts.size() - 1; i = i + 2) {
@@ -47,7 +49,9 @@ public abstract class PathPropertiesCalculator {
                     switches.add(s1);
                 }
                 switches.add(s2);
-                links.add(l);
+                if(l != null) {
+                    links.add(l);
+                }
             }
         }
 

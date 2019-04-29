@@ -274,6 +274,9 @@ public class KShortestPathSolver implements Solver {
         List<Path> paths = routingService.getPathsSlow(src, dst, 1);
         Path path = paths.get(0);
 
+        Map<SecurityDimension, Float> pathProperties = pathPropertiesService.calculatePathProperties(path);
+        Map<SecurityDimension, Float> pathRisks = riskService.calculateRisk(pathProperties, dtsp.getConsequences());
+
         Map<NodePortTuple, SwitchPortBandwidth> predicateBandwidthConsumption = new HashMap<>();
         List<NodePortTuple> npts = path.getPath();
         actualBandwidthConsumption.forEach((nodePortTuple, switchPortBandwidth) -> {
@@ -299,9 +302,6 @@ public class KShortestPathSolver implements Solver {
         Double pathUnevenAfter = unevenService.getUneven(unevenMetric, predicateBandwidthConsumption);
         long latency = path.getLatency().getValue();
         log.debug("Uneven after = " + pathUnevenAfter + " and latency = " + latency);
-
-        Map<SecurityDimension, Float> pathProperties = pathPropertiesService.calculatePathProperties(path);
-        Map<SecurityDimension, Float> pathRisks = riskService.calculateRisk(pathProperties, dtsp.getConsequences());
 
         boolean solved = isPathRiskInRange(acceptableRisks, pathRisks);
         if(solved == false) {
