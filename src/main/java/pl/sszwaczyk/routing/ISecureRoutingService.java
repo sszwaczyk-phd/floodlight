@@ -11,4 +11,6 @@ public interface ISecureRoutingService  extends IRoutingService {
 
     Decision getSecureDecision(User user, Service service, DatapathId src, OFPort srcPort, DatapathId dst, OFPort dstPort);
 
+    Decision getSecureShortestDecision(User user, Service service, DatapathId src, OFPort srcPort, DatapathId dst, OFPort dstPort);
+
 }

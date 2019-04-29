@@ -8,4 +8,6 @@ import pl.sszwaczyk.user.User;
 public interface Solver {
 
     Decision solve(User user, Service service, DatapathId src, OFPort srcPort, DatapathId dst, OFPort dstPort);
+
+    Decision solveShortest(User user, Service service, DatapathId src, OFPort srcPort, DatapathId dst, OFPort dstPort);
 }

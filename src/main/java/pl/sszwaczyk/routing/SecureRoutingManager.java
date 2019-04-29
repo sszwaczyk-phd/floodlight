@@ -156,20 +156,6 @@ public class SecureRoutingManager extends RoutingManager implements ISecureRouti
         decision.setTime(System.currentTimeMillis() - start);
 
         secureRoutingStatisticsService.getSecureRoutingStatistics().addDecision(decision);
-        //update stats base on solve decision
-//        if(!decision.isSolved()) {
-//            log.info("Updating not realized requests statistic");
-//            secureRoutingStatisticsService.getSecureRoutingStatistics().updateNotRealized(user, service);
-//            return new Path(null, ImmutableList.of());
-//        } else if(decision.getRegion().equals(SolveRegion.RAR_BF)) {
-//            log.info("Path {} in RAR-BF with distance {}", decision.getPath(), decision.getValue());
-//            log.debug("Updating realized requests statistic");
-//            secureRoutingStatisticsService.getSecureRoutingStatistics().updateRealized(user, service, decision);
-//        } else if(decision.getRegion().equals(SolveRegion.RAR_RF)) {
-//            log.info("Path {} in RAR-RF with distance {}", decision.getPath(), decision.getValue());
-//            log.debug("Updating realized requests statistic");
-//            secureRoutingStatisticsService.getSecureRoutingStatistics().updateRealized(user, service, decision);
-//        }
 
         if(decision.isSolved() == false) {
             decision.setPath(new Path(null, ImmutableList.of()));
@@ -178,5 +164,15 @@ public class SecureRoutingManager extends RoutingManager implements ISecureRouti
         return decision;
     }
 
-
+    @Override
+    public Decision getSecureShortestDecision(User user, Service service, DatapathId src, OFPort srcPort, DatapathId dst, OFPort dstPort) {
+        long start = System.currentTimeMillis();
+        Decision decision = solver.solveShortest(user, service, src, srcPort, dst, dstPort);
+        decision.setTime(System.currentTimeMillis() - start);
+        secureRoutingStatisticsService.getSecureRoutingStatistics().addDecision(decision);
+        if(decision.isSolved() == false) {
+            decision.setPath(new Path(null, ImmutableList.of()));
+        }
+        return decision;
+    }
 }

@@ -112,6 +112,9 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
     protected static final short FLOWSET_SHIFT = DECISION_BITS;
     private static final long FLOWSET_MASK = ((1L << FLOWSET_BITS) - 1) << FLOWSET_SHIFT;
     private static final long FLOWSET_MAX = (long) (Math.pow(2, FLOWSET_BITS) - 1);
+
+    private static boolean ONLY_SHORTEST;
+
     protected static FlowSetIdRegistry flowSetIdRegistry;
 
     private static L3RoutingManager l3manager;
@@ -737,14 +740,25 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
                 log.error("Cannot get user from server response context");
                 return;
             }
-            log.info("Security routing for service {} to user {}", service, user);
-            secureDecison = routingEngineService.getSecureDecision(user,
-                    service,
-                    srcSw,
-                    srcPort,
-                    dstAp.getNodeId(),
-                    dstAp.getPortId());
-            path = secureDecison.getPath();
+            if(ONLY_SHORTEST) {
+                log.info("Shortests security routing for service {} to user {}", service, user);
+                secureDecison = routingEngineService.getSecureShortestDecision(user,
+                        service,
+                        srcSw,
+                        srcPort,
+                        dstAp.getNodeId(),
+                        dstAp.getPortId());
+                path = secureDecison.getPath();
+            } else {
+                log.info("Security routing for service {} to user {}", service, user);
+                secureDecison = routingEngineService.getSecureDecision(user,
+                        service,
+                        srcSw,
+                        srcPort,
+                        dstAp.getNodeId(),
+                        dstAp.getPortId());
+                path = secureDecison.getPath();
+            }
         } else {
             log.info("Standard routing...");
             path = routingEngineService.getPath(srcSw,
@@ -1561,6 +1575,13 @@ public class Forwarding extends ForwardingBase implements IFloodlightModule, IOF
             log.info("Flows will be removed on link/port down events");
         } else {
             log.info("Flows will not be removed on link/port down events");
+        }
+
+        tmp = configParameters.get("only-shortest");
+        if(tmp != null) {
+            ONLY_SHORTEST = Boolean.parseBoolean(tmp);
+        } else {
+            throw new FloodlightModuleException("only-shortest parameter not specified");
         }
     }
 

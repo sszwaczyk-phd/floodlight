@@ -261,6 +261,90 @@ public class KShortestPathSolver implements Solver {
 
     }
 
+    @Override
+    public Decision solveShortest(User user, Service service, DatapathId src, OFPort srcPort, DatapathId dst, OFPort dstPort) {
+        DTSP dtsp = dtspService.getDTSPForService(service);
+        Risks risks = calculateRisks(service);
+        Map<SecurityDimension, Float> acceptableRisks = risks.getAcceptableRisks();
+        Map<SecurityDimension, Float> maxRisks = risks.getMaxRisks();
+        Map<NodePortTuple, SwitchPortBandwidth> actualBandwidthConsumption = statisticsService.getBandwidthConsumption();
+        Double unevenBefore = unevenService.getUneven(unevenMetric);
+        Double unevenAfter = Double.MAX_VALUE;
+
+        List<Path> paths = routingService.getPathsSlow(src, dst, 1);
+        Path path = paths.get(0);
+
+        Map<NodePortTuple, SwitchPortBandwidth> predicateBandwidthConsumption = new HashMap<>();
+        List<NodePortTuple> npts = path.getPath();
+        actualBandwidthConsumption.forEach((nodePortTuple, switchPortBandwidth) -> {
+            if(npts.contains(nodePortTuple)) {
+                predicateBandwidthConsumption.put(nodePortTuple, SwitchPortBandwidth.of(switchPortBandwidth.getSwitchId(),
+                        switchPortBandwidth.getSwitchPort(),
+                        switchPortBandwidth.getLinkSpeedBitsPerSec(),
+                        switchPortBandwidth.getBitsPerSecondRx(),
+                        U64.of(switchPortBandwidth.getBitsPerSecondTx().getValue() + dtsp.getService().getBandwidth().longValue() * 1000000),
+                        switchPortBandwidth.getPriorByteValueRx(),
+                        switchPortBandwidth.getPriorByteValueTx()));
+            } else {
+                //copy actual
+                predicateBandwidthConsumption.put(nodePortTuple, SwitchPortBandwidth.of(switchPortBandwidth.getSwitchId(),
+                        switchPortBandwidth.getSwitchPort(),
+                        switchPortBandwidth.getLinkSpeedBitsPerSec(),
+                        switchPortBandwidth.getBitsPerSecondRx(),
+                        switchPortBandwidth.getBitsPerSecondTx(),
+                        switchPortBandwidth.getPriorByteValueRx(),
+                        switchPortBandwidth.getPriorByteValueTx()));
+            }
+        });
+        Double pathUnevenAfter = unevenService.getUneven(unevenMetric, predicateBandwidthConsumption);
+        long latency = path.getLatency().getValue();
+        log.debug("Uneven after = " + pathUnevenAfter + " and latency = " + latency);
+
+        Map<SecurityDimension, Float> pathProperties = pathPropertiesService.calculatePathProperties(path);
+        Map<SecurityDimension, Float> pathRisks = riskService.calculateRisk(pathProperties, dtsp.getConsequences());
+
+        boolean solved = isPathRiskInRange(acceptableRisks, pathRisks);
+        if(solved == false) {
+            log.info("Cannot find path to realize service " + service.getId());
+            return Decision.builder()
+                    .id(UUID.randomUUID().toString())
+                    .user(user)
+                    .service(service)
+                    .acceptableRisks(acceptableRisks)
+                    .maxRisks(maxRisks)
+                    .solved(false)
+                    .reason(Reason.CANNOT_FULFILL_DTSP)
+                    .date(LocalTime.now())
+                    .build();
+        } else {
+            double rarBfPathDistance = Math.sqrt(Math.pow(pathRisks.get(SecurityDimension.CONFIDENTIALITY), 2)
+                    + Math.pow(pathRisks.get(SecurityDimension.INTEGRITY), 2)
+                    + Math.pow(pathRisks.get(SecurityDimension.AVAILABILITY), 2)
+                    + Math.pow(pathRisks.get(SecurityDimension.TRUST), 2));
+            path = addSrcAndDstToPath(srcPort, src, dstPort, dst, path);
+            log.info("Path {} in RAR-BF with distance {}", path, rarBfPathDistance);
+            return Decision.builder()
+                    .id(UUID.randomUUID().toString())
+                    .user(user)
+                    .service(service)
+                    .acceptableRisks(acceptableRisks)
+                    .maxRisks(maxRisks)
+                    .solved(true)
+                    .unevenBefore(unevenBefore)
+                    .unevenAfter(unevenAfter)
+                    .region(SolveRegion.RAR_BF)
+                    .value(rarBfPathDistance)
+                    .risks(pathRisks)
+                    .risk(aggregateRisk(pathRisks))
+                    .date(LocalTime.now())
+                    .path(path)
+                    .pathLength(path.getHopCount())
+                    .pathLatency(path.getLatency().getValue())
+                    .build();
+        }
+
+    }
+
     private List<Path> filterLatency(List<Path> paths, Long maxLatency) {
         return paths.stream().filter(path -> {
             if(path.getLatency().getValue() > maxLatency) {
