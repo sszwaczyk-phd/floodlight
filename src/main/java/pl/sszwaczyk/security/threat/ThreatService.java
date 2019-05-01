@@ -91,6 +91,8 @@ public class ThreatService implements IFloodlightModule, IThreatService {
                     .maxDuration(Integer.parseInt(configParameters.get("max-duration")))
                     .build();
 
+            long startTime = Long.parseLong(configParameters.get("threats-generator-start-time"));
+            log.info("Threats generator start time set to " + startTime + " seconds");
             new Timer().schedule(
                     new TimerTask() {
                         @Override
@@ -98,7 +100,7 @@ public class ThreatService implements IFloodlightModule, IThreatService {
                             uniformThreatsGenerator.start();
                         }
                     },
-                    Long.parseLong(configParameters.get("threats-generator-start-time")) * 1000
+                    startTime * 1000
             );
         }
     }

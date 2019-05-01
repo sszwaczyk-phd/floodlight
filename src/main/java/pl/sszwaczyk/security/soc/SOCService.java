@@ -8,6 +8,7 @@ import net.floodlightcontroller.restserver.IRestApiService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.sszwaczyk.security.SecurityDimension;
+import pl.sszwaczyk.security.soc.calculator.RandomSameValueThreatInfluenceCalculator;
 import pl.sszwaczyk.security.soc.calculator.RandomThreatInfluenceCalculator;
 import pl.sszwaczyk.security.soc.calculator.ThreatInfluenceCalculator;
 import pl.sszwaczyk.security.soc.web.SOCWebRoutable;
@@ -119,6 +120,62 @@ public class SOCService implements IFloodlightModule, ISOCService, IThreatListen
                     .build();
 
             log.info("RandomThreatInfluenceCalculator with minT = " + minT + "; maxT = " + maxT + "; minC = " + minC + "; maxC = " + maxC + "; minI = " + minI + "; maxI = " + maxI + "; minA = " + minA + "; maxA = " + maxA);
+        } else if(calculator.equals("random-same")) {
+            String randomMinString = configParameters.get("random-min");
+            String randomMaxString = configParameters.get("random-max");
+            if(randomMinString == null || randomMaxString == null || randomMinString.isEmpty() || randomMaxString.isEmpty()) {
+                throw new FloodlightModuleException("Random threat influcence calculator need random-min and random-max specified");
+            }
+            double randomMin = Double.parseDouble(randomMinString);
+            double randomMax = Double.parseDouble(randomMaxString);
+
+            String influenceTString = configParameters.get("influence-t");
+            boolean influenceT = false;
+            if(influenceTString == null || influenceTString.isEmpty()) {
+                log.info("Influence T not specified. Set default to " + influenceT);
+            } else {
+                influenceT = Boolean.parseBoolean(influenceTString);
+                log.info("Influence T set to " + influenceT);
+            }
+
+            String influenceCString = configParameters.get("influence-c");
+            boolean influenceC = false;
+            if(influenceCString == null || influenceCString.isEmpty()) {
+                log.info("Influence C not specified. Set default to " + influenceC);
+            } else {
+                influenceC = Boolean.parseBoolean(influenceCString);
+                log.info("Influence C set to " + influenceC);
+            }
+
+            String influenceIString = configParameters.get("influence-i");
+            boolean influenceI = false;
+            if(influenceIString == null || influenceIString.isEmpty()) {
+                log.info("Influence I not specified. Set default to " + influenceI);
+            } else {
+                influenceI = Boolean.parseBoolean(influenceIString);
+                log.info("Influence I set to " + influenceI);
+            }
+
+            String influenceAString = configParameters.get("influence-a");
+            boolean influenceA = false;
+            if(influenceAString == null || influenceAString.isEmpty()) {
+                log.info("Influence A not specified. Set default to " + influenceA);
+            } else {
+                influenceA = Boolean.parseBoolean(influenceAString);
+                log.info("Influence A set to " + influenceA);
+            }
+
+            threatInfluenceCalculator = RandomSameValueThreatInfluenceCalculator.builder()
+                    .seed(Integer.parseInt(configParameters.get("random-seed")))
+                    .min(randomMin)
+                    .max(randomMax)
+                    .influenceT(influenceT)
+                    .influenceC(influenceC)
+                    .influenceI(influenceI)
+                    .influenceA(influenceA)
+                    .build();
+
+            log.info("RandomSameValueThreatInfluenceCalculator with min = " + randomMin + ", max = " + randomMax + ", influence T = " + influenceT + ", influence C = " + influenceC + ", influence I = " + influenceI + ", influence A = " + influenceA );
         } else {
             throw new FloodlightModuleException("Invalid threat influence calculator specified");
         }
