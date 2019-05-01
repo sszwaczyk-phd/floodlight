@@ -42,7 +42,8 @@ def simplePolska():
                    build=False,
                    ipBase='10.0.0.0/24',
                    autoSetMacs=True,
-                   autoStaticArp=True)
+                   autoStaticArp=True,
+                   host=CPULimitedHost)
 
     info( '*** Adding controller\n' )
     c0=net.addController(name='c0',
@@ -66,34 +67,34 @@ def simplePolska():
     rzeszow = net.addSwitch( 'rzeszow', cls=OVSKernelSwitch, dpid='00:00:00:00:00:00:00:12' )
 
     info( '*** Add hosts\n')
-    userOneHost = net.addHost( 'User1', cls=Host, ip='10.0.0.101/24' )
-    userTwoHost = net.addHost( 'User2', cls=Host, ip='10.0.0.102/24' )
-    userThreeHost = net.addHost( 'User3', cls=Host, ip='10.0.0.103/24' )
-    userFourHost = net.addHost( 'User4', cls=Host, ip='10.0.0.104/24' )
-    userFiveHost = net.addHost( 'User5', cls=Host, ip='10.0.0.105/24' )
-    userSixHost = net.addHost( 'User6', cls=Host, ip='10.0.0.106/24' )
-    userSevenHost = net.addHost( 'User7', cls=Host, ip='10.0.0.107/24' )
-    userEightHost = net.addHost( 'User8', cls=Host, ip='10.0.0.108/24' )
-    userNineHost = net.addHost( 'User9', cls=Host, ip='10.0.0.109/24' )
-    userTenHost = net.addHost( 'User10', cls=Host, ip='10.0.0.110/24' )
-    userElevenHost = net.addHost( 'User11', cls=Host, ip='10.0.0.111/24' )
-    userTwelveHost = net.addHost( 'User12', cls=Host, ip='10.0.0.112/24' )
-    userThirteenHost = net.addHost( 'User13', cls=Host, ip='10.0.0.113/24' )
-    userFourteenHost = net.addHost( 'User14', cls=Host, ip='10.0.0.114/24' )
-    userFifteenHost = net.addHost( 'User15', cls=Host, ip='10.0.0.115/24' )
-    userSixteenHost = net.addHost( 'User16', cls=Host, ip='10.0.0.116/24' )
-    userSeventeenHost = net.addHost( 'User17', cls=Host, ip='10.0.0.117/24' )
-    userEighteenHost = net.addHost( 'User18', cls=Host, ip='10.0.0.118/24' )
-    userNineteenHost = net.addHost( 'User19', cls=Host, ip='10.0.0.119/24' )
-    userTwentyHost = net.addHost( 'User20', cls=Host, ip='10.0.0.120/24' )
-    userTwentyOneHost = net.addHost( 'User21', cls=Host, ip='10.0.0.121/24' )
+    hostsNumber = 21
+    userOneHost = net.addHost( 'User1', cls=Host, ip='10.0.0.101/24', cpu=.1/hostsNumber )
+    userTwoHost = net.addHost( 'User2', cls=Host, ip='10.0.0.102/24', cpu=.1/hostsNumber )
+    userThreeHost = net.addHost( 'User3', cls=Host, ip='10.0.0.103/24', cpu=.1/hostsNumber )
+    userFourHost = net.addHost( 'User4', cls=Host, ip='10.0.0.104/24', cpu=.1/hostsNumber )
+    userFiveHost = net.addHost( 'User5', cls=Host, ip='10.0.0.105/24', cpu=.1/hostsNumber )
+    userSixHost = net.addHost( 'User6', cls=Host, ip='10.0.0.106/24', cpu=.1/hostsNumber )
+    userSevenHost = net.addHost( 'User7', cls=Host, ip='10.0.0.107/24', cpu=.1/hostsNumber )
+    # userEightHost = net.addHost( 'User8', cls=Host, ip='10.0.0.108/24', cpu=.1/hostsNumber )
+    # userNineHost = net.addHost( 'User9', cls=Host, ip='10.0.0.109/24', cpu=.1/hostsNumber )
+    # userTenHost = net.addHost( 'User10', cls=Host, ip='10.0.0.110/24', cpu=.1/hostsNumber )
+    # userElevenHost = net.addHost( 'User11', cls=Host, ip='10.0.0.111/24', cpu=.1/hostsNumber )
+    # userTwelveHost = net.addHost( 'User12', cls=Host, ip='10.0.0.112/24', cpu=.1/hostsNumber )
+    # userThirteenHost = net.addHost( 'User13', cls=Host, ip='10.0.0.113/24', cpu=.1/hostsNumber )
+    # userFourteenHost = net.addHost( 'User14', cls=Host, ip='10.0.0.114/24', cpu=.1/hostsNumber )
+    # userFifteenHost = net.addHost( 'User15', cls=Host, ip='10.0.0.115/24', cpu=.1/hostsNumber )
+    # userSixteenHost = net.addHost( 'User16', cls=Host, ip='10.0.0.116/24', cpu=.1/hostsNumber )
+    # userSeventeenHost = net.addHost( 'User17', cls=Host, ip='10.0.0.117/24', cpu=.1/hostsNumber )
+    # userEighteenHost = net.addHost( 'User18', cls=Host, ip='10.0.0.118/24', cpu=.1/hostsNumber )
+    # userNineteenHost = net.addHost( 'User19', cls=Host, ip='10.0.0.119/24', cpu=.1/hostsNumber )
+    # userTwentyHost = net.addHost( 'User20', cls=Host, ip='10.0.0.120/24', cpu=.1/hostsNumber )
+    # userTwentyOneHost = net.addHost( 'User21', cls=Host, ip='10.0.0.121/24', cpu=.1/hostsNumber )
 
-
-    httpLsHost = net.addHost( 'HTTP_LS', cls=Host, ip='10.0.0.1/24' )
-    httpLrHost = net.addHost( 'HTTP_LR', cls=Host, ip='10.0.0.2/24' )
-    httpSsHost = net.addHost( 'HTTP_SS', cls=Host, ip='10.0.0.3/24' )
-    httpSrHost = net.addHost( 'HTTP_SR', cls=Host, ip='10.0.0.4/24' )
-    httpSuHost = net.addHost( 'HTTP_SU', cls=Host, ip='10.0.0.5/24' )
+    httpLsHost = net.addHost( 'HTTP_LS', cls=Host, ip='10.0.0.1/24', cpu=.1/hostsNumber )
+    httpLrHost = net.addHost( 'HTTP_LR', cls=Host, ip='10.0.0.2/24', cpu=.1/hostsNumber )
+    httpSsHost = net.addHost( 'HTTP_SS', cls=Host, ip='10.0.0.3/24', cpu=.1/hostsNumber )
+    httpSrHost = net.addHost( 'HTTP_SR', cls=Host, ip='10.0.0.4/24', cpu=.1/hostsNumber )
+    httpSuHost = net.addHost( 'HTTP_SU', cls=Host, ip='10.0.0.5/24', cpu=.1/hostsNumber )
 
     info( '*** Add links\n')
     # Add links between switches
@@ -141,20 +142,20 @@ def simplePolska():
     net.addLink( lodz, userFiveHost, cls=TCLink , bw=10 )
     net.addLink( katowice, userSixHost, cls=TCLink , bw=10 )
     net.addLink( krakow, userSevenHost, cls=TCLink , bw=10 )
-    net.addLink( gdansk, userEightHost, cls=TCLink , bw=10 )
-    net.addLink( szczecin, userNineHost, cls=TCLink , bw=10 )
-    net.addLink( bydgoszcz, userTenHost, cls=TCLink , bw=10 )
-    net.addLink( poznan, userElevenHost, cls=TCLink , bw=10 )
-    net.addLink( lodz, userTwelveHost, cls=TCLink , bw=10 )
-    net.addLink( katowice, userThirteenHost, cls=TCLink , bw=10 )
-    net.addLink( krakow, userFourteenHost, cls=TCLink , bw=10 )
-    net.addLink( gdansk, userFifteenHost, cls=TCLink , bw=10 )
-    net.addLink( szczecin, userSixteenHost, cls=TCLink , bw=10 )
-    net.addLink( bydgoszcz, userSeventeenHost, cls=TCLink , bw=10 )
-    net.addLink( poznan, userEighteenHost, cls=TCLink , bw=10 )
-    net.addLink( lodz, userNineteenHost, cls=TCLink , bw=10 )
-    net.addLink( katowice, userTwentyHost, cls=TCLink , bw=10 )
-    net.addLink( krakow, userTwentyOneHost, cls=TCLink , bw=10 )
+    # net.addLink( gdansk, userEightHost, cls=TCLink , bw=10 )
+    # net.addLink( szczecin, userNineHost, cls=TCLink , bw=10 )
+    # net.addLink( bydgoszcz, userTenHost, cls=TCLink , bw=10 )
+    # net.addLink( poznan, userElevenHost, cls=TCLink , bw=10 )
+    # net.addLink( lodz, userTwelveHost, cls=TCLink , bw=10 )
+    # net.addLink( katowice, userThirteenHost, cls=TCLink , bw=10 )
+    # net.addLink( krakow, userFourteenHost, cls=TCLink , bw=10 )
+    # net.addLink( gdansk, userFifteenHost, cls=TCLink , bw=10 )
+    # net.addLink( szczecin, userSixteenHost, cls=TCLink , bw=10 )
+    # net.addLink( bydgoszcz, userSeventeenHost, cls=TCLink , bw=10 )
+    # net.addLink( poznan, userEighteenHost, cls=TCLink , bw=10 )
+    # net.addLink( lodz, userNineteenHost, cls=TCLink , bw=10 )
+    # net.addLink( katowice, userTwentyHost, cls=TCLink , bw=10 )
+    # net.addLink( krakow, userTwentyOneHost, cls=TCLink , bw=10 )
 
     info( '*** Starting network\n')
     net.build()
@@ -227,61 +228,61 @@ def simplePolska():
     userSevenCommand = 'java -jar /home/sszwaczyk/WAT/PhD/impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /home/sszwaczyk/WAT/PhD/impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-seven -st ./user-seven-exit.xlsx -er ./user-seven-every-request.xlsx -s 77777 -g poisson -l ' + str(lam)
     popens[userSevenHost] = userSevenHost.popen(userSevenCommand.split())
 
-    sleep(1)
-    userEightCommand = 'java -jar /home/sszwaczyk/WAT/PhD/impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /home/sszwaczyk/WAT/PhD/impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-eight -st ./user-eight-exit.xlsx -er ./user-eight-every-request.xlsx -s 88888 -g poisson -l ' + str(lam)
-    popens[userEightHost] = userEightHost.popen(userEightCommand.split())
-
-    sleep(1)
-    userNineCommand = 'java -jar /home/sszwaczyk/WAT/PhD/impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /home/sszwaczyk/WAT/PhD/impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Nine -st ./user-Nine-exit.xlsx -er ./user-Nine-every-request.xlsx -s 99999 -g poisson -l ' + str(lam)
-    popens[userNineHost] = userNineHost.popen(userNineCommand.split())
-
-    sleep(1)
-    userTenCommand = 'java -jar /home/sszwaczyk/WAT/PhD/impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /home/sszwaczyk/WAT/PhD/impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Ten -st ./user-Ten-exit.xlsx -er ./user-Ten-every-request.xlsx -s 1010101010 -g poisson -l ' + str(lam)
-    popens[userTenHost] = userTenHost.popen(userTenCommand.split())
-
-    sleep(1)
-    userElevenCommand = 'java -jar /home/sszwaczyk/WAT/PhD/impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /home/sszwaczyk/WAT/PhD/impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Eleven -st ./user-Eleven-exit.xlsx -er ./user-Eleven-every-request.xlsx -s 1111111111 -g poisson -l ' + str(lam)
-    popens[userElevenHost] = userElevenHost.popen(userElevenCommand.split())
-
-    sleep(1)
-    userTwelveCommand = 'java -jar /home/sszwaczyk/WAT/PhD/impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /home/sszwaczyk/WAT/PhD/impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Twelve -st ./user-Twelve-exit.xlsx -er ./user-Twelve-every-request.xlsx -s 1212121212 -g poisson -l ' + str(lam)
-    popens[userTwelveHost] = userTwelveHost.popen(userTwelveCommand.split())
-
-    sleep(1)
-    userThirteenCommand = 'java -jar /home/sszwaczyk/WAT/PhD/impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /home/sszwaczyk/WAT/PhD/impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Thirteen -st ./user-Thirteen-exit.xlsx -er ./user-Thirteen-every-request.xlsx -s 1313131313 -g poisson -l ' + str(lam)
-    popens[userThirteenHost] = userThirteenHost.popen(userThirteenCommand.split())
-
-    sleep(1)
-    userFourteenCommand = 'java -jar /home/sszwaczyk/WAT/PhD/impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /home/sszwaczyk/WAT/PhD/impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Fourteen -st ./user-Fourteen-exit.xlsx -er ./user-Fourteen-every-request.xlsx -s 1414141414 -g poisson -l ' + str(lam)
-    popens[userFourteenHost] = userFourteenHost.popen(userFourteenCommand.split())
-
-    sleep(1)
-    userFifteenCommand = 'java -jar /home/sszwaczyk/WAT/PhD/impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /home/sszwaczyk/WAT/PhD/impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Fifteen -st ./user-Fifteen-exit.xlsx -er ./user-Fifteen-every-request.xlsx -s 1515151515 -g poisson -l ' + str(lam)
-    popens[userFifteenHost] = userFifteenHost.popen(userFifteenCommand.split())
-
-    sleep(1)
-    userSixteenCommand = 'java -jar /home/sszwaczyk/WAT/PhD/impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /home/sszwaczyk/WAT/PhD/impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Sixteen -st ./user-Sixteen-exit.xlsx -er ./user-Sixteen-every-request.xlsx -s 1616161616 -g poisson -l ' + str(lam)
-    popens[userSixteenHost] = userSixteenHost.popen(userSixteenCommand.split())
-
-    sleep(1)
-    userSeventeenCommand = 'java -jar /home/sszwaczyk/WAT/PhD/impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /home/sszwaczyk/WAT/PhD/impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Seventeen -st ./user-Seventeen-exit.xlsx -er ./user-Seventeen-every-request.xlsx -s 1717171717 -g poisson -l ' + str(lam)
-    popens[userSeventeenHost] = userSeventeenHost.popen(userSeventeenCommand.split())
-
-    sleep(1)
-    userEighteenCommand = 'java -jar /home/sszwaczyk/WAT/PhD/impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /home/sszwaczyk/WAT/PhD/impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Eighteen -st ./user-Eighteen-exit.xlsx -er ./user-Eighteen-every-request.xlsx -s 1818181818 -g poisson -l ' + str(lam)
-    popens[userEighteenHost] = userEighteenHost.popen(userEighteenCommand.split())
-
-    sleep(1)
-    userNineteenCommand = 'java -jar /home/sszwaczyk/WAT/PhD/impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /home/sszwaczyk/WAT/PhD/impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Nineteen -st ./user-Nineteen-exit.xlsx -er ./user-Nineteen-every-request.xlsx -s 1919191919 -g poisson -l ' + str(lam)
-    popens[userNineteenHost] = userNineteenHost.popen(userNineteenCommand.split())
-
-    sleep(1)
-    userTwentyCommand = 'java -jar /home/sszwaczyk/WAT/PhD/impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /home/sszwaczyk/WAT/PhD/impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Twenty -st ./user-Twenty-exit.xlsx -er ./user-Twenty-every-request.xlsx -s 2020202020 -g poisson -l ' + str(lam)
-    popens[userTwentyHost] = userTwentyHost.popen(userTwentyCommand.split())
-
-    sleep(1)
-    userTwentyOneCommand = 'java -jar /home/sszwaczyk/WAT/PhD/impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /home/sszwaczyk/WAT/PhD/impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-TwentyOne -st ./user-TwentyOne-exit.xlsx -er ./user-TwentyOne-every-request.xlsx -s 2121212121 -g poisson -l ' + str(lam)
-    popens[userTwentyOneHost] = userTwentyOneHost.popen(userTwentyOneCommand.split())
+    # sleep(1)
+    # userEightCommand = 'java -jar /home/sszwaczyk/WAT/PhD/impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /home/sszwaczyk/WAT/PhD/impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-eight -st ./user-eight-exit.xlsx -er ./user-eight-every-request.xlsx -s 88888 -g poisson -l ' + str(lam)
+    # popens[userEightHost] = userEightHost.popen(userEightCommand.split())
+    #
+    # sleep(1)
+    # userNineCommand = 'java -jar /home/sszwaczyk/WAT/PhD/impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /home/sszwaczyk/WAT/PhD/impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Nine -st ./user-Nine-exit.xlsx -er ./user-Nine-every-request.xlsx -s 99999 -g poisson -l ' + str(lam)
+    # popens[userNineHost] = userNineHost.popen(userNineCommand.split())
+    #
+    # sleep(1)
+    # userTenCommand = 'java -jar /home/sszwaczyk/WAT/PhD/impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /home/sszwaczyk/WAT/PhD/impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Ten -st ./user-Ten-exit.xlsx -er ./user-Ten-every-request.xlsx -s 1010101010 -g poisson -l ' + str(lam)
+    # popens[userTenHost] = userTenHost.popen(userTenCommand.split())
+    #
+    # sleep(1)
+    # userElevenCommand = 'java -jar /home/sszwaczyk/WAT/PhD/impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /home/sszwaczyk/WAT/PhD/impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Eleven -st ./user-Eleven-exit.xlsx -er ./user-Eleven-every-request.xlsx -s 1111111111 -g poisson -l ' + str(lam)
+    # popens[userElevenHost] = userElevenHost.popen(userElevenCommand.split())
+    #
+    # sleep(1)
+    # userTwelveCommand = 'java -jar /home/sszwaczyk/WAT/PhD/impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /home/sszwaczyk/WAT/PhD/impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Twelve -st ./user-Twelve-exit.xlsx -er ./user-Twelve-every-request.xlsx -s 1212121212 -g poisson -l ' + str(lam)
+    # popens[userTwelveHost] = userTwelveHost.popen(userTwelveCommand.split())
+    #
+    # sleep(1)
+    # userThirteenCommand = 'java -jar /home/sszwaczyk/WAT/PhD/impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /home/sszwaczyk/WAT/PhD/impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Thirteen -st ./user-Thirteen-exit.xlsx -er ./user-Thirteen-every-request.xlsx -s 1313131313 -g poisson -l ' + str(lam)
+    # popens[userThirteenHost] = userThirteenHost.popen(userThirteenCommand.split())
+    #
+    # sleep(1)
+    # userFourteenCommand = 'java -jar /home/sszwaczyk/WAT/PhD/impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /home/sszwaczyk/WAT/PhD/impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Fourteen -st ./user-Fourteen-exit.xlsx -er ./user-Fourteen-every-request.xlsx -s 1414141414 -g poisson -l ' + str(lam)
+    # popens[userFourteenHost] = userFourteenHost.popen(userFourteenCommand.split())
+    #
+    # sleep(1)
+    # userFifteenCommand = 'java -jar /home/sszwaczyk/WAT/PhD/impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /home/sszwaczyk/WAT/PhD/impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Fifteen -st ./user-Fifteen-exit.xlsx -er ./user-Fifteen-every-request.xlsx -s 1515151515 -g poisson -l ' + str(lam)
+    # popens[userFifteenHost] = userFifteenHost.popen(userFifteenCommand.split())
+    #
+    # sleep(1)
+    # userSixteenCommand = 'java -jar /home/sszwaczyk/WAT/PhD/impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /home/sszwaczyk/WAT/PhD/impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Sixteen -st ./user-Sixteen-exit.xlsx -er ./user-Sixteen-every-request.xlsx -s 1616161616 -g poisson -l ' + str(lam)
+    # popens[userSixteenHost] = userSixteenHost.popen(userSixteenCommand.split())
+    #
+    # sleep(1)
+    # userSeventeenCommand = 'java -jar /home/sszwaczyk/WAT/PhD/impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /home/sszwaczyk/WAT/PhD/impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Seventeen -st ./user-Seventeen-exit.xlsx -er ./user-Seventeen-every-request.xlsx -s 1717171717 -g poisson -l ' + str(lam)
+    # popens[userSeventeenHost] = userSeventeenHost.popen(userSeventeenCommand.split())
+    #
+    # sleep(1)
+    # userEighteenCommand = 'java -jar /home/sszwaczyk/WAT/PhD/impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /home/sszwaczyk/WAT/PhD/impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Eighteen -st ./user-Eighteen-exit.xlsx -er ./user-Eighteen-every-request.xlsx -s 1818181818 -g poisson -l ' + str(lam)
+    # popens[userEighteenHost] = userEighteenHost.popen(userEighteenCommand.split())
+    #
+    # sleep(1)
+    # userNineteenCommand = 'java -jar /home/sszwaczyk/WAT/PhD/impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /home/sszwaczyk/WAT/PhD/impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Nineteen -st ./user-Nineteen-exit.xlsx -er ./user-Nineteen-every-request.xlsx -s 1919191919 -g poisson -l ' + str(lam)
+    # popens[userNineteenHost] = userNineteenHost.popen(userNineteenCommand.split())
+    #
+    # sleep(1)
+    # userTwentyCommand = 'java -jar /home/sszwaczyk/WAT/PhD/impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /home/sszwaczyk/WAT/PhD/impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-Twenty -st ./user-Twenty-exit.xlsx -er ./user-Twenty-every-request.xlsx -s 2020202020 -g poisson -l ' + str(lam)
+    # popens[userTwentyHost] = userTwentyHost.popen(userTwentyCommand.split())
+    #
+    # sleep(1)
+    # userTwentyOneCommand = 'java -jar /home/sszwaczyk/WAT/PhD/impl/requests-generator/target/requests-generator-1.0-SNAPSHOT.jar -sf /home/sszwaczyk/WAT/PhD/impl/floodlight/scenarios/simple-polska/mininet/services.json -lf user-TwentyOne -st ./user-TwentyOne-exit.xlsx -er ./user-TwentyOne-every-request.xlsx -s 2121212121 -g poisson -l ' + str(lam)
+    # popens[userTwentyOneHost] = userTwentyOneHost.popen(userTwentyOneCommand.split())
 
     # CLI(net)
 
