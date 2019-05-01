@@ -1,5 +1,8 @@
 package pl.sszwaczyk.security.properties;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import net.floodlightcontroller.core.IOFSwitch;
 import net.floodlightcontroller.core.IOFSwitchListener;
@@ -21,6 +24,7 @@ import net.floodlightcontroller.threadpool.IThreadPoolService;
 import org.projectfloodlight.openflow.protocol.OFPortDesc;
 import org.projectfloodlight.openflow.types.DatapathId;
 import org.projectfloodlight.openflow.types.OFPort;
+import org.projectfloodlight.openflow.types.U64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pl.sszwaczyk.security.SecurityDimension;
@@ -32,6 +36,8 @@ import pl.sszwaczyk.security.soc.ISOCService;
 import pl.sszwaczyk.security.soc.SOCUpdate;
 import pl.sszwaczyk.security.soc.SOCUpdateType;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -50,6 +56,10 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
     private List<ISecurityPropertiesChangedListener> listeners = new ArrayList<>();
 
     private boolean enableLinkAvaialabilityUtilizationActualization = false;
+    private boolean readFromFile = false;
+
+    private Map<String, SwitchSecurityProperties> initSwitchesSecurityProperites;
+    private Map<Link, LinkSecurityProperties> initLinkSecurityProperties;
 
     @Override
     public Collection<Class<? extends IFloodlightService>> getModuleServices() {
@@ -98,6 +108,52 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
             enableLinkAvaialabilityUtilizationActualization = false;
             log.info("Link availability actualization based on utilization not set. Set default to " + enableLinkAvaialabilityUtilizationActualization);
         }
+
+        tmp = configParameters.get("read-from-file");
+        if(tmp != null && !tmp.isEmpty()) {
+            readFromFile = Boolean.parseBoolean(tmp);
+            log.info("Read Security Properties set to " + readFromFile);
+            if(readFromFile) {
+                String repositoryFile = configParameters.get("repository-file");
+                if(repositoryFile == null || repositoryFile.isEmpty()) {
+                    throw new FloodlightModuleException("Read Security Properties from file enabled but repository file not set!");
+                }
+                loadInitSecurityProperties(repositoryFile);
+            }
+        } else {
+            readFromFile = false;
+            log.info("Read Security Properties not set. Set default to " + readFromFile);
+        }
+    }
+
+    private void loadInitSecurityProperties(String repositoryFile) throws FloodlightModuleException {
+        initSwitchesSecurityProperites = new HashMap<>();
+        initLinkSecurityProperties = new HashMap<>();
+
+        File file = new File(repositoryFile);
+        ObjectMapper mapper = new ObjectMapper();
+
+        try {
+            JsonNode root = mapper.readTree(file);
+            JsonNode switchesNode = root.path("switches");
+            List<SwitchSecurityProperties> switchesSecurityProps = mapper.readValue(mapper.treeAsTokens(switchesNode), new TypeReference<List<SwitchSecurityProperties>>() {});
+            for(SwitchSecurityProperties p: switchesSecurityProps) {
+                initSwitchesSecurityProperites.put(p.getSwitchDpid(), p);
+            }
+
+            JsonNode linksNode = root.path("links");
+            List<LinkSecurityProperties> linkSecurityProps = mapper.readValue(mapper.treeAsTokens(linksNode), new TypeReference<List<LinkSecurityProperties>>() {});
+            for(LinkSecurityProperties p: linkSecurityProps) {
+                Link link = new Link(DatapathId.of(p.getSrc()), OFPort.of(p.getSrcPort()), DatapathId.of(p.getDst()), OFPort.of(p.getDstPort()), U64.ZERO);
+                initLinkSecurityProperties.put(link, p);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new FloodlightModuleException("Cannot parse Security Properties from file");
+        }
+
+
     }
 
     @Override
@@ -115,8 +171,19 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
     public void switchAdded(DatapathId switchId) {
         log.debug("Switch added handling ({})", switchId);
         IOFSwitch newSwitch = switchService.getSwitch(switchId);
-        newSwitch.getAttributes().put(SecurityDimension.TRUST, 0.99f);
-        log.info("Trust for new switch {} set to 0.99", switchId);
+        if(readFromFile) {
+            SwitchSecurityProperties switchSecurityProperties = initSwitchesSecurityProperites.get(switchId.toString());
+            if(switchSecurityProperties != null) {
+                newSwitch.getAttributes().put(SecurityDimension.TRUST, switchSecurityProperties.getTrust());
+                log.info("Trust for new switch {} set to {}", switchId, switchSecurityProperties.getTrust());
+            } else {
+                log.warn("Init Security Properties for switch " + switchId + " not found! Setting to 0.99.");
+                newSwitch.getAttributes().put(SecurityDimension.TRUST, 0.99f);
+            }
+        } else {
+            newSwitch.getAttributes().put(SecurityDimension.TRUST, 0.99f);
+            log.info("Trust for new switch {} set to 0.99", switchId);
+        }
     }
 
     @Override
@@ -150,12 +217,32 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
                         && link.getDstPort().equals(ldUpdate.getDstPort())
                         && link.getSecurityProperties() == null) {
                             log.debug("Handling link update ({})", link);
-                            Map<SecurityDimension, Float> securityProperties = new HashMap<>();
-                            securityProperties.put(SecurityDimension.CONFIDENTIALITY, 0.99f);
-                            securityProperties.put(SecurityDimension.INTEGRITY, 0.99f);
-                            securityProperties.put(SecurityDimension.AVAILABILITY, 0.99f);
-                            link.setSecurityProperties(securityProperties);
-                            log.info("C, I, A for new link {} set to 0.99", link);
+                            if(readFromFile) {
+                                LinkSecurityProperties linkSecurityProperties = initLinkSecurityProperties.get(link);
+                                if(linkSecurityProperties != null) {
+                                    Map<SecurityDimension, Float> securityProperties = new HashMap<>();
+                                    securityProperties.put(SecurityDimension.CONFIDENTIALITY, linkSecurityProperties.getConfidentiality());
+                                    securityProperties.put(SecurityDimension.INTEGRITY, linkSecurityProperties.getIntegrity());
+                                    securityProperties.put(SecurityDimension.AVAILABILITY, linkSecurityProperties.getAvailability());
+                                    link.setSecurityProperties(securityProperties);
+                                    log.info("C, I, A for new link " + link + " set to " + linkSecurityProperties.getConfidentiality() + ", " + linkSecurityProperties.getIntegrity() + ", " + linkSecurityProperties.getAvailability());
+                                } else {
+                                    log.warn("Init Security Properties for link " + link + " not found! Setting to 0.99.");
+                                    Map<SecurityDimension, Float> securityProperties = new HashMap<>();
+                                    securityProperties.put(SecurityDimension.CONFIDENTIALITY, 0.99f);
+                                    securityProperties.put(SecurityDimension.INTEGRITY, 0.99f);
+                                    securityProperties.put(SecurityDimension.AVAILABILITY, 0.99f);
+                                    link.setSecurityProperties(securityProperties);
+                                }
+                            } else {
+                                Map<SecurityDimension, Float> securityProperties = new HashMap<>();
+                                securityProperties.put(SecurityDimension.CONFIDENTIALITY, 0.99f);
+                                securityProperties.put(SecurityDimension.INTEGRITY, 0.99f);
+                                securityProperties.put(SecurityDimension.AVAILABILITY, 0.99f);
+                                link.setSecurityProperties(securityProperties);
+                                log.info("C, I, A for new link {} set to 0.99", link);
+                            }
+
                     }
                 }
             }

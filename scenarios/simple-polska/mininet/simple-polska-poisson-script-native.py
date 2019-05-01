@@ -1,25 +1,16 @@
 #!/usr/bin/python
-from mininet.net import Mininet
-from mininet.node import Controller, RemoteController, OVSController
-from mininet.node import CPULimitedHost, Host, Node
-from mininet.node import OVSKernelSwitch, UserSwitch
-from mininet.node import IVSSwitch
-from mininet.cli import CLI
+import sys
+from mininet.link import TCLink
 from mininet.log import setLogLevel, info
-from mininet.link import TCLink, Intf
+from mininet.net import Mininet
+from mininet.node import Host
+from mininet.node import OVSKernelSwitch
+from mininet.node import RemoteController
 from mininet.util import pmonitor
-from subprocess import call
-
+from signal import SIGTERM
 from time import sleep
 from time import time
-from signal import SIGINT
-from signal import SIGTERM
 
-import os
-import signal
-import subprocess
-
-import sys
 
 def simplePolska():
 
@@ -30,9 +21,9 @@ def simplePolska():
     simulationTime = int(sys.argv[1])
     lam = float(sys.argv[2])
 
-    info( '*** Starting controller...\n')
-    cmd = "java -jar target/floodlight.jar -cf /home/sszwaczyk/WAT/PhD/impl/floodlight/scenarios/simple-polska/mininet/floodlightdefault.properties"
-    proc = subprocess.Popen(cmd.split(), cwd='/home/sszwaczyk/WAT/PhD/impl/floodlight')
+    # info( '*** Starting controller...\n')
+    # cmd = "java -jar target/floodlight.jar -cf /home/sszwaczyk/WAT/PhD/impl/floodlight/scenarios/simple-polska/mininet/floodlightdefault.properties"
+    # proc = subprocess.Popen(cmd.split(), cwd='/home/sszwaczyk/WAT/PhD/impl/floodlight')
 
     info( '*** Sleep 5 seconds to let controller start...\n')
     sleep(5)
@@ -298,8 +289,8 @@ def simplePolska():
     info( '*** Stopping net...\n')
     net.stop()
 
-    info( '*** Stopping controller...\n')
-    os.kill(proc.pid, signal.SIGTERM)
+    # info( '*** Stopping controller...\n')
+    # os.kill(proc.pid, signal.SIGTERM)
 
 if __name__ == '__main__':
     setLogLevel( 'info' )
