@@ -27,6 +27,7 @@ public class DuplicatedPacketInFilter implements IFloodlightModule, IOFMessageLi
 
     private static Logger log = LoggerFactory.getLogger(DuplicatedPacketInFilter.class);
 
+    private static boolean FLUSH_EXPIRED = false;
     private static int BUFFERING_TIME = 1800; //seconds
 
     private IFloodlightProviderService floodlightProviderService;
@@ -64,13 +65,25 @@ public class DuplicatedPacketInFilter implements IFloodlightModule, IOFMessageLi
     public void init(FloodlightModuleContext context) throws FloodlightModuleException {
         floodlightProviderService = context.getServiceImpl(IFloodlightProviderService.class);
         serviceService = context.getServiceImpl(IServiceService.class);
+
+        Map<String, String> configParameters = context.getConfigParams(this);
+        String flushExpiredString = configParameters.get("flush-expired");
+        if(flushExpiredString == null || flushExpiredString.isEmpty()) {
+            log.info("Flush expired not set. Set default to " + FLUSH_EXPIRED);
+        } else {
+            FLUSH_EXPIRED = Boolean.parseBoolean(flushExpiredString);
+            log.info("Flush expired set to " + FLUSH_EXPIRED);
+        }
     }
 
     @Override
     public void startUp(FloodlightModuleContext context) throws FloodlightModuleException {
         floodlightProviderService.addOFMessageListener(OFType.PACKET_IN, this);
-        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-        scheduler.scheduleAtFixedRate(new FlushExpired(), 10, 10, TimeUnit.SECONDS);
+
+        if(FLUSH_EXPIRED) {
+            ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+            scheduler.scheduleAtFixedRate(new FlushExpired(), 10, 10, TimeUnit.SECONDS);
+        }
     }
 
     @Override
