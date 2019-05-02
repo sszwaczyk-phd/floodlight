@@ -4,7 +4,7 @@
     "ip": "10.0.0.1",
     "port": 8000,
     "path": "/home/sszwaczyk/WAT/PhD/impl/20MB.zip",
-    "bandwidth": 100000,
+    "bandwidth": 500000,
     "maxLatency": 150
   },
   {
@@ -12,7 +12,7 @@
     "ip": "10.0.0.2",
     "port": 8000,
     "path": "/home/sszwaczyk/WAT/PhD/impl/20MB.zip",
-    "bandwidth": 100000,
+    "bandwidth": 500000,
     "maxLatency": 1000
   },
   {
@@ -20,7 +20,7 @@
     "ip": "10.0.0.3",
     "port": 8000,
     "path": "/home/sszwaczyk/WAT/PhD/impl/10MB.zip",
-    "bandwidth": 100000,
+    "bandwidth": 500000,
     "maxLatency": 150
   },
   {
@@ -28,7 +28,7 @@
     "ip": "10.0.0.4",
     "port": 8000,
     "path": "/home/sszwaczyk/WAT/PhD/impl/10MB.zip",
-    "bandwidth": 100000,
+    "bandwidth": 500000,
     "maxLatency": 150
   },
   {
@@ -36,7 +36,7 @@
     "ip": "10.0.0.5",
     "port": 8000,
     "path": "/home/sszwaczyk/WAT/PhD/impl/5MB.zip",
-    "bandwidth": 100000,
+    "bandwidth": 500000,
     "maxLatency": 1000
   }
 ]

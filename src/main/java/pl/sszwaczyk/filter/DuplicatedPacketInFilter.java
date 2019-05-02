@@ -27,7 +27,7 @@ public class DuplicatedPacketInFilter implements IFloodlightModule, IOFMessageLi
 
     private static Logger log = LoggerFactory.getLogger(DuplicatedPacketInFilter.class);
 
-    private static int BUFFERING_TIME = 60; //seconds
+    private static int BUFFERING_TIME = 1800; //seconds
 
     private IFloodlightProviderService floodlightProviderService;
     private IServiceService serviceService;
