@@ -106,7 +106,7 @@ public class KShortestPathSolver implements Solver {
                                 switchPortBandwidth.getSwitchPort(),
                                 switchPortBandwidth.getLinkSpeedBitsPerSec(),
                                 switchPortBandwidth.getBitsPerSecondRx(),
-                                U64.of(switchPortBandwidth.getBitsPerSecondTx().getValue() + dtsp.getService().getBandwidth().longValue() * 1000000),
+                                U64.of(switchPortBandwidth.getBitsPerSecondTx().getValue() + dtsp.getService().getBandwidth().longValue()),
                                 switchPortBandwidth.getPriorByteValueRx(),
                                 switchPortBandwidth.getPriorByteValueTx()));
                     } else {
@@ -285,7 +285,7 @@ public class KShortestPathSolver implements Solver {
                         switchPortBandwidth.getSwitchPort(),
                         switchPortBandwidth.getLinkSpeedBitsPerSec(),
                         switchPortBandwidth.getBitsPerSecondRx(),
-                        U64.of(switchPortBandwidth.getBitsPerSecondTx().getValue() + dtsp.getService().getBandwidth().longValue() * 1000000),
+                        U64.of(switchPortBandwidth.getBitsPerSecondTx().getValue() + dtsp.getService().getBandwidth().longValue()),
                         switchPortBandwidth.getPriorByteValueRx(),
                         switchPortBandwidth.getPriorByteValueTx()));
             } else {
@@ -358,7 +358,7 @@ public class KShortestPathSolver implements Solver {
         return paths.stream().filter(path -> {
             for(NodePortTuple npt: path.getPath()) {
                 SwitchPortBandwidth bandwidthConsumption = statisticsService.getBandwidthConsumption(npt.getNodeId(), npt.getPortId());
-                if((bandwidthConsumption.getAvailableTxBandwidth() / 1000) < bandwidth) {
+                if((bandwidthConsumption.getAvailableTxBandwidth() * 1000) < bandwidth) {
                     return false;
                 }
             }
