@@ -28,7 +28,9 @@ public class ServiceStats {
 
     private int notRealized;
     private int notRealizedDTSP;
-    private float notRealizedBandwidth;
+    private int notRealizedBandwidth;
+    private int notRealizedLatency;
+    private int notRealizedPending;
 
     public void updateRealized(SolveRegion solveRegion, float risk) {
         generated++;
@@ -49,9 +51,16 @@ public class ServiceStats {
         notRealized++;
         if(reason.equals(Reason.CANNOT_FULFILL_BANDWIDTH)) {
             notRealizedBandwidth++;
-        } else {
+        } else if(reason.equals(Reason.CANNOT_FULFILL_DTSP)){
             notRealizedDTSP++;
+        } else {
+            notRealizedLatency++;
         }
     }
 
+    public void updateNotRealizedPending() {
+        generated++;
+        notRealized++;
+        notRealizedPending++;
+    }
 }

@@ -43,6 +43,8 @@ public class SecureRoutingStatisticsService implements IFloodlightModule, ISecur
 
     private SecureRoutingStatistics statistics;
 
+    private static PendingClassification PENDING_CLASSIFICATION = PendingClassification.REALIZED;
+
     @Override
     public Collection<Class<? extends IFloodlightService>> getModuleServices() {
         Collection<Class<? extends IFloodlightService>> s =
@@ -91,6 +93,9 @@ public class SecureRoutingStatisticsService implements IFloodlightModule, ISecur
             Thread thread = new Thread(new SnapshotOnExitRunnable(snapshotFile, this));
             Runtime.getRuntime().addShutdownHook(thread);
         }
+
+        PENDING_CLASSIFICATION = PendingClassification.valueOf(configParameters.get("pending-classification"));
+        log.info("Pending classification set to " + PENDING_CLASSIFICATION);
     }
 
     @Override
@@ -145,6 +150,7 @@ public class SecureRoutingStatisticsService implements IFloodlightModule, ISecur
         AtomicLong notRealized = new AtomicLong();
         AtomicLong notRealizedBandwidth = new AtomicLong();
         AtomicLong notRealizedDTSP = new AtomicLong();
+        AtomicLong notRealizedLatency = new AtomicLong();
 
         Map<User, Map<Service, RelationStats>> relationStatsMap = new HashMap<>();
         List<ServiceStats> serviceStatsList = new ArrayList<>();
@@ -199,10 +205,97 @@ public class SecureRoutingStatisticsService implements IFloodlightModule, ISecur
                 serviceStats.updateNotRealized(reason);
                 if(reason.equals(Reason.CANNOT_FULFILL_BANDWIDTH)) {
                     notRealizedBandwidth.getAndIncrement();
-                } else {
+                } else if(reason.equals(Reason.CANNOT_FULFILL_DTSP)) {
                     notRealizedDTSP.getAndIncrement();
+                } else {
+                    notRealizedLatency.getAndIncrement();
                 }
             }
+        }
+
+        AtomicLong notRealizedPending = new AtomicLong();
+        if(PENDING_CLASSIFICATION.equals(PendingClassification.REALIZED)) {
+
+            for (Flow flow : secureFlowsRepository.getPendingFlows()) {
+                User user = flow.getUser();
+                Service service = flow.getService();
+                Map<Service, RelationStats> serviceRelationStatsMap = relationStatsMap.get(user);
+                RelationStats relationStats;
+                if (serviceRelationStatsMap == null) {
+                    serviceRelationStatsMap = new HashMap<>();
+                    relationStats = new RelationStats();
+                } else {
+                    relationStats = serviceRelationStatsMap.get(service);
+                    if (relationStats == null) {
+                        relationStats = new RelationStats();
+                    }
+                }
+                serviceRelationStatsMap.put(service, relationStats);
+                relationStatsMap.put(user, serviceRelationStatsMap);
+
+                ServiceStats serviceStats;
+                Optional<ServiceStats> optional = serviceStatsList.stream().filter(ss -> ss.getService().getId().equals(service.getId()))
+                        .findFirst();
+                if (optional.isPresent()) {
+                    serviceStats = optional.get();
+                } else {
+                    serviceStats = new ServiceStats(service);
+                    serviceStatsList.add(serviceStats);
+                }
+
+                total.getAndIncrement();
+                Decision lastDecision = flow.getDecisions().get(flow.getDecisions().size() - 1);
+                realized.getAndIncrement();
+                float risk = lastDecision.getRisk();
+                if (lastDecision.getRegion().equals(SolveRegion.RAR_BF)) {
+                    realizedRarBf.getAndIncrement();
+                    totalRiskRarBf += risk;
+                    riskPerReqRarBf = totalRiskRarBf / realizedRarBf.get();
+                } else {
+                    realizedRarRf.getAndIncrement();
+                    totalRiskRarRf += risk;
+                    riskPerReqRarRf = totalRiskRarRf / realizedRarRf.get();
+                }
+                relationStats.updateRealized(lastDecision.getRegion(), risk);
+                serviceStats.updateRealized(lastDecision.getRegion(), risk);
+            }
+
+        } else if(PENDING_CLASSIFICATION.equals(PendingClassification.NOT_REALIZED)) {
+
+            for(Flow flow: secureFlowsRepository.getPendingFlows()) {
+                User user = flow.getUser();
+                Service service = flow.getService();
+                Map<Service, RelationStats> serviceRelationStatsMap = relationStatsMap.get(user);
+                RelationStats relationStats;
+                if (serviceRelationStatsMap == null) {
+                    serviceRelationStatsMap = new HashMap<>();
+                    relationStats = new RelationStats();
+                } else {
+                    relationStats = serviceRelationStatsMap.get(service);
+                    if (relationStats == null) {
+                        relationStats = new RelationStats();
+                    }
+                }
+                serviceRelationStatsMap.put(service, relationStats);
+                relationStatsMap.put(user, serviceRelationStatsMap);
+
+                ServiceStats serviceStats;
+                Optional<ServiceStats> optional = serviceStatsList.stream().filter(ss -> ss.getService().getId().equals(service.getId()))
+                        .findFirst();
+                if (optional.isPresent()) {
+                    serviceStats = optional.get();
+                } else {
+                    serviceStats = new ServiceStats(service);
+                    serviceStatsList.add(serviceStats);
+                }
+
+                total.getAndIncrement();
+                notRealized.getAndIncrement();
+                relationStats.updateNotRealizedPending();
+                serviceStats.updateNotRealizedPending();
+                notRealizedPending.getAndIncrement();
+            }
+
         }
 
         //general
@@ -220,6 +313,8 @@ public class SecureRoutingStatisticsService implements IFloodlightModule, ISecur
         row0.createCell(8).setCellValue("Not realized");
         row0.createCell(9).setCellValue("Not realized - BANDWIDTH");
         row0.createCell(10).setCellValue("Not realized - DTSP");
+        row0.createCell(11).setCellValue("Not realized - LATENCY");
+        row0.createCell(12).setCellValue("Not realized - PENDING");
 
         Row row1 = sheet.createRow(1);
         row1.createCell(0).setCellValue(total.get());
@@ -233,6 +328,8 @@ public class SecureRoutingStatisticsService implements IFloodlightModule, ISecur
         row1.createCell(8).setCellValue(notRealized.get());
         row1.createCell(9).setCellValue(notRealizedBandwidth.get());
         row1.createCell(10).setCellValue(notRealizedDTSP.get());
+        row1.createCell(11).setCellValue(notRealizedLatency.get());
+        row1.createCell(12).setCellValue(notRealizedPending.get());
 
         //users
         sheet = workbook.createSheet("Users");
@@ -257,6 +354,8 @@ public class SecureRoutingStatisticsService implements IFloodlightModule, ISecur
         row1.createCell(10).setCellValue("Total");
         row1.createCell(11).setCellValue("DTSP");
         row1.createCell(12).setCellValue("BANDWIDTH");
+        row1.createCell(13).setCellValue("LATENCY");
+        row1.createCell(14).setCellValue("PENDING");
 
         int i = 2;
 
@@ -283,6 +382,8 @@ public class SecureRoutingStatisticsService implements IFloodlightModule, ISecur
                 row.createCell(10).setCellValue(relationStats.getNotRealized());
                 row.createCell(11).setCellValue(relationStats.getNotRealizedDTSP());
                 row.createCell(12).setCellValue(relationStats.getNotRealizedBandwidth());
+                row.createCell(13).setCellValue(relationStats.getNotRealizedLatency());
+                row.createCell(14).setCellValue(relationStats.getNotRealizedPending());
                 i++;
             }
         }
@@ -310,6 +411,8 @@ public class SecureRoutingStatisticsService implements IFloodlightModule, ISecur
         row1.createCell(9).setCellValue("Total");
         row1.createCell(10).setCellValue("DTSP");
         row1.createCell(11).setCellValue("BANDWIDTH");
+        row1.createCell(12).setCellValue("LATENCY");
+        row1.createCell(13).setCellValue("PENDING");
 
         i = 2;
         for(ServiceStats serviceStats: serviceStatsList) {
@@ -326,6 +429,8 @@ public class SecureRoutingStatisticsService implements IFloodlightModule, ISecur
             row.createCell(9).setCellValue(serviceStats.getNotRealized());
             row.createCell(10).setCellValue(serviceStats.getNotRealizedDTSP());
             row.createCell(11).setCellValue(serviceStats.getNotRealizedBandwidth());
+            row.createCell(12).setCellValue(serviceStats.getNotRealizedLatency());
+            row.createCell(13).setCellValue(serviceStats.getNotRealizedPending());
             i++;
         }
     }

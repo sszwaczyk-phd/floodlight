@@ -22,6 +22,8 @@ public class RelationStats {
     int notRealized;
     int notRealizedBandwidth;
     int notRealizedDTSP;
+    int notRealizedLatency;
+    int notRealizedPending;
 
     public void updateRealized(SolveRegion solveRegion, float risk) {
         generated++;
@@ -42,8 +44,16 @@ public class RelationStats {
         notRealized++;
         if(reason.equals(Reason.CANNOT_FULFILL_BANDWIDTH)) {
             notRealizedBandwidth++;
-        } else {
+        } else if(reason.equals(Reason.CANNOT_FULFILL_DTSP)){
             notRealizedDTSP++;
+        } else {
+            notRealizedLatency++;
         }
+    }
+
+    public void updateNotRealizedPending() {
+        generated++;
+        notRealized++;
+        notRealizedPending++;
     }
 }
