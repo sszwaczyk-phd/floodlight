@@ -68,16 +68,17 @@ public class KShortestPathSolver implements Solver {
         Reason reason = null;
 
         int lastSize = 0;
-        int i = 0;
         while(rarBfPath == null && rarRfPath == null) {
-            log.info("Searching shortests paths between " + lastSize + " and " + (k + i));
-            List<Path> paths = routingService.getPathsSlow(src, dst, k + i);
-            log.error("Paths size = " + paths.size());
-            log.error("Last size = " + lastSize);
+            List<Path> paths = routingService.getPathsSlow(src, dst, k + lastSize);
             if(paths.size() <= lastSize) {
                 log.error("Break");
                 break;
             }
+            log.info("Searching shortests paths between " + (lastSize + 1) + " and " + paths.size());
+            int pathsSize = paths.size();
+            paths = paths.subList(lastSize, paths.size());
+            lastSize = pathsSize;
+
 
             reason = null;
             List<Path> filteredPaths = filterBandwidth(paths, dtsp.getService().getBandwidth());
@@ -91,11 +92,11 @@ public class KShortestPathSolver implements Solver {
                 reason = Reason.CANNOT_FULFILL_LATENCY;
                 log.info("No path which fulfill latency requirement.");
             }
-            log.error("Filtered size = " + filteredPaths.size());
 
-            for(int j = lastSize; j < filteredPaths.size(); j++) {
+            log.info("Filtered size = " + filteredPaths.size());
 
-                Path p = filteredPaths.get(j);
+            for(Path p: filteredPaths) {
+
                 log.debug("Checking path " + p);
 
                 Map<SecurityDimension, Float> pathProperties = pathPropertiesService.calculatePathProperties(p);
@@ -213,8 +214,6 @@ public class KShortestPathSolver implements Solver {
                 }
 
             }
-            lastSize = paths.size();
-            i = lastSize;
         }
 
         if(rarBfPath == null && rarRfPath == null) {
@@ -364,6 +363,7 @@ public class KShortestPathSolver implements Solver {
     private List<Path> filterLatency(List<Path> paths, Long maxLatency) {
         return paths.stream().filter(path -> {
             if(path.getLatency().getValue() > maxLatency) {
+                log.info("Filtering path " + path.toString() + " because of Latency. Path Latency = " + path.getLatency().getValue() + " ms");
                 return false;
             }
             return true;
@@ -375,6 +375,7 @@ public class KShortestPathSolver implements Solver {
             for(NodePortTuple npt: path.getPath()) {
                 SwitchPortBandwidth bandwidthConsumption = statisticsService.getBandwidthConsumption(npt.getNodeId(), npt.getPortId());
                 if((bandwidthConsumption.getAvailableTxBandwidth() * 1000) < bandwidth) {
+                    log.info("Filtering path " + path.toString() + " because of Bandwidth. Current Path available bandwidth = " + (bandwidthConsumption.getAvailableTxBandwidth() * 1000) + " b/s");
                     return false;
                 }
             }
