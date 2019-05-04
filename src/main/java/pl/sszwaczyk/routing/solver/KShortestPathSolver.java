@@ -211,6 +211,9 @@ public class KShortestPathSolver implements Solver {
 
         if(rarBfPath == null && rarRfPath == null) {
             log.info("Cannot find path to realize service " + service.getId());
+            if(reason == null) {
+                reason = Reason.CANNOT_FULFILL_DTSP;
+            }
             return Decision.builder()
                     .id(UUID.randomUUID().toString())
                     .user(user)
