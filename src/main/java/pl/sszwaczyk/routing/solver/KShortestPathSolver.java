@@ -68,6 +68,7 @@ public class KShortestPathSolver implements Solver {
         Reason reason = null;
 
         int lastSize = 0;
+        boolean wasPathChecked = false;
         while(rarBfPath == null && rarRfPath == null) {
             List<Path> paths = routingService.getPathsSlow(src, dst, k + lastSize);
             if(paths.size() <= lastSize) {
@@ -83,21 +84,26 @@ public class KShortestPathSolver implements Solver {
             reason = null;
             List<Path> filteredPaths = filterBandwidth(paths, dtsp.getService().getBandwidth());
             if(filteredPaths.size() == 0) {
-                reason = Reason.CANNOT_FULFILL_BANDWIDTH;
+                if(!wasPathChecked) {
+                    reason = Reason.CANNOT_FULFILL_BANDWIDTH;
+                }
                 log.info("No path which fulfill bandwidth requirement.");
             }
 
             filteredPaths = filterLatency(filteredPaths, dtsp.getService().getMaxLatency());
             if(filteredPaths.size() == 0) {
-                reason = Reason.CANNOT_FULFILL_LATENCY;
+                if(!wasPathChecked) {
+                    reason = Reason.CANNOT_FULFILL_LATENCY;
+                }
                 log.info("No path which fulfill latency requirement.");
             }
 
             log.info("Filtered size = " + filteredPaths.size());
 
             for(Path p: filteredPaths) {
-
-                log.debug("Checking path " + p);
+                wasPathChecked = true;
+                reason = Reason.CANNOT_FULFILL_DTSP;
+                log.info("Checking path " + p);
 
                 Map<SecurityDimension, Float> pathProperties = pathPropertiesService.calculatePathProperties(p);
                 Map<SecurityDimension, Float> pathRisks = riskService.calculateRisk(pathProperties, dtsp.getConsequences());
@@ -127,19 +133,6 @@ public class KShortestPathSolver implements Solver {
                 Double pathUnevenAfter = unevenService.getUneven(unevenMetric, predicateBandwidthConsumption);
                 long latency = p.getLatency().getValue();
                 log.debug("Uneven after = " + pathUnevenAfter + " and latency = " + latency);
-
-                if(user.getId().equals("User6") && service.getId().equals("HTTP_LS")) {
-                    log.error("User 6 and HTTP_LS");
-                    log.error("Checking path " + p.toString());
-                    log.error("Risk -> " + pathRisks.get(SecurityDimension.CONFIDENTIALITY) + ", " + pathRisks.get(SecurityDimension.INTEGRITY) + ", " + pathRisks.get(SecurityDimension.AVAILABILITY) + ", " + pathRisks.get(SecurityDimension.TRUST));
-                    log.error("Acc Risk -> " + acceptableRisks.get(SecurityDimension.CONFIDENTIALITY) + ", " + acceptableRisks.get(SecurityDimension.INTEGRITY) + ", " + acceptableRisks.get(SecurityDimension.AVAILABILITY) + ", " + acceptableRisks.get(SecurityDimension.TRUST));
-                }
-                if(user.getId().equals("User7") && service.getId().equals("HTTP_SS")) {
-                    log.error("User 6 and HTTP_LS");
-                    log.error("Checking path " + p.toString());
-                    log.error("Risk -> " + pathRisks.get(SecurityDimension.CONFIDENTIALITY) + ", " + pathRisks.get(SecurityDimension.INTEGRITY) + ", " + pathRisks.get(SecurityDimension.AVAILABILITY) + ", " + pathRisks.get(SecurityDimension.TRUST));
-                    log.error("Acc Risk -> " + acceptableRisks.get(SecurityDimension.CONFIDENTIALITY) + ", " + acceptableRisks.get(SecurityDimension.INTEGRITY) + ", " + acceptableRisks.get(SecurityDimension.AVAILABILITY) + ", " + acceptableRisks.get(SecurityDimension.TRUST));
-                }
 
                 if(isPathRiskInRange(acceptableRisks, pathRisks)) {
                     if(rarBfPath == null) {
@@ -225,7 +218,7 @@ public class KShortestPathSolver implements Solver {
                     .acceptableRisks(acceptableRisks)
                     .maxRisks(maxRisks)
                     .solved(false)
-                    .reason(reason == null ? Reason.CANNOT_FULFILL_DTSP : reason)
+                    .reason(reason)
                     .date(LocalTime.now())
                     .build();
         }
