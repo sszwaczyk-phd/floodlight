@@ -22,7 +22,7 @@
     },
     {
       "switchDpid": "00:00:00:00:00:00:00:06",
-      "trust": 0.85
+      "trust": 0.87
     },
     {
       "switchDpid": "00:00:00:00:00:00:00:07",
@@ -30,7 +30,7 @@
     },
     {
       "switchDpid": "00:00:00:00:00:00:00:08",
-      "trust": 0.80
+      "trust": 0.88
     },
     {
       "switchDpid": "00:00:00:00:00:00:00:09",
@@ -149,8 +149,8 @@
       "srcPort": 2,
       "dst": "00:00:00:00:00:00:00:06",
       "dstPort": 1,
-      "confidentiality": 0.80,
-      "integrity": 0.80,
+      "confidentiality": 0.87,
+      "integrity": 0.87,
       "availability": 0.99
     },
     {
@@ -158,8 +158,8 @@
       "srcPort": 1,
       "dst": "00:00:00:00:00:00:00:03",
       "dstPort": 2,
-      "confidentiality": 0.80,
-      "integrity": 0.80,
+      "confidentiality": 0.87,
+      "integrity": 0.87,
       "availability": 0.99
     },
 
