@@ -72,7 +72,10 @@ public class KShortestPathSolver implements Solver {
         while(rarBfPath == null && rarRfPath == null) {
             log.info("Searching shortests paths between " + lastSize + " and " + (k + i));
             List<Path> paths = routingService.getPathsSlow(src, dst, k + i);
+            log.error("Paths size = " + paths.size());
+            log.error("Last size = " + lastSize);
             if(paths.size() <= lastSize) {
+                log.error("Break");
                 break;
             }
 
@@ -88,7 +91,7 @@ public class KShortestPathSolver implements Solver {
                 reason = Reason.CANNOT_FULFILL_LATENCY;
                 log.info("No path which fulfill latency requirement.");
             }
-
+            log.error("Filtered size = " + filteredPaths.size());
 
             for(int j = lastSize; j < filteredPaths.size(); j++) {
 
