@@ -124,6 +124,19 @@ public class KShortestPathSolver implements Solver {
                 long latency = p.getLatency().getValue();
                 log.debug("Uneven after = " + pathUnevenAfter + " and latency = " + latency);
 
+                if(user.getId().equals("User6") && service.getId().equals("HTTP_LS")) {
+                    log.error("User 6 and HTTP_LS");
+                    log.error("Checking path " + p.toString());
+                    log.error("Risk -> " + pathRisks.get(SecurityDimension.CONFIDENTIALITY) + ", " + pathRisks.get(SecurityDimension.INTEGRITY) + ", " + pathRisks.get(SecurityDimension.AVAILABILITY) + ", " + pathRisks.get(SecurityDimension.TRUST));
+                    log.error("Acc Risk -> " + acceptableRisks.get(SecurityDimension.CONFIDENTIALITY) + ", " + acceptableRisks.get(SecurityDimension.INTEGRITY) + ", " + acceptableRisks.get(SecurityDimension.AVAILABILITY) + ", " + acceptableRisks.get(SecurityDimension.TRUST));
+                }
+                if(user.getId().equals("User7") && service.getId().equals("HTTP_SS")) {
+                    log.error("User 6 and HTTP_LS");
+                    log.error("Checking path " + p.toString());
+                    log.error("Risk -> " + pathRisks.get(SecurityDimension.CONFIDENTIALITY) + ", " + pathRisks.get(SecurityDimension.INTEGRITY) + ", " + pathRisks.get(SecurityDimension.AVAILABILITY) + ", " + pathRisks.get(SecurityDimension.TRUST));
+                    log.error("Acc Risk -> " + acceptableRisks.get(SecurityDimension.CONFIDENTIALITY) + ", " + acceptableRisks.get(SecurityDimension.INTEGRITY) + ", " + acceptableRisks.get(SecurityDimension.AVAILABILITY) + ", " + acceptableRisks.get(SecurityDimension.TRUST));
+                }
+
                 if(isPathRiskInRange(acceptableRisks, pathRisks)) {
                     if(rarBfPath == null) {
                         rarBfPath = p;
