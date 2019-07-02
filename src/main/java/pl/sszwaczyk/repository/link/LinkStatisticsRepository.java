@@ -22,7 +22,7 @@ public class LinkStatisticsRepository implements IFloodlightModule, ILinkStatist
 
     private Logger log = LoggerFactory.getLogger(LinkStatisticsRepository.class);
 
-    private List<SwitchPortBandwidth> maxBandwidthConsumption = new ArrayList<>();
+    private List<MaxLinkUtilization> maxBandwidthConsumption = new ArrayList<>();
     private Map<UnevenMetric, Double> maxUneven = new HashMap<>();
 
     private IStatisticsService statisticsService;
@@ -72,7 +72,7 @@ public class LinkStatisticsRepository implements IFloodlightModule, ILinkStatist
     }
 
     @Override
-    public List<SwitchPortBandwidth> getMaxLinksBandwidth() {
+    public List<MaxLinkUtilization> getMaxLinksBandwidth() {
         return Collections.unmodifiableList(maxBandwidthConsumption);
     }
 
@@ -87,16 +87,22 @@ public class LinkStatisticsRepository implements IFloodlightModule, ILinkStatist
         public void run() {
             Map<NodePortTuple, SwitchPortBandwidth> bandwidthConsumption = statisticsService.getBandwidthConsumption();
             for(SwitchPortBandwidth spb: bandwidthConsumption.values()) {
-                int indexOf = maxBandwidthConsumption.indexOf(spb);
-                if(indexOf == -1) {
-                    log.debug("Max bandwidth consumption set for " + spb);
-                    maxBandwidthConsumption.add(spb);
+                MaxLinkUtilization max = null;
+                for(MaxLinkUtilization maxLinkUtilization: maxBandwidthConsumption) {
+                    if(maxLinkUtilization.getId().equals(spb.getSwitchId()) && maxLinkUtilization.getPt().getPortNumber() == spb.getSwitchPort().getPortNumber()) {
+                        max = maxLinkUtilization;
+                    }
+                }
+                if(max == null) {
+                    maxBandwidthConsumption.add(new MaxLinkUtilization(spb.getSwitchId(), spb.getSwitchPort(), spb.getRxUtilization(), spb.getRxUtilizationPercent(), spb.getTxUtilization(), spb.getTxUtilizationPercent()));
                 } else {
-                    SwitchPortBandwidth max = maxBandwidthConsumption.get(indexOf);
-                    if(spb.getTxUtilization() > max.getTxUtilization()) {
-                        maxBandwidthConsumption.remove(max);
-                        maxBandwidthConsumption.add(spb);
-                        log.debug("Max bandwidth consumption updated for " + max + " to " + spb);
+                    if(spb.getRxUtilization() > max.getMaxRxUtilization()) {
+                        max.setMaxRxUtilization(spb.getRxUtilization());
+                        max.setMaxRxUtilizationPercent(spb.getRxUtilizationPercent());
+                    }
+                    if(spb.getTxUtilization() > max.getMaxTxUtilization()) {
+                        max.setMaxTxUtilization(spb.getTxUtilization());
+                        max.setMaxTxUtilizationPercent(spb.getTxUtilizationPercent());
                     }
                 }
             }

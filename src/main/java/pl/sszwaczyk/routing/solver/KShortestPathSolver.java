@@ -88,6 +88,7 @@ public class KShortestPathSolver implements Solver {
                     reason = Reason.CANNOT_FULFILL_BANDWIDTH;
                 }
                 log.info("No path which fulfill bandwidth requirement.");
+                continue;
             }
 
             filteredPaths = filterLatency(filteredPaths, dtsp.getService().getMaxLatency());
@@ -96,6 +97,7 @@ public class KShortestPathSolver implements Solver {
                     reason = Reason.CANNOT_FULFILL_LATENCY;
                 }
                 log.info("No path which fulfill latency requirement.");
+                continue;
             }
 
             log.info("Filtered size = " + filteredPaths.size());

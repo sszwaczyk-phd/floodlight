@@ -18,6 +18,7 @@ import pl.sszwaczyk.repository.flow.Flow;
 import pl.sszwaczyk.repository.flow.FlowStatus;
 import pl.sszwaczyk.repository.flow.ISecureFlowsRepository;
 import pl.sszwaczyk.repository.link.ILinkStatisticsRepository;
+import pl.sszwaczyk.repository.link.MaxLinkUtilization;
 import pl.sszwaczyk.routing.solver.Decision;
 import pl.sszwaczyk.routing.solver.Reason;
 import pl.sszwaczyk.routing.solver.SolveRegion;
@@ -773,15 +774,19 @@ public class SecureRoutingStatisticsService implements IFloodlightModule, ISecur
         row0.createCell(1).setCellValue("Port");
         row0.createCell(2).setCellValue("Max TX Utilization");
         row0.createCell(3).setCellValue("Max TX Utilization [%]");
+        row0.createCell(4).setCellValue("Max RX Utilization");
+        row0.createCell(5).setCellValue("Max RX Utilization [%]");
 
         int i = 1;
-        List<SwitchPortBandwidth> maxLinksBandwidth = linkStatisticsRepository.getMaxLinksBandwidth();
-        for(SwitchPortBandwidth spb: maxLinksBandwidth) {
+        List<MaxLinkUtilization> maxLinksBandwidth = linkStatisticsRepository.getMaxLinksBandwidth();
+        for(MaxLinkUtilization max: maxLinksBandwidth) {
             Row row = sheet.createRow(i);
-            row.createCell(0).setCellValue(spb.getSwitchId().toString());
-            row.createCell(1).setCellValue(spb.getSwitchPort().getPortNumber());
-            row.createCell(2).setCellValue(spb.getTxUtilization());
-            row.createCell(3).setCellValue(spb.getTxUtilizationPercent());
+            row.createCell(0).setCellValue(max.getId().toString());
+            row.createCell(1).setCellValue(max.getPt().getPortNumber());
+            row.createCell(2).setCellValue(max.getMaxTxUtilization());
+            row.createCell(3).setCellValue(max.getMaxTxUtilizationPercent());
+            row.createCell(4).setCellValue(max.getMaxRxUtilization());
+            row.createCell(5).setCellValue(max.getMaxRxUtilizationPercent());
             i++;
         }
 

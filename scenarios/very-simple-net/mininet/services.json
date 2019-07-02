@@ -1,0 +1,18 @@
+[
+  {
+    "id": "HTTP_LS",
+    "ip": "10.0.0.1",
+    "port": 8000,
+    "path": "/home/sszwaczyk/WAT/PhD/impl/20MB.zip",
+    "bandwidth": 1000000,
+    "maxLatency": 10000
+  },
+  {
+    "id": "HTTP_SS",
+    "ip": "10.0.0.2",
+    "port": 8000,
+    "path": "/home/sszwaczyk/WAT/PhD/impl/10MB.zip",
+    "bandwidth": 1000000,
+    "maxLatency": 10000
+  }
+]

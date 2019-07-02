@@ -9,7 +9,7 @@ import java.util.Map;
 
 public interface ILinkStatisticsRepository extends IFloodlightService {
 
-    List<SwitchPortBandwidth> getMaxLinksBandwidth();
+    List<MaxLinkUtilization> getMaxLinksBandwidth();
 
     Map<UnevenMetric, Double> getMaxUneven();
 }
