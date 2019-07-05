@@ -287,6 +287,32 @@ public class KShortestPathSolver implements Solver {
         List<Path> paths = routingService.getPathsSlow(src, dst, 1);
         Path path = paths.get(0);
 
+        if(!isBandwidthFullfilled(path, service.getBandwidth())) {
+            log.info("Cannot find path to realize service " + service.getId() + " becaouse of bandiwidth");
+            return Decision.builder()
+                    .id(UUID.randomUUID().toString())
+                    .user(user)
+                    .service(service)
+                    .acceptableRisks(acceptableRisks)
+                    .maxRisks(maxRisks)
+                    .solved(false)
+                    .reason(Reason.CANNOT_FULFILL_BANDWIDTH)
+                    .date(LocalTime.now())
+                    .build();
+        } else if(!isLatencyFullfilled(path, service.getMaxLatency())) {
+            log.info("Cannot find path to realize service " + service.getId() + " becaouse of latency");
+            return Decision.builder()
+                    .id(UUID.randomUUID().toString())
+                    .user(user)
+                    .service(service)
+                    .acceptableRisks(acceptableRisks)
+                    .maxRisks(maxRisks)
+                    .solved(false)
+                    .reason(Reason.CANNOT_FULFILL_LATENCY)
+                    .date(LocalTime.now())
+                    .build();
+        }
+
         Map<SecurityDimension, Float> pathProperties = pathPropertiesService.calculatePathProperties(path);
         Map<SecurityDimension, Float> pathRisks = riskService.calculateRisk(pathProperties, dtsp.getConsequences());
 
@@ -356,6 +382,25 @@ public class KShortestPathSolver implements Solver {
                     .build();
         }
 
+    }
+
+    private boolean isLatencyFullfilled(Path path, Long maxLatency) {
+        if(path.getLatency().getValue() > maxLatency) {
+            log.info("Path not fullfill latency " + path.toString() + " because of Latency. Path Latency = " + path.getLatency().getValue() + " ms");
+            return false;
+        }
+        return true;
+    }
+
+    private boolean isBandwidthFullfilled(Path path, Double bandwidth) {
+        for(NodePortTuple npt: path.getPath()) {
+            SwitchPortBandwidth bandwidthConsumption = statisticsService.getBandwidthConsumption(npt.getNodeId(), npt.getPortId());
+            if((bandwidthConsumption.getAvailableTxBandwidth() * 1000) < bandwidth) {
+                log.info("Path not fullfill bandwidth " + path.toString() + " because of Bandwidth. Current Path available bandwidth = " + (bandwidthConsumption.getAvailableTxBandwidth() * 1000) + " b/s");
+                return false;
+            }
+        }
+        return true;
     }
 
     private List<Path> filterLatency(List<Path> paths, Long maxLatency) {
