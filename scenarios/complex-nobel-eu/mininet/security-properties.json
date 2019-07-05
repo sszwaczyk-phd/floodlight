@@ -1,0 +1,857 @@
+{
+  "switches": [
+    {
+      "switchDpid": "00:00:00:00:00:00:00:19",
+      "trust": 0.87594926
+    },
+    {
+      "switchDpid": "00:00:00:00:00:00:00:17",
+      "trust": 0.9478202
+    },
+    {
+      "switchDpid": "00:00:00:00:00:00:00:18",
+      "trust": 0.85638964
+    },
+    {
+      "switchDpid": "00:00:00:00:00:00:00:26",
+      "trust": 0.8668237
+    },
+    {
+      "switchDpid": "00:00:00:00:00:00:00:04",
+      "trust": 0.9099589
+    },
+    {
+      "switchDpid": "00:00:00:00:00:00:00:27",
+      "trust": 0.85012764
+    },
+    {
+      "switchDpid": "00:00:00:00:00:00:00:05",
+      "trust": 0.88765377
+    },
+    {
+      "switchDpid": "00:00:00:00:00:00:00:02",
+      "trust": 0.8566386
+    },
+    {
+      "switchDpid": "00:00:00:00:00:00:00:24",
+      "trust": 0.9110505
+    },
+    {
+      "switchDpid": "00:00:00:00:00:00:00:25",
+      "trust": 0.9017014
+    },
+    {
+      "switchDpid": "00:00:00:00:00:00:00:03",
+      "trust": 0.92293364
+    },
+    {
+      "switchDpid": "00:00:00:00:00:00:00:22",
+      "trust": 0.91078115
+    },
+    {
+      "switchDpid": "00:00:00:00:00:00:00:01",
+      "trust": 0.86146384
+    },
+    {
+      "switchDpid": "00:00:00:00:00:00:00:23",
+      "trust": 0.9255555
+    },
+    {
+      "switchDpid": "00:00:00:00:00:00:00:20",
+      "trust": 0.91888934
+    },
+    {
+      "switchDpid": "00:00:00:00:00:00:00:21",
+      "trust": 0.90200925
+    },
+    {
+      "switchDpid": "00:00:00:00:00:00:00:08",
+      "trust": 0.9389499
+    },
+    {
+      "switchDpid": "00:00:00:00:00:00:00:09",
+      "trust": 0.94835275
+    },
+    {
+      "switchDpid": "00:00:00:00:00:00:00:06",
+      "trust": 0.89242625
+    },
+    {
+      "switchDpid": "00:00:00:00:00:00:00:28",
+      "trust": 0.8730482
+    },
+    {
+      "switchDpid": "00:00:00:00:00:00:00:07",
+      "trust": 0.8541423
+    },
+    {
+      "switchDpid": "00:00:00:00:00:00:00:15",
+      "trust": 0.9263809
+    },
+    {
+      "switchDpid": "00:00:00:00:00:00:00:16",
+      "trust": 0.91281134
+    },
+    {
+      "switchDpid": "00:00:00:00:00:00:00:13",
+      "trust": 0.89671236
+    },
+    {
+      "switchDpid": "00:00:00:00:00:00:00:14",
+      "trust": 0.9349903
+    },
+    {
+      "switchDpid": "00:00:00:00:00:00:00:11",
+      "trust": 0.8836329
+    },
+    {
+      "switchDpid": "00:00:00:00:00:00:00:12",
+      "trust": 0.8907641
+    },
+    {
+      "switchDpid": "00:00:00:00:00:00:00:10",
+      "trust": 0.922283
+    }
+  ],
+  "links": [
+    {
+      "src": "00:00:00:00:00:00:00:08",
+      "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:09",
+      "dstPort": 1,
+      "confidentiality": 0.8803068,
+      "integrity": 0.8854645,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:09",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:08",
+      "dstPort": 2,
+      "confidentiality": 0.90209943,
+      "integrity": 0.8654878,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:24",
+      "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:25",
+      "dstPort": 2,
+      "confidentiality": 0.92213154,
+      "integrity": 0.93258166,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:04",
+      "srcPort": 4,
+      "dst": "00:00:00:00:00:00:00:11",
+      "dstPort": 1,
+      "confidentiality": 0.8849093,
+      "integrity": 0.90061486,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:08",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:07",
+      "dstPort": 2,
+      "confidentiality": 0.8528171,
+      "integrity": 0.93229693,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:07",
+      "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:08",
+      "dstPort": 1,
+      "confidentiality": 0.8990255,
+      "integrity": 0.8541566,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:25",
+      "srcPort": 3,
+      "dst": "00:00:00:00:00:00:00:26",
+      "dstPort": 2,
+      "confidentiality": 0.8851464,
+      "integrity": 0.8658411,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:28",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:23",
+      "dstPort": 3,
+      "confidentiality": 0.93025374,
+      "integrity": 0.88579416,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:26",
+      "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:25",
+      "dstPort": 3,
+      "confidentiality": 0.8843999,
+      "integrity": 0.85526705,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:27",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:26",
+      "dstPort": 3,
+      "confidentiality": 0.9244951,
+      "integrity": 0.851811,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:06",
+      "srcPort": 3,
+      "dst": "00:00:00:00:00:00:00:07",
+      "dstPort": 1,
+      "confidentiality": 0.8850344,
+      "integrity": 0.90181446,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:02",
+      "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:03",
+      "dstPort": 1,
+      "confidentiality": 0.9083374,
+      "integrity": 0.85046744,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:03",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:02",
+      "dstPort": 2,
+      "confidentiality": 0.90472007,
+      "integrity": 0.8557403,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:19",
+      "srcPort": 4,
+      "dst": "00:00:00:00:00:00:00:21",
+      "dstPort": 1,
+      "confidentiality": 0.8503213,
+      "integrity": 0.9379705,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:04",
+      "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:03",
+      "dstPort": 2,
+      "confidentiality": 0.87947285,
+      "integrity": 0.86984545,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:12",
+      "srcPort": 5,
+      "dst": "00:00:00:00:00:00:00:13",
+      "dstPort": 3,
+      "confidentiality": 0.9170898,
+      "integrity": 0.87105244,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:18",
+      "srcPort": 4,
+      "dst": "00:00:00:00:00:00:00:20",
+      "dstPort": 1,
+      "confidentiality": 0.8946515,
+      "integrity": 0.87944424,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:06",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:03",
+      "dstPort": 3,
+      "confidentiality": 0.94337577,
+      "integrity": 0.91105694,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:14",
+      "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:13",
+      "dstPort": 4,
+      "confidentiality": 0.89134836,
+      "integrity": 0.89379036,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:12",
+      "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:11",
+      "dstPort": 2,
+      "confidentiality": 0.8520584,
+      "integrity": 0.8623116,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:05",
+      "srcPort": 3,
+      "dst": "00:00:00:00:00:00:00:12",
+      "dstPort": 1,
+      "confidentiality": 0.85710126,
+      "integrity": 0.87694436,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:09",
+      "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:10",
+      "dstPort": 2,
+      "confidentiality": 0.8600398,
+      "integrity": 0.87464356,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:06",
+      "srcPort": 4,
+      "dst": "00:00:00:00:00:00:00:13",
+      "dstPort": 1,
+      "confidentiality": 0.89424556,
+      "integrity": 0.89660954,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:13",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:06",
+      "dstPort": 4,
+      "confidentiality": 0.8827428,
+      "integrity": 0.894197,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:11",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:04",
+      "dstPort": 4,
+      "confidentiality": 0.9050465,
+      "integrity": 0.89587253,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:20",
+      "srcPort": 3,
+      "dst": "00:00:00:00:00:00:00:26",
+      "dstPort": 1,
+      "confidentiality": 0.9164414,
+      "integrity": 0.92191637,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:19",
+      "srcPort": 3,
+      "dst": "00:00:00:00:00:00:00:18",
+      "dstPort": 5,
+      "confidentiality": 0.8946817,
+      "integrity": 0.89254063,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:12",
+      "srcPort": 4,
+      "dst": "00:00:00:00:00:00:00:19",
+      "dstPort": 1,
+      "confidentiality": 0.8715047,
+      "integrity": 0.8856817,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:26",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:20",
+      "dstPort": 3,
+      "confidentiality": 0.9037427,
+      "integrity": 0.8787712,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:11",
+      "srcPort": 3,
+      "dst": "00:00:00:00:00:00:00:18",
+      "dstPort": 1,
+      "confidentiality": 0.9022069,
+      "integrity": 0.899336,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:15",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:14",
+      "dstPort": 3,
+      "confidentiality": 0.8877888,
+      "integrity": 0.86410236,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:19",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:12",
+      "dstPort": 4,
+      "confidentiality": 0.86387837,
+      "integrity": 0.91265243,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:01",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:02",
+      "dstPort": 1,
+      "confidentiality": 0.9030268,
+      "integrity": 0.88769054,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:17",
+      "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:18",
+      "dstPort": 2,
+      "confidentiality": 0.8893986,
+      "integrity": 0.8863647,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:25",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:18",
+      "dstPort": 3,
+      "confidentiality": 0.9223523,
+      "integrity": 0.87245595,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:14",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:10",
+      "dstPort": 3,
+      "confidentiality": 0.9364643,
+      "integrity": 0.91124886,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:27",
+      "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:28",
+      "dstPort": 2,
+      "confidentiality": 0.8657072,
+      "integrity": 0.8606508,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:10",
+      "srcPort": 3,
+      "dst": "00:00:00:00:00:00:00:14",
+      "dstPort": 1,
+      "confidentiality": 0.861026,
+      "integrity": 0.8663925,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:20",
+      "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:21",
+      "dstPort": 2,
+      "confidentiality": 0.8939258,
+      "integrity": 0.8785108,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:22",
+      "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:23",
+      "dstPort": 2,
+      "confidentiality": 0.93552697,
+      "integrity": 0.86195284,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:22",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:21",
+      "dstPort": 3,
+      "confidentiality": 0.9136494,
+      "integrity": 0.90115225,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:19",
+      "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:15",
+      "dstPort": 2,
+      "confidentiality": 0.93144745,
+      "integrity": 0.9463495,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:25",
+      "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:24",
+      "dstPort": 2,
+      "confidentiality": 0.93188626,
+      "integrity": 0.89065844,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:26",
+      "srcPort": 3,
+      "dst": "00:00:00:00:00:00:00:27",
+      "dstPort": 1,
+      "confidentiality": 0.8584357,
+      "integrity": 0.88756484,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:07",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:06",
+      "dstPort": 3,
+      "confidentiality": 0.8576186,
+      "integrity": 0.88697237,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:28",
+      "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:27",
+      "dstPort": 2,
+      "confidentiality": 0.9089222,
+      "integrity": 0.86905694,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:06",
+      "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:05",
+      "dstPort": 1,
+      "confidentiality": 0.85967165,
+      "integrity": 0.8782617,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:05",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:06",
+      "dstPort": 2,
+      "confidentiality": 0.85302085,
+      "integrity": 0.93346626,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:03",
+      "srcPort": 3,
+      "dst": "00:00:00:00:00:00:00:06",
+      "dstPort": 1,
+      "confidentiality": 0.88588464,
+      "integrity": 0.854135,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:04",
+      "srcPort": 3,
+      "dst": "00:00:00:00:00:00:00:05",
+      "dstPort": 2,
+      "confidentiality": 0.903505,
+      "integrity": 0.92988753,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:15",
+      "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:19",
+      "dstPort": 2,
+      "confidentiality": 0.90974885,
+      "integrity": 0.94059485,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:01",
+      "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:04",
+      "dstPort": 1,
+      "confidentiality": 0.85889333,
+      "integrity": 0.8612607,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:04",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:01",
+      "dstPort": 2,
+      "confidentiality": 0.88860506,
+      "integrity": 0.87264717,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:03",
+      "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:04",
+      "dstPort": 2,
+      "confidentiality": 0.92261016,
+      "integrity": 0.85020614,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:24",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:16",
+      "dstPort": 1,
+      "confidentiality": 0.89018244,
+      "integrity": 0.9178275,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:13",
+      "srcPort": 3,
+      "dst": "00:00:00:00:00:00:00:12",
+      "dstPort": 5,
+      "confidentiality": 0.9398746,
+      "integrity": 0.88104653,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:05",
+      "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:04",
+      "dstPort": 3,
+      "confidentiality": 0.91512185,
+      "integrity": 0.890509,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:15",
+      "srcPort": 3,
+      "dst": "00:00:00:00:00:00:00:23",
+      "dstPort": 1,
+      "confidentiality": 0.9398171,
+      "integrity": 0.92666215,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:11",
+      "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:12",
+      "dstPort": 2,
+      "confidentiality": 0.9080197,
+      "integrity": 0.9369257,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:21",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:19",
+      "dstPort": 4,
+      "confidentiality": 0.9290422,
+      "integrity": 0.9221137,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:13",
+      "srcPort": 4,
+      "dst": "00:00:00:00:00:00:00:14",
+      "dstPort": 2,
+      "confidentiality": 0.88814306,
+      "integrity": 0.8719302,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:13",
+      "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:12",
+      "dstPort": 3,
+      "confidentiality": 0.85697734,
+      "integrity": 0.85581636,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:12",
+      "srcPort": 3,
+      "dst": "00:00:00:00:00:00:00:13",
+      "dstPort": 2,
+      "confidentiality": 0.8584762,
+      "integrity": 0.9007823,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:16",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:24",
+      "dstPort": 1,
+      "confidentiality": 0.93683517,
+      "integrity": 0.93598706,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:20",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:18",
+      "dstPort": 4,
+      "confidentiality": 0.93859327,
+      "integrity": 0.85598975,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:23",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:15",
+      "dstPort": 3,
+      "confidentiality": 0.90582025,
+      "integrity": 0.90432686,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:10",
+      "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:09",
+      "dstPort": 2,
+      "confidentiality": 0.9319498,
+      "integrity": 0.8608135,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:12",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:05",
+      "dstPort": 3,
+      "confidentiality": 0.92921543,
+      "integrity": 0.94051844,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:10",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:06",
+      "dstPort": 5,
+      "confidentiality": 0.90602523,
+      "integrity": 0.91755205,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:18",
+      "srcPort": 5,
+      "dst": "00:00:00:00:00:00:00:19",
+      "dstPort": 3,
+      "confidentiality": 0.927443,
+      "integrity": 0.8680002,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:06",
+      "srcPort": 5,
+      "dst": "00:00:00:00:00:00:00:10",
+      "dstPort": 1,
+      "confidentiality": 0.87903464,
+      "integrity": 0.88566154,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:18",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:11",
+      "dstPort": 3,
+      "confidentiality": 0.85924256,
+      "integrity": 0.92864597,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:14",
+      "srcPort": 3,
+      "dst": "00:00:00:00:00:00:00:15",
+      "dstPort": 1,
+      "confidentiality": 0.90288013,
+      "integrity": 0.88563085,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:02",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:01",
+      "dstPort": 1,
+      "confidentiality": 0.9220094,
+      "integrity": 0.87737167,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:18",
+      "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:17",
+      "dstPort": 2,
+      "confidentiality": 0.8660432,
+      "integrity": 0.9419356,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:17",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:16",
+      "dstPort": 2,
+      "confidentiality": 0.9324918,
+      "integrity": 0.9464612,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:16",
+      "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:17",
+      "dstPort": 1,
+      "confidentiality": 0.90147763,
+      "integrity": 0.9447531,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:18",
+      "srcPort": 3,
+      "dst": "00:00:00:00:00:00:00:25",
+      "dstPort": 1,
+      "confidentiality": 0.94199055,
+      "integrity": 0.85790735,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:21",
+      "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:20",
+      "dstPort": 2,
+      "confidentiality": 0.91007715,
+      "integrity": 0.9203231,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:23",
+      "srcPort": 3,
+      "dst": "00:00:00:00:00:00:00:28",
+      "dstPort": 1,
+      "confidentiality": 0.94179046,
+      "integrity": 0.9021984,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:23",
+      "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:22",
+      "dstPort": 2,
+      "confidentiality": 0.8965259,
+      "integrity": 0.88637614,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:21",
+      "srcPort": 3,
+      "dst": "00:00:00:00:00:00:00:22",
+      "dstPort": 1,
+      "confidentiality": 0.88762355,
+      "integrity": 0.9014599,
+      "availability": 0.99
+    }
+  ]
+}
+

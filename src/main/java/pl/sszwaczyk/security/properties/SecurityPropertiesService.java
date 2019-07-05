@@ -1,5 +1,6 @@
 package pl.sszwaczyk.security.properties;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -39,7 +40,7 @@ import pl.sszwaczyk.security.soc.SOCUpdateType;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchListener, ILinkDiscoveryListener,
         ISOCListener, ISecurityPropertiesService {
@@ -58,8 +59,8 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
     private boolean enableLinkAvaialabilityUtilizationActualization = false;
     private boolean readFromFile = false;
 
-    private Map<String, SwitchSecurityProperties> initSwitchesSecurityProperites;
-    private Map<Link, LinkSecurityProperties> initLinkSecurityProperties;
+    private Map<String, SwitchSecurityProperties> initSwitchesSecurityProperites = new HashMap<>();
+    private Map<Link, LinkSecurityProperties> initLinkSecurityProperties = new HashMap<>();
 
     @Override
     public Collection<Class<? extends IFloodlightService>> getModuleServices() {
@@ -184,6 +185,35 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
             newSwitch.getAttributes().put(SecurityDimension.TRUST, 0.99f);
             log.info("Trust for new switch {} set to 0.99", switchId);
         }
+
+//        SwitchSecurityProperties props = new SwitchSecurityProperties();
+//        props.setSwitchDpid(switchId.toString());
+//        props.setTrust((float) ThreadLocalRandom.current().nextDouble(0.85, 0.95));
+//        initSwitchesSecurityProperites.put(switchId.toString(), props);
+//
+//        Runnable r = () -> {
+//            String switches = null;
+//            String links = null;
+//            Collection<SwitchSecurityProperties> values = initSwitchesSecurityProperites.values();
+//            ObjectMapper mapper = new ObjectMapper();
+//            try {
+//                switches = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(values);
+//            } catch (JsonProcessingException e) {
+//                e.printStackTrace();
+//            }
+//            Collection<LinkSecurityProperties> values1 = initLinkSecurityProperties.values();
+//            try {
+//                links = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(values1);
+//            } catch (JsonProcessingException e) {
+//                e.printStackTrace();
+//            }
+//
+//            System.out.println(switches);
+//            System.out.println(links);
+//        };
+//
+//        ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+//        scheduledExecutorService.scheduleWithFixedDelay(r, 100, 600, TimeUnit.SECONDS);
     }
 
     @Override
@@ -243,10 +273,20 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
                                 log.info("C, I, A for new link {} set to 0.99", link);
                             }
 
+                            LinkSecurityProperties p = new LinkSecurityProperties();
+                            p.setSrc(link.getSrc().toString());
+                            p.setSrcPort(link.getSrcPort().getPortNumber());
+                            p.setDst(link.getDst().toString());
+                            p.setDstPort(link.getDstPort().getPortNumber());
+                            p.setAvailability(0.99f);
+                            p.setIntegrity((float) ThreadLocalRandom.current().nextDouble(0.85, 0.95));
+                            p.setConfidentiality((float) ThreadLocalRandom.current().nextDouble(0.85, 0.95));
+                            initLinkSecurityProperties.put(link, p);
                     }
                 }
             }
         }
+
     }
 
     @Override
