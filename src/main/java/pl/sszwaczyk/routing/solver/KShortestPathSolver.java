@@ -45,6 +45,7 @@ public class KShortestPathSolver implements Solver {
     private IUnevenService unevenService;
 
     private int k;
+    private int maxPaths;
     private boolean chooseMinUneven;
     private UnevenMetric unevenMetric;
 
@@ -70,6 +71,10 @@ public class KShortestPathSolver implements Solver {
         int lastSize = 0;
         boolean wasPathChecked = false;
         while(rarBfPath == null && rarRfPath == null) {
+            if(lastSize >= maxPaths) {
+                break;
+            }
+
             List<Path> paths = routingService.getPathsSlow(src, dst, k + lastSize);
             if(paths.size() <= lastSize) {
                 log.error("Break");

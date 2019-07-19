@@ -100,6 +100,16 @@ public class SecureRoutingManager extends RoutingManager implements ISecureRouti
                 log.info("K shortest path set to " + k);
             }
 
+            String maxString = configParameters.get("max-paths");
+            int maxPaths = 0;
+            if(maxString == null) {
+                maxPaths = Integer.MAX_VALUE;
+                log.info("Max paths not set. Default to " + Integer.MAX_VALUE);
+            } else {
+                maxPaths = Integer.valueOf(maxString);
+                log.info("Max paths set to " + maxPaths);
+            }
+
             String chooseMinUnevenString = configParameters.get("min-uneven");
             boolean chooseMinUneven;
             UnevenMetric unevenMetric = null;
@@ -134,6 +144,7 @@ public class SecureRoutingManager extends RoutingManager implements ISecureRouti
                     .statisticsService(statisticsService)
                     .unevenService(unevenService)
                     .k(k)
+                    .maxPaths(maxPaths)
                     .chooseMinUneven(chooseMinUneven)
                     .unevenMetric(unevenMetric)
                     .build();
