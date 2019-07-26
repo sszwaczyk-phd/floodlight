@@ -146,8 +146,8 @@
       "srcPort": 4,
       "dst": "00:00:00:00:00:00:00:11",
       "dstPort": 1,
-      "confidentiality": 0.89877504,
-      "integrity": 0.8818202,
+      "confidentiality": 0.92877504,
+      "integrity": 0.9318202,
       "availability": 0.99
     },
     {
@@ -281,7 +281,7 @@
       "srcPort": 2,
       "dst": "00:00:00:00:00:00:00:11",
       "dstPort": 2,
-      "confidentiality": 0.88907945,
+      "confidentiality": 0.92907945,
       "integrity": 0.9271942,
       "availability": 0.99
     },
@@ -327,7 +327,7 @@
       "dst": "00:00:00:00:00:00:00:04",
       "dstPort": 4,
       "confidentiality": 0.9405713,
-      "integrity": 0.8717704,
+      "integrity": 0.9317704,
       "availability": 0.99
     },
     {
@@ -344,7 +344,7 @@
       "srcPort": 3,
       "dst": "00:00:00:00:00:00:00:18",
       "dstPort": 5,
-      "confidentiality": 0.88404036,
+      "confidentiality": 0.93404036,
       "integrity": 0.9416774,
       "availability": 0.99
     },
@@ -372,7 +372,7 @@
       "dst": "00:00:00:00:00:00:00:18",
       "dstPort": 1,
       "confidentiality": 0.9380505,
-      "integrity": 0.87936044,
+      "integrity": 0.92936044,
       "availability": 0.99
     },
     {
@@ -435,7 +435,7 @@
       "dst": "00:00:00:00:00:00:00:18",
       "dstPort": 3,
       "confidentiality": 0.90044105,
-      "integrity": 0.8651047,
+      "integrity": 0.931047,
       "availability": 0.99
     },
     {
@@ -641,7 +641,7 @@
       "srcPort": 2,
       "dst": "00:00:00:00:00:00:00:12",
       "dstPort": 2,
-      "confidentiality": 0.8673642,
+      "confidentiality": 0.9173642,
       "integrity": 0.92676765,
       "availability": 0.99
     },
@@ -696,7 +696,7 @@
       "dst": "00:00:00:00:00:00:00:18",
       "dstPort": 4,
       "confidentiality": 0.9355432,
-      "integrity": 0.856604,
+      "integrity": 0.926604,
       "availability": 0.99
     },
     {
@@ -813,7 +813,7 @@
       "dst": "00:00:00:00:00:00:00:25",
       "dstPort": 1,
       "confidentiality": 0.93844235,
-      "integrity": 0.89383876,
+      "integrity": 0.93383876,
       "availability": 0.99
     },
     {
