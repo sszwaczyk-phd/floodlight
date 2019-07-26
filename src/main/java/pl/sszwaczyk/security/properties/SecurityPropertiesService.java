@@ -186,34 +186,6 @@ public class SecurityPropertiesService implements IFloodlightModule, IOFSwitchLi
             log.info("Trust for new switch {} set to 0.99", switchId);
         }
 
-//        SwitchSecurityProperties props = new SwitchSecurityProperties();
-//        props.setSwitchDpid(switchId.toString());
-//        props.setTrust((float) ThreadLocalRandom.current().nextDouble(0.85, 0.95));
-//        initSwitchesSecurityProperites.put(switchId.toString(), props);
-//
-//        Runnable r = () -> {
-//            String switches = null;
-//            String links = null;
-//            Collection<SwitchSecurityProperties> values = initSwitchesSecurityProperites.values();
-//            ObjectMapper mapper = new ObjectMapper();
-//            try {
-//                switches = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(values);
-//            } catch (JsonProcessingException e) {
-//                e.printStackTrace();
-//            }
-//            Collection<LinkSecurityProperties> values1 = initLinkSecurityProperties.values();
-//            try {
-//                links = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(values1);
-//            } catch (JsonProcessingException e) {
-//                e.printStackTrace();
-//            }
-//
-//            System.out.println(switches);
-//            System.out.println(links);
-//        };
-//
-//        ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
-//        scheduledExecutorService.scheduleWithFixedDelay(r, 100, 600, TimeUnit.SECONDS);
     }
 
     @Override

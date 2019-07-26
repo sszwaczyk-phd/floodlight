@@ -4,39 +4,39 @@
     "ip": "10.0.0.1",
     "port": 8000,
     "path": "/home/sszwaczyk/WAT/PhD/impl/20MB.zip",
-    "bandwidth": 5000000,
-    "maxLatency": 10000
+    "bandwidth": 500000,
+    "maxLatency": 150
   },
   {
     "id": "HTTP_LR",
     "ip": "10.0.0.2",
     "port": 8000,
     "path": "/home/sszwaczyk/WAT/PhD/impl/20MB.zip",
-    "bandwidth": 5000000,
-    "maxLatency": 10000
+    "bandwidth": 500000,
+    "maxLatency": 1000
   },
   {
     "id": "HTTP_SS",
     "ip": "10.0.0.3",
     "port": 8000,
     "path": "/home/sszwaczyk/WAT/PhD/impl/10MB.zip",
-    "bandwidth": 5000000,
-    "maxLatency": 10000
+    "bandwidth": 500000,
+    "maxLatency": 150
   },
   {
     "id": "HTTP_SR",
     "ip": "10.0.0.4",
     "port": 8000,
     "path": "/home/sszwaczyk/WAT/PhD/impl/10MB.zip",
-    "bandwidth": 5000000,
-    "maxLatency": 10000
+    "bandwidth": 500000,
+    "maxLatency": 150
   },
   {
     "id": "HTTP_SU",
     "ip": "10.0.0.5",
     "port": 8000,
     "path": "/home/sszwaczyk/WAT/PhD/impl/5MB.zip",
-    "bandwidth": 5000000,
+    "bandwidth": 500000,
     "maxLatency": 1000
   }
 ]

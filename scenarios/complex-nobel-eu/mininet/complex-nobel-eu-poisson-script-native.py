@@ -131,7 +131,6 @@ def complexNobelEu():
 
     net.addLink( frankfurt, strasbourg, cls=TCLink ,  bw=10 )
     net.addLink( frankfurt, munich, cls=TCLink ,  bw=10 )
-    net.addLink( frankfurt, strasbourg, cls=TCLink ,  bw=10 )
 
     net.addLink( strasbourg, zurich, cls=TCLink ,  bw=10 )
 
