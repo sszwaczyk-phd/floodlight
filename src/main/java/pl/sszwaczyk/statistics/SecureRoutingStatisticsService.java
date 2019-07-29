@@ -592,6 +592,9 @@ public class SecureRoutingStatisticsService implements IFloodlightModule, ISecur
         List<Flow> finishedFlows = secureFlowsRepository.getFinishedFlows();
         int i = 1;
         for(Flow flow: finishedFlows) {
+            if(flow == null) {
+                continue;
+            }
             Row row = sheet.createRow(i);
             row.createCell(0).setCellValue(flow.getStartTime().toString());
             row.createCell(1).setCellValue(flow.getEndTime().toString());
