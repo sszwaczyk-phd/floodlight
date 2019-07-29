@@ -156,6 +156,7 @@ def complexNobelEu():
     net.addLink( vienna, zagreb, cls=TCLink ,  bw=10 )
 
     net.addLink( zagreb, rome, cls=TCLink ,  bw=10 )
+    net.addLink( zagreb, belgrade, cls=TCLink ,  bw=10 )
 
     net.addLink( rome, athens, cls=TCLink ,  bw=10 )
 

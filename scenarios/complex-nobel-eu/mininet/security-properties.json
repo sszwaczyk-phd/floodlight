@@ -1,96 +1,52 @@
 {
   "switches": [
     {
-      "switchDpid": "00:00:00:00:00:00:00:19",
-      "trust": 0.9124314
-    },
-    {
-      "switchDpid": "00:00:00:00:00:00:00:17",
-      "trust": 0.91198176
-    },
-    {
-      "switchDpid": "00:00:00:00:00:00:00:18",
-      "trust": 0.92330337
-    },
-    {
-      "switchDpid": "00:00:00:00:00:00:00:26",
-      "trust": 0.896218
-    },
-    {
-      "switchDpid": "00:00:00:00:00:00:00:04",
-      "trust": 0.8664656
-    },
-    {
-      "switchDpid": "00:00:00:00:00:00:00:27",
-      "trust": 0.9315861
-    },
-    {
-      "switchDpid": "00:00:00:00:00:00:00:05",
-      "trust": 0.8792298
+      "switchDpid": "00:00:00:00:00:00:00:01",
+      "trust": 0.91287994
     },
     {
       "switchDpid": "00:00:00:00:00:00:00:02",
-      "trust": 0.93316907
-    },
-    {
-      "switchDpid": "00:00:00:00:00:00:00:24",
-      "trust": 0.91501707
-    },
-    {
-      "switchDpid": "00:00:00:00:00:00:00:25",
-      "trust": 0.9027202
+      "trust": 0.88316907
     },
     {
       "switchDpid": "00:00:00:00:00:00:00:03",
       "trust": 0.9355504
     },
     {
-      "switchDpid": "00:00:00:00:00:00:00:22",
-      "trust": 0.89167446
+      "switchDpid": "00:00:00:00:00:00:00:04",
+      "trust": 0.9264656
     },
     {
-      "switchDpid": "00:00:00:00:00:00:00:01",
-      "trust": 0.91287994
-    },
-    {
-      "switchDpid": "00:00:00:00:00:00:00:23",
-      "trust": 0.90083224
-    },
-    {
-      "switchDpid": "00:00:00:00:00:00:00:20",
-      "trust": 0.86502945
-    },
-    {
-      "switchDpid": "00:00:00:00:00:00:00:21",
-      "trust": 0.91692203
-    },
-    {
-      "switchDpid": "00:00:00:00:00:00:00:08",
-      "trust": 0.85236
-    },
-    {
-      "switchDpid": "00:00:00:00:00:00:00:09",
-      "trust": 0.8722107
+      "switchDpid": "00:00:00:00:00:00:00:05",
+      "trust": 0.8792298
     },
     {
       "switchDpid": "00:00:00:00:00:00:00:06",
       "trust": 0.8641315
     },
     {
-      "switchDpid": "00:00:00:00:00:00:00:28",
-      "trust": 0.94815165
-    },
-    {
       "switchDpid": "00:00:00:00:00:00:00:07",
       "trust": 0.90827864
     },
     {
-      "switchDpid": "00:00:00:00:00:00:00:15",
-      "trust": 0.8683901
+      "switchDpid": "00:00:00:00:00:00:00:08",
+      "trust": 0.95236
     },
     {
-      "switchDpid": "00:00:00:00:00:00:00:16",
-      "trust": 0.91793233
+      "switchDpid": "00:00:00:00:00:00:00:09",
+      "trust": 0.8722107
+    },
+    {
+      "switchDpid": "00:00:00:00:00:00:00:10",
+      "trust": 0.9522431
+    },
+    {
+      "switchDpid": "00:00:00:00:00:00:00:11",
+      "trust": 0.92352265
+    },
+    {
+      "switchDpid": "00:00:00:00:00:00:00:12",
+      "trust": 0.9168122
     },
     {
       "switchDpid": "00:00:00:00:00:00:00:13",
@@ -101,316 +57,63 @@
       "trust": 0.9257743
     },
     {
-      "switchDpid": "00:00:00:00:00:00:00:11",
-      "trust": 0.86352265
+      "switchDpid": "00:00:00:00:00:00:00:15",
+      "trust": 0.8683901
     },
     {
-      "switchDpid": "00:00:00:00:00:00:00:12",
-      "trust": 0.9168122
+      "switchDpid": "00:00:00:00:00:00:00:16",
+      "trust": 0.91793233
     },
     {
-      "switchDpid": "00:00:00:00:00:00:00:10",
-      "trust": 0.8522431
+      "switchDpid": "00:00:00:00:00:00:00:17",
+      "trust": 0.91198176
+    },
+    {
+      "switchDpid": "00:00:00:00:00:00:00:18",
+      "trust": 0.92330337
+    },
+    {
+      "switchDpid": "00:00:00:00:00:00:00:19",
+      "trust": 0.9124314
+    },
+    {
+      "switchDpid": "00:00:00:00:00:00:00:20",
+      "trust": 0.86502945
+    },
+    {
+      "switchDpid": "00:00:00:00:00:00:00:21",
+      "trust": 0.91692203
+    },
+    {
+      "switchDpid": "00:00:00:00:00:00:00:22",
+      "trust": 0.89167446
+    },
+    {
+      "switchDpid": "00:00:00:00:00:00:00:23",
+      "trust": 0.88083224
+    },
+    {
+      "switchDpid": "00:00:00:00:00:00:00:24",
+      "trust": 0.91501707
+    },
+    {
+      "switchDpid": "00:00:00:00:00:00:00:25",
+      "trust": 0.9027202
+    },
+    {
+      "switchDpid": "00:00:00:00:00:00:00:26",
+      "trust": 0.896218
+    },
+    {
+      "switchDpid": "00:00:00:00:00:00:00:27",
+      "trust": 0.9315861
+    },
+    {
+      "switchDpid": "00:00:00:00:00:00:00:28",
+      "trust": 0.94815165
     }
   ],
   "links": [
-    {
-      "src": "00:00:00:00:00:00:00:08",
-      "srcPort": 2,
-      "dst": "00:00:00:00:00:00:00:09",
-      "dstPort": 1,
-      "confidentiality": 0.89898217,
-      "integrity": 0.8934565,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:09",
-      "srcPort": 1,
-      "dst": "00:00:00:00:00:00:00:08",
-      "dstPort": 2,
-      "confidentiality": 0.8931978,
-      "integrity": 0.89348894,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:24",
-      "srcPort": 2,
-      "dst": "00:00:00:00:00:00:00:25",
-      "dstPort": 2,
-      "confidentiality": 0.90229434,
-      "integrity": 0.9297395,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:04",
-      "srcPort": 4,
-      "dst": "00:00:00:00:00:00:00:11",
-      "dstPort": 1,
-      "confidentiality": 0.92877504,
-      "integrity": 0.9318202,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:08",
-      "srcPort": 1,
-      "dst": "00:00:00:00:00:00:00:07",
-      "dstPort": 2,
-      "confidentiality": 0.897718,
-      "integrity": 0.92662156,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:07",
-      "srcPort": 2,
-      "dst": "00:00:00:00:00:00:00:08",
-      "dstPort": 1,
-      "confidentiality": 0.90853786,
-      "integrity": 0.857456,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:25",
-      "srcPort": 3,
-      "dst": "00:00:00:00:00:00:00:26",
-      "dstPort": 2,
-      "confidentiality": 0.87787056,
-      "integrity": 0.9253438,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:28",
-      "srcPort": 1,
-      "dst": "00:00:00:00:00:00:00:23",
-      "dstPort": 3,
-      "confidentiality": 0.9435169,
-      "integrity": 0.9257177,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:26",
-      "srcPort": 2,
-      "dst": "00:00:00:00:00:00:00:25",
-      "dstPort": 3,
-      "confidentiality": 0.9272868,
-      "integrity": 0.90324545,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:27",
-      "srcPort": 1,
-      "dst": "00:00:00:00:00:00:00:26",
-      "dstPort": 3,
-      "confidentiality": 0.912223,
-      "integrity": 0.8549265,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:06",
-      "srcPort": 3,
-      "dst": "00:00:00:00:00:00:00:07",
-      "dstPort": 1,
-      "confidentiality": 0.88180083,
-      "integrity": 0.90242946,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:02",
-      "srcPort": 2,
-      "dst": "00:00:00:00:00:00:00:03",
-      "dstPort": 1,
-      "confidentiality": 0.9214662,
-      "integrity": 0.8952614,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:03",
-      "srcPort": 1,
-      "dst": "00:00:00:00:00:00:00:02",
-      "dstPort": 2,
-      "confidentiality": 0.89520514,
-      "integrity": 0.9305716,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:19",
-      "srcPort": 4,
-      "dst": "00:00:00:00:00:00:00:21",
-      "dstPort": 1,
-      "confidentiality": 0.9458391,
-      "integrity": 0.9306498,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:04",
-      "srcPort": 2,
-      "dst": "00:00:00:00:00:00:00:03",
-      "dstPort": 2,
-      "confidentiality": 0.8994159,
-      "integrity": 0.9418399,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:18",
-      "srcPort": 4,
-      "dst": "00:00:00:00:00:00:00:20",
-      "dstPort": 1,
-      "confidentiality": 0.8521564,
-      "integrity": 0.8785073,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:06",
-      "srcPort": 1,
-      "dst": "00:00:00:00:00:00:00:03",
-      "dstPort": 3,
-      "confidentiality": 0.9217867,
-      "integrity": 0.8895585,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:14",
-      "srcPort": 2,
-      "dst": "00:00:00:00:00:00:00:13",
-      "dstPort": 4,
-      "confidentiality": 0.89134836,
-      "integrity": 0.89379036,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:12",
-      "srcPort": 2,
-      "dst": "00:00:00:00:00:00:00:11",
-      "dstPort": 2,
-      "confidentiality": 0.92907945,
-      "integrity": 0.9271942,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:05",
-      "srcPort": 3,
-      "dst": "00:00:00:00:00:00:00:12",
-      "dstPort": 1,
-      "confidentiality": 0.90462756,
-      "integrity": 0.9104107,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:09",
-      "srcPort": 2,
-      "dst": "00:00:00:00:00:00:00:10",
-      "dstPort": 2,
-      "confidentiality": 0.87304896,
-      "integrity": 0.88215774,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:06",
-      "srcPort": 4,
-      "dst": "00:00:00:00:00:00:00:13",
-      "dstPort": 1,
-      "confidentiality": 0.938729,
-      "integrity": 0.93977535,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:13",
-      "srcPort": 1,
-      "dst": "00:00:00:00:00:00:00:06",
-      "dstPort": 4,
-      "confidentiality": 0.91917664,
-      "integrity": 0.9465276,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:11",
-      "srcPort": 1,
-      "dst": "00:00:00:00:00:00:00:04",
-      "dstPort": 4,
-      "confidentiality": 0.9405713,
-      "integrity": 0.9317704,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:20",
-      "srcPort": 3,
-      "dst": "00:00:00:00:00:00:00:26",
-      "dstPort": 1,
-      "confidentiality": 0.9250208,
-      "integrity": 0.8893055,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:19",
-      "srcPort": 3,
-      "dst": "00:00:00:00:00:00:00:18",
-      "dstPort": 5,
-      "confidentiality": 0.93404036,
-      "integrity": 0.9416774,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:12",
-      "srcPort": 4,
-      "dst": "00:00:00:00:00:00:00:19",
-      "dstPort": 1,
-      "confidentiality": 0.9210449,
-      "integrity": 0.88319767,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:26",
-      "srcPort": 1,
-      "dst": "00:00:00:00:00:00:00:20",
-      "dstPort": 3,
-      "confidentiality": 0.8619612,
-      "integrity": 0.898759,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:11",
-      "srcPort": 3,
-      "dst": "00:00:00:00:00:00:00:18",
-      "dstPort": 1,
-      "confidentiality": 0.9380505,
-      "integrity": 0.92936044,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:13",
-      "srcPort": 3,
-      "dst": "00:00:00:00:00:00:00:14",
-      "dstPort": 2,
-      "confidentiality": 0.87754035,
-      "integrity": 0.8553034,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:14",
-      "srcPort": 2,
-      "dst": "00:00:00:00:00:00:00:13",
-      "dstPort": 3,
-      "confidentiality": 0.92813885,
-      "integrity": 0.9219115,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:15",
-      "srcPort": 1,
-      "dst": "00:00:00:00:00:00:00:14",
-      "dstPort": 3,
-      "confidentiality": 0.9313645,
-      "integrity": 0.9282618,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:19",
-      "srcPort": 1,
-      "dst": "00:00:00:00:00:00:00:12",
-      "dstPort": 4,
-      "confidentiality": 0.86718386,
-      "integrity": 0.863075,
-      "availability": 0.99
-    },
     {
       "src": "00:00:00:00:00:00:00:01",
       "srcPort": 1,
@@ -421,165 +124,12 @@
       "availability": 0.99
     },
     {
-      "src": "00:00:00:00:00:00:00:17",
-      "srcPort": 2,
-      "dst": "00:00:00:00:00:00:00:18",
-      "dstPort": 2,
-      "confidentiality": 0.9308228,
-      "integrity": 0.91181156,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:25",
+      "src": "00:00:00:00:00:00:00:02",
       "srcPort": 1,
-      "dst": "00:00:00:00:00:00:00:18",
-      "dstPort": 3,
-      "confidentiality": 0.90044105,
-      "integrity": 0.931047,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:14",
-      "srcPort": 1,
-      "dst": "00:00:00:00:00:00:00:10",
-      "dstPort": 3,
-      "confidentiality": 0.902854,
-      "integrity": 0.8874927,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:27",
-      "srcPort": 2,
-      "dst": "00:00:00:00:00:00:00:28",
-      "dstPort": 2,
-      "confidentiality": 0.92504853,
-      "integrity": 0.8815454,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:10",
-      "srcPort": 3,
-      "dst": "00:00:00:00:00:00:00:14",
+      "dst": "00:00:00:00:00:00:00:01",
       "dstPort": 1,
-      "confidentiality": 0.89790255,
-      "integrity": 0.8585197,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:20",
-      "srcPort": 2,
-      "dst": "00:00:00:00:00:00:00:21",
-      "dstPort": 2,
-      "confidentiality": 0.9106356,
-      "integrity": 0.92481524,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:22",
-      "srcPort": 2,
-      "dst": "00:00:00:00:00:00:00:23",
-      "dstPort": 2,
-      "confidentiality": 0.8854394,
-      "integrity": 0.91866225,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:22",
-      "srcPort": 1,
-      "dst": "00:00:00:00:00:00:00:21",
-      "dstPort": 3,
-      "confidentiality": 0.8592764,
-      "integrity": 0.91450465,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:19",
-      "srcPort": 2,
-      "dst": "00:00:00:00:00:00:00:15",
-      "dstPort": 2,
-      "confidentiality": 0.8842906,
-      "integrity": 0.8829933,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:25",
-      "srcPort": 2,
-      "dst": "00:00:00:00:00:00:00:24",
-      "dstPort": 2,
-      "confidentiality": 0.8588096,
-      "integrity": 0.8556885,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:26",
-      "srcPort": 3,
-      "dst": "00:00:00:00:00:00:00:27",
-      "dstPort": 1,
-      "confidentiality": 0.90992355,
-      "integrity": 0.9191185,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:07",
-      "srcPort": 1,
-      "dst": "00:00:00:00:00:00:00:06",
-      "dstPort": 3,
-      "confidentiality": 0.9404875,
-      "integrity": 0.8778661,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:28",
-      "srcPort": 2,
-      "dst": "00:00:00:00:00:00:00:27",
-      "dstPort": 2,
-      "confidentiality": 0.8816819,
-      "integrity": 0.9179493,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:06",
-      "srcPort": 2,
-      "dst": "00:00:00:00:00:00:00:05",
-      "dstPort": 1,
-      "confidentiality": 0.89059275,
-      "integrity": 0.8996266,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:05",
-      "srcPort": 1,
-      "dst": "00:00:00:00:00:00:00:06",
-      "dstPort": 2,
-      "confidentiality": 0.8901213,
-      "integrity": 0.9498795,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:03",
-      "srcPort": 3,
-      "dst": "00:00:00:00:00:00:00:06",
-      "dstPort": 1,
-      "confidentiality": 0.86675423,
-      "integrity": 0.94812465,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:04",
-      "srcPort": 3,
-      "dst": "00:00:00:00:00:00:00:05",
-      "dstPort": 2,
-      "confidentiality": 0.8718275,
-      "integrity": 0.9490655,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:15",
-      "srcPort": 2,
-      "dst": "00:00:00:00:00:00:00:19",
-      "dstPort": 2,
-      "confidentiality": 0.9465324,
-      "integrity": 0.8745187,
+      "confidentiality": 0.88821566,
+      "integrity": 0.89559126,
       "availability": 0.99
     },
     {
@@ -600,6 +150,26 @@
       "integrity": 0.8750417,
       "availability": 0.99
     },
+
+    {
+      "src": "00:00:00:00:00:00:00:02",
+      "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:03",
+      "dstPort": 1,
+      "confidentiality": 0.9214662,
+      "integrity": 0.9305716,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:03",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:02",
+      "dstPort": 2,
+      "confidentiality": 0.9214662,
+      "integrity": 0.9305716,
+      "availability": 0.99
+    },
+
     {
       "src": "00:00:00:00:00:00:00:03",
       "srcPort": 2,
@@ -610,12 +180,40 @@
       "availability": 0.99
     },
     {
-      "src": "00:00:00:00:00:00:00:24",
-      "srcPort": 1,
-      "dst": "00:00:00:00:00:00:00:16",
+      "src": "00:00:00:00:00:00:00:04",
+      "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:03",
+      "dstPort": 2,
+      "confidentiality": 0.85240495,
+      "integrity": 0.88721776,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:03",
+      "srcPort": 3,
+      "dst": "00:00:00:00:00:00:00:06",
       "dstPort": 1,
-      "confidentiality": 0.8589976,
-      "integrity": 0.9005211,
+      "confidentiality": 0.9217867,
+      "integrity": 0.93675423,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:06",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:03",
+      "dstPort": 3,
+      "confidentiality": 0.9217867,
+      "integrity": 0.93675423,
+      "availability": 0.99
+    },
+
+    {
+      "src": "00:00:00:00:00:00:00:04",
+      "srcPort": 3,
+      "dst": "00:00:00:00:00:00:00:05",
+      "dstPort": 2,
+      "confidentiality": 0.88007495,
+      "integrity": 0.8690655,
       "availability": 0.99
     },
     {
@@ -623,89 +221,166 @@
       "srcPort": 2,
       "dst": "00:00:00:00:00:00:00:04",
       "dstPort": 3,
-      "confidentiality": 0.85910016,
-      "integrity": 0.91007495,
+      "confidentiality": 0.88007495,
+      "integrity": 0.8690655,
       "availability": 0.99
     },
     {
-      "src": "00:00:00:00:00:00:00:15",
-      "srcPort": 3,
-      "dst": "00:00:00:00:00:00:00:23",
+      "src": "00:00:00:00:00:00:00:04",
+      "srcPort": 4,
+      "dst": "00:00:00:00:00:00:00:11",
       "dstPort": 1,
-      "confidentiality": 0.9020859,
-      "integrity": 0.8906157,
+      "confidentiality": 0.92877504,
+      "integrity": 0.9318202,
       "availability": 0.99
     },
     {
       "src": "00:00:00:00:00:00:00:11",
-      "srcPort": 2,
-      "dst": "00:00:00:00:00:00:00:12",
-      "dstPort": 2,
-      "confidentiality": 0.9173642,
-      "integrity": 0.92676765,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:21",
       "srcPort": 1,
-      "dst": "00:00:00:00:00:00:00:19",
+      "dst": "00:00:00:00:00:00:00:04",
       "dstPort": 4,
-      "confidentiality": 0.8584342,
-      "integrity": 0.8530065,
+      "confidentiality": 0.92877504,
+      "integrity": 0.9318202,
       "availability": 0.99
     },
+
     {
-      "src": "00:00:00:00:00:00:00:13",
-      "srcPort": 4,
-      "dst": "00:00:00:00:00:00:00:14",
+      "src": "00:00:00:00:00:00:00:05",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:06",
       "dstPort": 2,
-      "confidentiality": 0.88814306,
-      "integrity": 0.8719302,
+      "confidentiality": 0.9101213,
+      "integrity": 0.9498795,
       "availability": 0.99
     },
     {
-      "src": "00:00:00:00:00:00:00:13",
+      "src": "00:00:00:00:00:00:00:06",
       "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:05",
+      "dstPort": 1,
+      "confidentiality": 0.9101213,
+      "integrity": 0.9498795,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:05",
+      "srcPort": 3,
       "dst": "00:00:00:00:00:00:00:12",
-      "dstPort": 3,
-      "confidentiality": 0.942389,
-      "integrity": 0.86681724,
+      "dstPort": 1,
+      "confidentiality": 0.90462756,
+      "integrity": 0.9104107,
       "availability": 0.99
     },
     {
       "src": "00:00:00:00:00:00:00:12",
-      "srcPort": 3,
-      "dst": "00:00:00:00:00:00:00:13",
-      "dstPort": 2,
-      "confidentiality": 0.9236912,
-      "integrity": 0.910772,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:16",
       "srcPort": 1,
-      "dst": "00:00:00:00:00:00:00:24",
-      "dstPort": 1,
-      "confidentiality": 0.94368714,
-      "integrity": 0.85221434,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:20",
-      "srcPort": 1,
-      "dst": "00:00:00:00:00:00:00:18",
-      "dstPort": 4,
-      "confidentiality": 0.9355432,
-      "integrity": 0.926604,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:23",
-      "srcPort": 1,
-      "dst": "00:00:00:00:00:00:00:15",
+      "dst": "00:00:00:00:00:00:00:05",
       "dstPort": 3,
-      "confidentiality": 0.8934805,
-      "integrity": 0.89028114,
+      "confidentiality": 0.90462756,
+      "integrity": 0.9104107,
+      "availability": 0.99
+    },
+
+    {
+      "src": "00:00:00:00:00:00:00:06",
+      "srcPort": 3,
+      "dst": "00:00:00:00:00:00:00:07",
+      "dstPort": 1,
+      "confidentiality": 0.88180083,
+      "integrity": 0.88242946,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:07",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:06",
+      "dstPort": 3,
+      "confidentiality": 0.88180083,
+      "integrity": 0.88242946,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:06",
+      "srcPort": 5,
+      "dst": "00:00:00:00:00:00:00:10",
+      "dstPort": 1,
+      "confidentiality": 0.9406846,
+      "integrity": 0.93668926,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:10",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:06",
+      "dstPort": 5,
+      "confidentiality": 0.9406846,
+      "integrity": 0.93668926,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:06",
+      "srcPort": 4,
+      "dst": "00:00:00:00:00:00:00:13",
+      "dstPort": 1,
+      "confidentiality": 0.938729,
+      "integrity": 0.93977535,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:13",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:06",
+      "dstPort": 4,
+      "confidentiality": 0.938729,
+      "integrity": 0.93977535,
+      "availability": 0.99
+    },
+
+    {
+      "src": "00:00:00:00:00:00:00:07",
+      "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:08",
+      "dstPort": 1,
+      "confidentiality": 0.90853786,
+      "integrity": 0.92662156,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:08",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:07",
+      "dstPort": 2,
+      "confidentiality": 0.90853786,
+      "integrity": 0.92662156,
+      "availability": 0.99
+    },
+
+    {
+      "src": "00:00:00:00:00:00:00:08",
+      "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:09",
+      "dstPort": 1,
+      "confidentiality": 0.928217,
+      "integrity": 0.8934565,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:09",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:08",
+      "dstPort": 2,
+      "confidentiality": 0.928217,
+      "integrity": 0.8934565,
+      "availability": 0.99
+    },
+
+    {
+      "src": "00:00:00:00:00:00:00:09",
+      "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:10",
+      "dstPort": 2,
+      "confidentiality": 0.91988224,
+      "integrity": 0.902112,
       "availability": 0.99
     },
     {
@@ -717,40 +392,51 @@
       "integrity": 0.902112,
       "availability": 0.99
     },
-    {
-      "src": "00:00:00:00:00:00:00:12",
-      "srcPort": 1,
-      "dst": "00:00:00:00:00:00:00:05",
-      "dstPort": 3,
-      "confidentiality": 0.9171758,
-      "integrity": 0.93316244,
-      "availability": 0.99
-    },
+
     {
       "src": "00:00:00:00:00:00:00:10",
-      "srcPort": 1,
-      "dst": "00:00:00:00:00:00:00:06",
-      "dstPort": 5,
-      "confidentiality": 0.8809168,
-      "integrity": 0.8594672,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:18",
-      "srcPort": 5,
-      "dst": "00:00:00:00:00:00:00:19",
-      "dstPort": 3,
-      "confidentiality": 0.91547704,
-      "integrity": 0.90881497,
-      "availability": 0.99
-    },
-    {
-      "src": "00:00:00:00:00:00:00:06",
-      "srcPort": 5,
-      "dst": "00:00:00:00:00:00:00:10",
+      "srcPort": 3,
+      "dst": "00:00:00:00:00:00:00:14",
       "dstPort": 1,
-      "confidentiality": 0.8506846,
-      "integrity": 0.93668926,
+      "confidentiality": 0.902854,
+      "integrity": 0.8874927,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:14",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:10",
+      "dstPort": 3,
+      "confidentiality": 0.902854,
+      "integrity": 0.8874927,
+      "availability": 0.99
+    },
+
+    {
+      "src": "00:00:00:00:00:00:00:11",
+      "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:12",
+      "dstPort": 2,
+      "confidentiality": 0.9173642,
+      "integrity": 0.92676765,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:12",
+      "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:11",
+      "dstPort": 2,
+      "confidentiality": 0.9173642,
+      "integrity": 0.92676765,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:11",
+      "srcPort": 3,
+      "dst": "00:00:00:00:00:00:00:18",
+      "dstPort": 1,
+      "confidentiality": 0.9380505,
+      "integrity": 0.92936044,
       "availability": 0.99
     },
     {
@@ -758,35 +444,130 @@
       "srcPort": 1,
       "dst": "00:00:00:00:00:00:00:11",
       "dstPort": 3,
-      "confidentiality": 0.9311085,
-      "integrity": 0.9186558,
+      "confidentiality": 0.9380505,
+      "integrity": 0.92936044,
       "availability": 0.99
     },
+
+    {
+      "src": "00:00:00:00:00:00:00:12",
+      "srcPort": 3,
+      "dst": "00:00:00:00:00:00:00:13",
+      "dstPort": 2,
+      "confidentiality": 0.9236912,
+      "integrity": 0.910772,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:13",
+      "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:12",
+      "dstPort": 3,
+      "confidentiality": 0.9236912,
+      "integrity": 0.910772,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:12",
+      "srcPort": 4,
+      "dst": "00:00:00:00:00:00:00:19",
+      "dstPort": 1,
+      "confidentiality": 0.9210449,
+      "integrity": 0.93319767,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:19",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:12",
+      "dstPort": 4,
+      "confidentiality": 0.9210449,
+      "integrity": 0.93319767,
+      "availability": 0.99
+    },
+
+    {
+      "src": "00:00:00:00:00:00:00:13",
+      "srcPort": 3,
+      "dst": "00:00:00:00:00:00:00:14",
+      "dstPort": 2,
+      "confidentiality": 0.92813885,
+      "integrity": 0.9219115,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:14",
+      "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:13",
+      "dstPort": 3,
+      "confidentiality": 0.92813885,
+      "integrity": 0.9219115,
+      "availability": 0.99
+    },
+
     {
       "src": "00:00:00:00:00:00:00:14",
       "srcPort": 3,
       "dst": "00:00:00:00:00:00:00:15",
       "dstPort": 1,
-      "confidentiality": 0.8895166,
-      "integrity": 0.9390442,
+      "confidentiality": 0.9313645,
+      "integrity": 0.9282618,
       "availability": 0.99
     },
     {
-      "src": "00:00:00:00:00:00:00:02",
+      "src": "00:00:00:00:00:00:00:15",
       "srcPort": 1,
-      "dst": "00:00:00:00:00:00:00:01",
-      "dstPort": 1,
-      "confidentiality": 0.8749566,
-      "integrity": 0.8817419,
+      "dst": "00:00:00:00:00:00:00:14",
+      "dstPort": 3,
+      "confidentiality": 0.9313645,
+      "integrity": 0.9282618,
+      "availability": 0.99
+    },
+
+    {
+      "src": "00:00:00:00:00:00:00:15",
+      "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:19",
+      "dstPort": 2,
+      "confidentiality": 0.9465324,
+      "integrity": 0.9020859,
       "availability": 0.99
     },
     {
-      "src": "00:00:00:00:00:00:00:18",
+      "src": "00:00:00:00:00:00:00:19",
+      "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:15",
+      "dstPort": 2,
+      "confidentiality": 0.9465324,
+      "integrity": 0.9020859,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:15",
+      "srcPort": 3,
+      "dst": "00:00:00:00:00:00:00:23",
+      "dstPort": 1,
+      "confidentiality": 0.8834805,
+      "integrity": 0.8906157,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:23",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:15",
+      "dstPort": 3,
+      "confidentiality": 0.8834805,
+      "integrity": 0.8906157,
+      "availability": 0.99
+    },
+
+    {
+      "src": "00:00:00:00:00:00:00:16",
       "srcPort": 2,
       "dst": "00:00:00:00:00:00:00:17",
-      "dstPort": 2,
-      "confidentiality": 0.9242814,
-      "integrity": 0.93095023,
+      "dstPort": 1,
+      "confidentiality": 0.94741434,
+      "integrity": 0.94414014,
       "availability": 0.99
     },
     {
@@ -800,11 +581,76 @@
     },
     {
       "src": "00:00:00:00:00:00:00:16",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:24",
+      "dstPort": 1,
+      "confidentiality": 0.92368714,
+      "integrity": 0.9005211,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:24",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:16",
+      "dstPort": 1,
+      "confidentiality": 0.92368714,
+      "integrity": 0.9005211,
+      "availability": 0.99
+    },
+
+    {
+      "src": "00:00:00:00:00:00:00:17",
+      "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:18",
+      "dstPort": 2,
+      "confidentiality": 0.9308228,
+      "integrity": 0.91181156,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:18",
       "srcPort": 2,
       "dst": "00:00:00:00:00:00:00:17",
+      "dstPort": 2,
+      "confidentiality": 0.9308228,
+      "integrity": 0.91181156,
+      "availability": 0.99
+    },
+
+    {
+      "src": "00:00:00:00:00:00:00:18",
+      "srcPort": 5,
+      "dst": "00:00:00:00:00:00:00:19",
+      "dstPort": 3,
+      "confidentiality": 0.93404036,
+      "integrity": 0.9416774,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:19",
+      "srcPort": 3,
+      "dst": "00:00:00:00:00:00:00:18",
+      "dstPort": 5,
+      "confidentiality": 0.93404036,
+      "integrity": 0.9416774,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:18",
+      "srcPort": 4,
+      "dst": "00:00:00:00:00:00:00:20",
       "dstPort": 1,
-      "confidentiality": 0.9028882,
-      "integrity": 0.91713303,
+      "confidentiality": 0.8521564,
+      "integrity": 0.8785073,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:20",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:18",
+      "dstPort": 4,
+      "confidentiality": 0.8521564,
+      "integrity": 0.8785073,
       "availability": 0.99
     },
     {
@@ -812,8 +658,46 @@
       "srcPort": 3,
       "dst": "00:00:00:00:00:00:00:25",
       "dstPort": 1,
-      "confidentiality": 0.93844235,
-      "integrity": 0.93383876,
+      "confidentiality": 0.90044105,
+      "integrity": 0.931047,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:25",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:18",
+      "dstPort": 3,
+      "confidentiality": 0.90044105,
+      "integrity": 0.931047,
+      "availability": 0.99
+    },
+
+    {
+      "src": "00:00:00:00:00:00:00:19",
+      "srcPort": 4,
+      "dst": "00:00:00:00:00:00:00:21",
+      "dstPort": 1,
+      "confidentiality": 0.9458391,
+      "integrity": 0.9306498,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:21",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:19",
+      "dstPort": 4,
+      "confidentiality": 0.9458391,
+      "integrity": 0.9306498,
+      "availability": 0.99
+    },
+
+    {
+      "src": "00:00:00:00:00:00:00:20",
+      "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:21",
+      "dstPort": 2,
+      "confidentiality": 0.9106356,
+      "integrity": 0.92481524,
       "availability": 0.99
     },
     {
@@ -821,17 +705,55 @@
       "srcPort": 2,
       "dst": "00:00:00:00:00:00:00:20",
       "dstPort": 2,
-      "confidentiality": 0.9122498,
-      "integrity": 0.8579189,
+      "confidentiality": 0.9106356,
+      "integrity": 0.92481524,
       "availability": 0.99
     },
     {
-      "src": "00:00:00:00:00:00:00:23",
+      "src": "00:00:00:00:00:00:00:20",
       "srcPort": 3,
-      "dst": "00:00:00:00:00:00:00:28",
+      "dst": "00:00:00:00:00:00:00:26",
       "dstPort": 1,
-      "confidentiality": 0.8886688,
-      "integrity": 0.9137674,
+      "confidentiality": 0.8619612,
+      "integrity": 0.898759,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:26",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:20",
+      "dstPort": 3,
+      "confidentiality": 0.8619612,
+      "integrity": 0.898759,
+      "availability": 0.99
+    },
+
+    {
+      "src": "00:00:00:00:00:00:00:21",
+      "srcPort": 3,
+      "dst": "00:00:00:00:00:00:00:22",
+      "dstPort": 1,
+      "confidentiality": 0.8592764,
+      "integrity": 0.88824815,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:22",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:21",
+      "dstPort": 3,
+      "confidentiality": 0.8592764,
+      "integrity": 0.88824815,
+      "availability": 0.99
+    },
+
+    {
+      "src": "00:00:00:00:00:00:00:22",
+      "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:23",
+      "dstPort": 2,
+      "confidentiality": 0.9292764,
+      "integrity": 0.91866225,
       "availability": 0.99
     },
     {
@@ -839,17 +761,122 @@
       "srcPort": 2,
       "dst": "00:00:00:00:00:00:00:22",
       "dstPort": 2,
-      "confidentiality": 0.8824594,
-      "integrity": 0.8803716,
+      "confidentiality": 0.9292764,
+      "integrity": 0.91866225,
       "availability": 0.99
     },
     {
-      "src": "00:00:00:00:00:00:00:21",
+      "src": "00:00:00:00:00:00:00:22",
       "srcPort": 3,
-      "dst": "00:00:00:00:00:00:00:22",
+      "dst": "00:00:00:00:00:00:00:27",
       "dstPort": 1,
-      "confidentiality": 0.88824815,
-      "integrity": 0.90937364,
+      "confidentiality": 0.8854394,
+      "integrity": 0.92866225,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:27",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:22",
+      "dstPort": 3,
+      "confidentiality": 0.8854394,
+      "integrity": 0.92866225,
+      "availability": 0.99
+    },
+
+    {
+      "src": "00:00:00:00:00:00:00:23",
+      "srcPort": 3,
+      "dst": "00:00:00:00:00:00:00:28",
+      "dstPort": 1,
+      "confidentiality": 0.9435169,
+      "integrity": 0.9257177,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:28",
+      "srcPort": 1,
+      "dst": "00:00:00:00:00:00:00:23",
+      "dstPort": 3,
+      "confidentiality": 0.9435169,
+      "integrity": 0.9257177,
+      "availability": 0.99
+    },
+
+    {
+      "src": "00:00:00:00:00:00:00:24",
+      "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:25",
+      "dstPort": 2,
+      "confidentiality": 0.90229434,
+      "integrity": 0.9297395,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:25",
+      "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:24",
+      "dstPort": 2,
+      "confidentiality": 0.90229434,
+      "integrity": 0.9297395,
+      "availability": 0.99
+    },
+
+
+    {
+      "src": "00:00:00:00:00:00:00:25",
+      "srcPort": 3,
+      "dst": "00:00:00:00:00:00:00:26",
+      "dstPort": 2,
+      "confidentiality": 0.88787056,
+      "integrity": 0.9253438,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:26",
+      "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:25",
+      "dstPort": 3,
+      "confidentiality": 0.88787056,
+      "integrity": 0.9253438,
+      "availability": 0.99
+    },
+
+    {
+      "src": "00:00:00:00:00:00:00:26",
+      "srcPort": 3,
+      "dst": "00:00:00:00:00:00:00:27",
+      "dstPort": 2,
+      "confidentiality": 0.90992355,
+      "integrity": 0.9191185,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:27",
+      "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:26",
+      "dstPort": 3,
+      "confidentiality": 0.90992355,
+      "integrity": 0.9191185,
+      "availability": 0.99
+    },
+
+    {
+      "src": "00:00:00:00:00:00:00:27",
+      "srcPort": 3,
+      "dst": "00:00:00:00:00:00:00:28",
+      "dstPort": 2,
+      "confidentiality": 0.92504853,
+      "integrity": 0.8815454,
+      "availability": 0.99
+    },
+    {
+      "src": "00:00:00:00:00:00:00:28",
+      "srcPort": 2,
+      "dst": "00:00:00:00:00:00:00:27",
+      "dstPort": 3,
+      "confidentiality": 0.92504853,
+      "integrity": 0.8815454,
       "availability": 0.99
     }
   ]
