@@ -157,6 +157,10 @@ public class SecureRoutingStatisticsService implements IFloodlightModule, ISecur
         List<ServiceStats> serviceStatsList = new ArrayList<>();
 
         for (Flow flow : secureFlowsRepository.getFinishedFlows()) {
+            if(flow == null) {
+                log.warn("Finished flow null");
+                continue;
+            }
             User user = flow.getUser();
             Service service = flow.getService();
             Map<Service, RelationStats> serviceRelationStatsMap = relationStatsMap.get(user);
@@ -593,6 +597,7 @@ public class SecureRoutingStatisticsService implements IFloodlightModule, ISecur
         int i = 1;
         for(Flow flow: finishedFlows) {
             if(flow == null) {
+                log.warn("Finished flow null");
                 continue;
             }
             Row row = sheet.createRow(i);
@@ -727,6 +732,7 @@ public class SecureRoutingStatisticsService implements IFloodlightModule, ISecur
         for(Decision decision: decisions) {
             Row row = sheet.createRow(i);
             if(decision == null) {
+                log.warn("Decision null");
                 continue;
             }
             row.createCell(0).setCellValue(decision.getId());
