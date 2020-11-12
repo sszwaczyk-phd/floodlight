@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:16.04
 
 MAINTAINER Sebastian Szwaczyk <sebastian.szwaczyk@wat.edu.pl>
 
@@ -14,15 +14,10 @@ RUN apt-get -y install mininet
 ENV PATH=$PATH:/usr/share/openvswitch/scripts
 
 #JAVA-install
-RUN apt-get update && \
-    apt-get upgrade -y && \
-    apt-get install -y  software-properties-common && \
-    add-apt-repository ppa:webupd8team/java -y && \
-    apt-get update && \
-    echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections && \
-    apt-get install -y oracle-java8-installer && \
-    apt-get clean
-
+RUN echo debconf shared/accepted-oracle-license-v1-1 select true | debconf-set-selections && \
+    echo debconf shared/accepted-oracle-license-v1-1 seen true | debconf-set-selections && \
+    apt-get install -y default-jdk
+RUN apt-get install openjfx
 
 #Files
 RUN wget http://ipv4.download.thinkbroadband.com/1GB.zip && wget http://ipv4.download.thinkbroadband.com/512MB.zip && \
@@ -32,7 +27,6 @@ RUN wget http://ipv4.download.thinkbroadband.com/1GB.zip && wget http://ipv4.dow
 
 #Floodlight
 RUN apt-get -y install git build-essential maven
-RUN echo update
 RUN git clone https://github.com/sszwaczyk/floodlight.git
 RUN mkdir /var/lib/floodlight
 RUN chmod 777 /var/lib/floodlight

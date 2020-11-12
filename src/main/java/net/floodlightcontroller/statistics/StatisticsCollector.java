@@ -40,7 +40,7 @@ public class StatisticsCollector implements IFloodlightModule, IStatisticsServic
 
 	private static boolean isEnabled = false;
 
-	private final static int portStatsInitDelay = 30;
+	private static int portStatsInitDelay = 30;
 
 	private static int portStatsInterval = 10; /* could be set by REST API, so not final */
 	private static int flowStatsInterval = 11;
@@ -323,7 +323,7 @@ public class StatisticsCollector implements IFloodlightModule, IStatisticsServic
 
 		if (config.containsKey(PORT_STATS_INIT_DELAY_STR)) {
 			try {
-				portStatsInterval = Integer.parseInt(config.get(PORT_STATS_INIT_DELAY_STR).trim());
+				portStatsInitDelay = Integer.parseInt(config.get(PORT_STATS_INIT_DELAY_STR).trim());
 			} catch (Exception e) {
 				log.error("Could not parse '{}'. Using default of {}", PORT_STATS_INIT_DELAY_STR, portStatsInitDelay);
 			}
