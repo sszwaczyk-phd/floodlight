@@ -53,10 +53,10 @@ def verySimpleNet():
                          port=6653)
 
     info( '*** Add switches\n')
-    leftSwitch = net.addSwitch( 'leftSwitch', cls=OVSKernelSwitch, dpid='00:00:00:00:00:00:00:01' )
-    upSwitch = net.addSwitch( 'upSwitch', cls=OVSKernelSwitch, dpid='00:00:00:00:00:00:00:02' )
-    downSwitch = net.addSwitch( 'downSwitch', cls=OVSKernelSwitch, dpid='00:00:00:00:00:00:00:03' )
-    rightSwitch = net.addSwitch( 'rightSwitch', cls=OVSKernelSwitch, dpid='00:00:00:00:00:00:00:04' )
+    s1 = net.addSwitch( 's1', cls=OVSKernelSwitch, dpid='00:00:00:00:00:00:00:01' )
+    s2 = net.addSwitch( 's2', cls=OVSKernelSwitch, dpid='00:00:00:00:00:00:00:02' )
+    s3 = net.addSwitch( 's3', cls=OVSKernelSwitch, dpid='00:00:00:00:00:00:00:03' )
+    s4 = net.addSwitch( 's4', cls=OVSKernelSwitch, dpid='00:00:00:00:00:00:00:04' )
 
     info( '*** Add hosts\n')
     hostsNumber = 2
@@ -66,27 +66,27 @@ def verySimpleNet():
 
     info( '*** Add links\n')
     # Add links between switches
-    net.addLink( leftSwitch, upSwitch, cls=TCLink , bw=10 )
-    net.addLink( leftSwitch, downSwitch, cls=TCLink , bw=10 )
+    net.addLink( s1, s2, cls=TCLink , bw=10 )
+    net.addLink( s1, s3, cls=TCLink , bw=10 )
 
-    net.addLink( upSwitch, rightSwitch, cls=TCLink , bw=10 )
+    net.addLink( s2, s4, cls=TCLink , bw=10 )
 
-    net.addLink( downSwitch, rightSwitch, cls=TCLink , bw=10 )
+    net.addLink( s3, s4, cls=TCLink , bw=10 )
 
     # Add links to services
-    net.addLink( rightSwitch, httpLsHost, cls=TCLink , bw=10 )
+    net.addLink( s4, httpLsHost, cls=TCLink , bw=10 )
 
     #Add links to users
-    net.addLink( leftSwitch, userOneHost, cls=TCLink , bw=10 )
+    net.addLink( s1, userOneHost, cls=TCLink , bw=10 )
 
     info( '*** Starting network\n')
     net.build()
 
     info( '*** Starting switches\n')
-    net.get('leftSwitch').start([c0])
-    net.get('upSwitch').start([c0])
-    net.get('downSwitch').start([c0])
-    net.get('rightSwitch').start([c0])
+    net.get('s1').start([c0])
+    net.get('s2').start([c0])
+    net.get('s3').start([c0])
+    net.get('s4').start([c0])
 
     info( '*** Sleep 30 seconds to let controller get topology...\n')
     sleep(30)
