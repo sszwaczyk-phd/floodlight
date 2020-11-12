@@ -97,7 +97,7 @@ def verySimpleNet():
 
     info( '*** Starting services\n')
 
-    httpLsCommand = 'java -jar /home/sszwaczyk/WAT/PhD/impl/http-server/target/http-server-0.0.1-SNAPSHOT.jar --usersFile=/home/sszwaczyk/WAT/PhD/impl/floodlight/scenarios/simple-net/users.json --servicesFile=/home/sszwaczyk/WAT/PhD/impl/floodlight/scenarios/simple-net/mininet/services.json --logging.file=./service-one.log --exitStatsFile=./service-one-exit.xlsx'
+    httpLsCommand = 'java -jar /home/sszwaczyk/WAT/PhD/impl/http-server/target/http-server-0.0.1-SNAPSHOT.jar --usersFile=/home/sszwaczyk/WAT/PhD/impl/floodlight/scenarios/simple-net/users.json --servicesFile=/home/sszwaczyk/WAT/PhD/impl/floodlight/scenarios/simple-net/mininet/services.json --logging.file=./http-ls.log --exitStatsFile=./http-ls-exit.xlsx'
     popens[httpLsHost] = httpLsHost.popen(httpLsCommand.split())
 
     httpSsCommand = 'java -jar /home/sszwaczyk/WAT/PhD/impl/http-server/target/http-server-0.0.1-SNAPSHOT.jar --usersFile=/home/sszwaczyk/WAT/PhD/impl/floodlight/scenarios/simple-net/users.json --servicesFile=/home/sszwaczyk/WAT/PhD/impl/floodlight/scenarios/simple-net/mininet/services.json --logging.file=./http-ss.log --exitStatsFile=./http-ss-exit.xlsx'
