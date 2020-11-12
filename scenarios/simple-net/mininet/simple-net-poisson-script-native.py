@@ -63,6 +63,7 @@ def verySimpleNet():
     userOneHost = net.addHost( 'User1', cls=Host, ip='10.0.0.101/24', cpu=.1/hostsNumber )
 
     httpLsHost = net.addHost( 'HTTP_LS', cls=Host, ip='10.0.0.1/24', cpu=.1/hostsNumber )
+    httpSsHost = net.addHost( 'HTTP_SS', cls=Host, ip='10.0.0.2/24', cpu=.1/hostsNumber )
 
     info( '*** Add links\n')
     # Add links between switches
@@ -75,6 +76,7 @@ def verySimpleNet():
 
     # Add links to services
     net.addLink( s4, httpLsHost, cls=TCLink , bw=10 )
+    net.addLink( s4, httpSsHost, cls=TCLink , bw=10 )
 
     #Add links to users
     net.addLink( s1, userOneHost, cls=TCLink , bw=10 )
@@ -97,6 +99,9 @@ def verySimpleNet():
 
     httpLsCommand = 'java -jar /home/sszwaczyk/WAT/PhD/impl/http-server/target/http-server-0.0.1-SNAPSHOT.jar --usersFile=/home/sszwaczyk/WAT/PhD/impl/floodlight/scenarios/simple-net/users.json --servicesFile=/home/sszwaczyk/WAT/PhD/impl/floodlight/scenarios/simple-net/mininet/services.json --logging.file=./service-one.log --exitStatsFile=./service-one-exit.xlsx'
     popens[httpLsHost] = httpLsHost.popen(httpLsCommand.split())
+
+    httpSsCommand = 'java -jar /home/sszwaczyk/WAT/PhD/impl/http-server/target/http-server-0.0.1-SNAPSHOT.jar --usersFile=/home/sszwaczyk/WAT/PhD/impl/floodlight/scenarios/simple-net/users.json --servicesFile=/home/sszwaczyk/WAT/PhD/impl/floodlight/scenarios/simple-net/mininet/services.json --logging.file=./http-ss.log --exitStatsFile=./http-ss-exit.xlsx'
+    popens[httpSsHost] = httpSsHost.popen(httpSsCommand.split())
 
     info( '*** Sleep 30 seconds to let services start...\n')
     sleep(30)
