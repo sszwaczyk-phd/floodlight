@@ -19,5 +19,26 @@
       "AVAILABILITY": 0,
       "TRUST": 0
     }
+  },
+  {
+    "serviceId": "HTTP_SS",
+    "requirements": {
+      "CONFIDENTIALITY": 0.9,
+      "INTEGRITY": 0.9,
+      "AVAILABILITY": 0.9,
+      "TRUST": 0.9
+    },
+    "consequences": {
+      "CONFIDENTIALITY": 100,
+      "INTEGRITY": 100,
+      "AVAILABILITY": 75,
+      "TRUST": 100
+    },
+    "acceptableRiskIncrease": {
+      "CONFIDENTIALITY": 0,
+      "INTEGRITY": 0,
+      "AVAILABILITY": 0,
+      "TRUST": 0
+    }
   }
 ]
