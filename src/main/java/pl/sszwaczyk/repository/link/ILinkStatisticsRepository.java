@@ -12,4 +12,7 @@ public interface ILinkStatisticsRepository extends IFloodlightService {
     List<MaxLinkUtilization> getMaxLinksBandwidth();
 
     Map<UnevenMetric, Double> getMaxUneven();
+
+    List<LinkUtilizationAtTime> getLinkUtilizationAtTimes();
+
 }

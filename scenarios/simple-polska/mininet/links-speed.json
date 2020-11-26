@@ -1,0 +1,193 @@
+[
+  {
+    "datapathId": "00:00:00:00:00:00:00:01",
+    "portNumber": 1,
+    "speed": 10000
+  },
+  {
+    "datapathId": "00:00:00:00:00:00:00:01",
+    "portNumber": 2,
+    "speed": 10000
+  },
+  {
+    "datapathId": "00:00:00:00:00:00:00:01",
+    "portNumber": 3,
+    "speed": 10000
+  },
+
+  {
+    "datapathId": "00:00:00:00:00:00:00:02",
+    "portNumber": 1,
+    "speed": 10000
+  },
+  {
+    "datapathId": "00:00:00:00:00:00:00:02",
+    "portNumber": 2,
+    "speed": 10000
+  },
+  {
+    "datapathId": "00:00:00:00:00:00:00:02",
+    "portNumber": 3,
+    "speed": 10000
+  },
+
+  {
+    "datapathId": "00:00:00:00:00:00:00:03",
+    "portNumber": 1,
+    "speed": 10000
+  },
+  {
+    "datapathId": "00:00:00:00:00:00:00:03",
+    "portNumber": 2,
+    "speed": 10000
+  },
+
+  {
+    "datapathId": "00:00:00:00:00:00:00:04",
+    "portNumber": 1,
+    "speed": 10000
+  },
+  {
+    "datapathId": "00:00:00:00:00:00:00:04",
+    "portNumber": 2,
+    "speed": 10000
+  },
+  {
+    "datapathId": "00:00:00:00:00:00:00:04",
+    "portNumber": 3,
+    "speed": 10000
+  },
+
+  {
+    "datapathId": "00:00:00:00:00:00:00:05",
+    "portNumber": 1,
+    "speed": 10000
+  },
+  {
+    "datapathId": "00:00:00:00:00:00:00:05",
+    "portNumber": 2,
+    "speed": 10000
+  },
+  {
+    "datapathId": "00:00:00:00:00:00:00:05",
+    "portNumber": 3,
+    "speed": 10000
+  },
+
+  {
+    "datapathId": "00:00:00:00:00:00:00:06",
+    "portNumber": 1,
+    "speed": 10000
+  },
+  {
+    "datapathId": "00:00:00:00:00:00:00:06",
+    "portNumber": 2,
+    "speed": 10000
+  },
+  {
+    "datapathId": "00:00:00:00:00:00:00:06",
+    "portNumber": 3,
+    "speed": 10000
+  },
+
+  {
+    "datapathId": "00:00:00:00:00:00:00:07",
+    "portNumber": 1,
+    "speed": 10000
+  },
+  {
+    "datapathId": "00:00:00:00:00:00:00:07",
+    "portNumber": 2,
+    "speed": 10000
+  },
+  {
+    "datapathId": "00:00:00:00:00:00:00:07",
+    "portNumber": 3,
+    "speed": 10000
+  },
+  {
+    "datapathId": "00:00:00:00:00:00:00:07",
+    "portNumber": 4,
+    "speed": 10000
+  },
+  {
+    "datapathId": "00:00:00:00:00:00:00:07",
+    "portNumber": 5,
+    "speed": 10000
+  },
+
+  {
+    "datapathId": "00:00:00:00:00:00:00:08",
+    "portNumber": 1,
+    "speed": 10000
+  },
+  {
+    "datapathId": "00:00:00:00:00:00:00:08",
+    "portNumber": 2,
+    "speed": 10000
+  },
+  {
+    "datapathId": "00:00:00:00:00:00:00:08",
+    "portNumber": 3,
+    "speed": 10000
+  },
+
+  {
+    "datapathId": "00:00:00:00:00:00:00:09",
+    "portNumber": 1,
+    "speed": 10000
+  },
+  {
+    "datapathId": "00:00:00:00:00:00:00:09",
+    "portNumber": 2,
+    "speed": 10000
+  },
+  {
+    "datapathId": "00:00:00:00:00:00:00:09",
+    "portNumber": 3,
+    "speed": 10000
+  },
+
+  {
+    "datapathId": "00:00:00:00:00:00:00:10",
+    "portNumber": 1,
+    "speed": 10000
+  },
+  {
+    "datapathId": "00:00:00:00:00:00:00:10",
+    "portNumber": 2,
+    "speed": 10000
+  },
+  {
+    "datapathId": "00:00:00:00:00:00:00:10",
+    "portNumber": 3,
+    "speed": 10000
+  },
+
+  {
+    "datapathId": "00:00:00:00:00:00:00:11",
+    "portNumber": 1,
+    "speed": 10000
+  },
+  {
+    "datapathId": "00:00:00:00:00:00:00:11",
+    "portNumber": 2,
+    "speed": 10000
+  },
+  {
+    "datapathId": "00:00:00:00:00:00:00:11",
+    "portNumber": 3,
+    "speed": 10000
+  },
+
+  {
+    "datapathId": "00:00:00:00:00:00:00:12",
+    "portNumber": 1,
+    "speed": 10000
+  },
+  {
+    "datapathId": "00:00:00:00:00:00:00:12",
+    "portNumber": 2,
+    "speed": 10000
+  }
+]

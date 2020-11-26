@@ -1,0 +1,47 @@
+[
+  {
+    "datapathId": "00:00:00:00:00:00:00:01",
+    "portNumber": 1,
+    "speed": 10000
+  },
+  {
+    "datapathId": "00:00:00:00:00:00:00:01",
+    "portNumber": 2,
+    "speed": 10000
+  },
+  {
+    "datapathId": "00:00:00:00:00:00:00:02",
+    "portNumber": 1,
+    "speed": 10000
+  },
+  {
+    "datapathId": "00:00:00:00:00:00:00:02",
+    "portNumber": 2,
+    "speed": 10000
+  },
+  {
+    "datapathId": "00:00:00:00:00:00:00:03",
+    "portNumber": 1,
+    "speed": 10000
+  },
+  {
+    "datapathId": "00:00:00:00:00:00:00:03",
+    "portNumber": 2,
+    "speed": 10000
+  },
+  {
+    "datapathId": "00:00:00:00:00:00:00:04",
+    "portNumber": 1,
+    "speed": 10000
+  },
+  {
+    "datapathId": "00:00:00:00:00:00:00:04",
+    "portNumber": 1,
+    "speed": 10000
+  },
+  {
+    "datapathId": "00:00:00:00:00:00:00:04",
+    "portNumber": 2,
+    "speed": 10000
+  }
+]

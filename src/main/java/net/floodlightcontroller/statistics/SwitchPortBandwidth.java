@@ -36,9 +36,9 @@ public class SwitchPortBandwidth {
 		id = d;
 		pt = p;
 		speed = s;
-		//Set speed to 10 Mb/s (100 000 kb/s) becouse OVS reads 10 GB/s from NIC
-		speed = U64.of(10000);
-		log.debug("Speed of switch (" + d + ") of port (" + p + ") is " + speed.getValue() + "kb/s");
+//		//Set speed to 10 Mb/s (100 000 kb/s) becouse OVS reads 10 GB/s from NIC
+//		speed = U64.of(10000);
+		log.info("Speed of switch (" + d + ") of port (" + p + ") is " + speed.getValue() + "kb/s");
 		this.rx = rx;
 		this.tx = tx;
 		time = new Date();

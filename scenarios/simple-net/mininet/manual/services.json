@@ -1,0 +1,18 @@
+[
+  {
+    "id": "HTTP_LS",
+    "ip": "10.0.0.1",
+    "port": 8000,
+    "path": "/home/sszwaczyk/Projects/SpringerBriefs/1GB.zip",
+    "bandwidth": 1000000,
+    "maxLatency": 150
+  },
+  {
+    "id": "HTTP_SS",
+    "ip": "10.0.0.2",
+    "port": 8000,
+    "path": "/home/sszwaczyk/Projects/SpringerBriefs/512MB.zip",
+    "bandwidth": 1000000,
+    "maxLatency": 10000
+  }
+]

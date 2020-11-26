@@ -5,7 +5,6 @@ import net.floodlightcontroller.core.module.FloodlightModuleException;
 import net.floodlightcontroller.core.module.IFloodlightModule;
 import net.floodlightcontroller.core.module.IFloodlightService;
 import net.floodlightcontroller.restserver.IRestApiService;
-import net.floodlightcontroller.statistics.SwitchPortBandwidth;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -18,6 +17,7 @@ import pl.sszwaczyk.repository.flow.Flow;
 import pl.sszwaczyk.repository.flow.FlowStatus;
 import pl.sszwaczyk.repository.flow.ISecureFlowsRepository;
 import pl.sszwaczyk.repository.link.ILinkStatisticsRepository;
+import pl.sszwaczyk.repository.link.LinkUtilizationAtTime;
 import pl.sszwaczyk.repository.link.MaxLinkUtilization;
 import pl.sszwaczyk.routing.solver.Decision;
 import pl.sszwaczyk.routing.solver.Reason;
@@ -127,6 +127,8 @@ public class SecureRoutingStatisticsService implements IFloodlightModule, ISecur
         createUnevenStatisticsSheet(workbook);
 
         createGeneralAndUsersAndServicesStatisticsSheet(workbook);
+
+        createLinkUtilizationAtTimeSheet(workbook);
 
         try (FileOutputStream fos = new FileOutputStream(statsFile)) {
             workbook.write(fos);
@@ -817,6 +819,33 @@ public class SecureRoutingStatisticsService implements IFloodlightModule, ISecur
             Row row = sheet.createRow(i);
             row.createCell(0).setCellValue(entry.getKey().toString());
             row.createCell(1).setCellValue(entry.getValue());
+            i++;
+        }
+    }
+
+    private void createLinkUtilizationAtTimeSheet(Workbook workbook) {
+        Sheet sheet = workbook.createSheet("Links Utilization Stats");
+
+        Row row0 = sheet.createRow(0);
+        row0.createCell(0).setCellValue("Date");
+        row0.createCell(1).setCellValue("Datapath ID");
+        row0.createCell(2).setCellValue("Port");
+        row0.createCell(3).setCellValue("Max TX Utilization");
+        row0.createCell(4).setCellValue("Max TX Utilization [%]");
+        row0.createCell(5).setCellValue("Max RX Utilization");
+        row0.createCell(6).setCellValue("Max RX Utilization [%]");
+
+        int i = 1;
+        List<LinkUtilizationAtTime> linkUtilizationAtTimes = linkStatisticsRepository.getLinkUtilizationAtTimes();
+        for(LinkUtilizationAtTime luat: linkUtilizationAtTimes) {
+            Row row = sheet.createRow(i);
+            row.createCell(0).setCellValue(luat.getDate().toString());
+            row.createCell(1).setCellValue(luat.getDatapathId().toString());
+            row.createCell(2).setCellValue(luat.getPt().getPortNumber());
+            row.createCell(3).setCellValue(luat.getTxUtilization());
+            row.createCell(4).setCellValue(luat.getTxUtilizationPercent());
+            row.createCell(5).setCellValue(luat.getRxUtilization());
+            row.createCell(6).setCellValue(luat.getRxUtilizationPercent());
             i++;
         }
     }

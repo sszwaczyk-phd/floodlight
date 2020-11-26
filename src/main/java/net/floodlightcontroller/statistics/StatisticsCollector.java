@@ -1,5 +1,7 @@
 package net.floodlightcontroller.statistics;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.primitives.UnsignedLong;
 import com.google.common.util.concurrent.ListenableFuture;
 import javafx.util.Pair;
@@ -22,7 +24,10 @@ import org.projectfloodlight.openflow.protocol.ver13.OFMeterSerializerVer13;
 import org.projectfloodlight.openflow.types.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.sszwaczyk.link.LinkSpeedConfig;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.Thread.State;
 import java.util.*;
 import java.util.Map.Entry;
@@ -56,6 +61,8 @@ public class StatisticsCollector implements IFloodlightModule, IStatisticsServic
 	private static final String INTERVAL_PORT_STATS_STR = "collectionIntervalPortStatsSeconds";
 	private static final String ENABLED_STR = "enable";
 
+	private static final String LINKS_SPEED_CONFIG_FILE_STR = "linksSpeedConfigFile";
+
 	private static final HashMap<NodePortTuple, SwitchPortBandwidth> portStats = new HashMap<NodePortTuple, SwitchPortBandwidth>();
 	private static final HashMap<NodePortTuple, SwitchPortBandwidth> tentativePortStats = new HashMap<NodePortTuple, SwitchPortBandwidth>();
 
@@ -63,6 +70,7 @@ public class StatisticsCollector implements IFloodlightModule, IStatisticsServic
 	
 	private static final HashMap<NodePortTuple, PortDesc> portDesc = new HashMap<NodePortTuple, PortDesc>();
 
+	private Map<NodePortTuple, Long> linksSpeedConfig = new HashMap<>();
 
 
 	/**
@@ -147,6 +155,13 @@ public class StatisticsCollector implements IFloodlightModule, IStatisticsServic
 
 			if(sw == null) return speed; /* could have disconnected; we'll assume zero-speed then */
 			if(sw.getPort(npt.getPortId()) == null) return speed;
+
+			// check if speed was configured from file
+			Long speedFromConfig = linksSpeedConfig.get(npt);
+			if (speedFromConfig != null) {
+				log.info("Returning speed from config: " + speedFromConfig + " for port: " + npt);
+				return speedFromConfig;
+			}
 
 			/* getCurrSpeed() should handle different OpenFlow Version */
 			OFVersion detectedVersion = sw.getOFFactory().getVersion();
@@ -338,6 +353,37 @@ public class StatisticsCollector implements IFloodlightModule, IStatisticsServic
 			}
 		}
 		log.info("Port statistics collection interval set to {}s", portStatsInterval);
+
+		if (config.containsKey(LINKS_SPEED_CONFIG_FILE_STR)) {
+			log.info("Loading links speed from file: " + LINKS_SPEED_CONFIG_FILE_STR);
+			try {
+				String linksSpeedConfigFilePath = config.get(LINKS_SPEED_CONFIG_FILE_STR);
+				linksSpeedConfig = loadLinksSpeedConfig(linksSpeedConfigFilePath);
+			} catch (IOException e) {
+				log.error("Cannot read link speed config from file because {}.", e.getMessage());
+				throw new FloodlightModuleException("Cannot read links speed config!");
+			}
+		}
+	}
+
+	private Map<NodePortTuple, Long> loadLinksSpeedConfig(String linksSpeedConfigFilePath) throws IOException {
+		File file = new File(linksSpeedConfigFilePath);
+		ObjectMapper objectMapper = new ObjectMapper();
+		List<LinkSpeedConfig> linksSpeed = objectMapper.readValue(file, new TypeReference<List<LinkSpeedConfig>>(){});
+
+		log.info("Loaded link speed configs:");
+		for (LinkSpeedConfig linkSpeedConfig: linksSpeed) {
+			log.info(linkSpeedConfig.toString());
+		}
+
+		Map<NodePortTuple, Long> configMap = new HashMap<>();
+		for (LinkSpeedConfig linkSpeedConfig: linksSpeed) {
+			configMap.put(
+					new NodePortTuple(DatapathId.of(linkSpeedConfig.getDatapathId()), OFPort.of(linkSpeedConfig.getPortNumber())),
+					linkSpeedConfig.getSpeed());
+		}
+
+		return configMap;
 	}
 
 	@Override

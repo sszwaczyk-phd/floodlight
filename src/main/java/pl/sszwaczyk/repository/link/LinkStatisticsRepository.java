@@ -5,6 +5,7 @@ import net.floodlightcontroller.core.module.FloodlightModuleException;
 import net.floodlightcontroller.core.module.IFloodlightModule;
 import net.floodlightcontroller.core.module.IFloodlightService;
 import net.floodlightcontroller.core.types.NodePortTuple;
+import net.floodlightcontroller.linkdiscovery.Link;
 import net.floodlightcontroller.restserver.IRestApiService;
 import net.floodlightcontroller.statistics.IStatisticsService;
 import net.floodlightcontroller.statistics.SwitchPortBandwidth;
@@ -15,6 +16,7 @@ import pl.sszwaczyk.repository.link.web.LinkStatisticsRepositoryRoutable;
 import pl.sszwaczyk.uneven.IUnevenService;
 import pl.sszwaczyk.uneven.UnevenMetric;
 
+import java.time.LocalTime;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -24,6 +26,8 @@ public class LinkStatisticsRepository implements IFloodlightModule, ILinkStatist
 
     private List<MaxLinkUtilization> maxBandwidthConsumption = new ArrayList<>();
     private Map<UnevenMetric, Double> maxUneven = new HashMap<>();
+
+    private final List<LinkUtilizationAtTime> linkUtilizationAtTimes = new ArrayList<>();
 
     private IStatisticsService statisticsService;
     private IUnevenService unevenService;
@@ -69,6 +73,7 @@ public class LinkStatisticsRepository implements IFloodlightModule, ILinkStatist
     public void startUp(FloodlightModuleContext context) throws FloodlightModuleException {
         restApiService.addRestletRoutable(new LinkStatisticsRepositoryRoutable());
         threadPoolService.getScheduledExecutor().scheduleAtFixedRate(new MaxStatisticsFetcher(), 10, 10, TimeUnit.SECONDS);
+        threadPoolService.getScheduledExecutor().scheduleAtFixedRate(new LinkUtilizationAtTimeFetcher(), 10, 10, TimeUnit.SECONDS);
     }
 
     @Override
@@ -79,6 +84,11 @@ public class LinkStatisticsRepository implements IFloodlightModule, ILinkStatist
     @Override
     public Map<UnevenMetric, Double> getMaxUneven() {
         return Collections.unmodifiableMap(maxUneven);
+    }
+
+    @Override
+    public List<LinkUtilizationAtTime> getLinkUtilizationAtTimes() {
+        return Collections.unmodifiableList(linkUtilizationAtTimes);
     }
 
     class MaxStatisticsFetcher implements Runnable {
@@ -131,4 +141,32 @@ public class LinkStatisticsRepository implements IFloodlightModule, ILinkStatist
 
     }
 
+    class LinkUtilizationAtTimeFetcher implements Runnable {
+
+        @Override
+        public void run() {
+            log.debug("Fetching actual link utilization stats...");
+            LocalTime date = LocalTime.now();
+
+            Map<NodePortTuple, SwitchPortBandwidth> bandwidthConsumption = statisticsService.getBandwidthConsumption();
+            for (SwitchPortBandwidth spb: bandwidthConsumption.values()) {
+                if (spb.getSwitchPort().getPortNumber() > 0) {
+                    LinkUtilizationAtTime linkUtilizationAtTime = LinkUtilizationAtTime.builder()
+                            .date(date)
+                            .datapathId(spb.getSwitchId())
+                            .pt(spb.getSwitchPort())
+                            .rxUtilization(spb.getRxUtilization())
+                            .rxUtilizationPercent(spb.getRxUtilizationPercent())
+                            .txUtilization(spb.getTxUtilization())
+                            .txUtilizationPercent(spb.getTxUtilizationPercent())
+                            .build();
+                    linkUtilizationAtTimes.add(linkUtilizationAtTime);
+                    log.debug("Added link utilization: " + linkUtilizationAtTime + " to repository");
+                }
+
+            }
+            log.debug("Fetching actual link utilization stats..");
+        }
+
+    }
 }
