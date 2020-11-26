@@ -159,7 +159,7 @@ public class StatisticsCollector implements IFloodlightModule, IStatisticsServic
 			// check if speed was configured from file
 			Long speedFromConfig = linksSpeedConfig.get(npt);
 			if (speedFromConfig != null) {
-				log.info("Returning speed from config: " + speedFromConfig + " for port: " + npt);
+				log.debug("Returning speed from config: " + speedFromConfig + " for port: " + npt);
 				return speedFromConfig;
 			}
 
@@ -371,9 +371,9 @@ public class StatisticsCollector implements IFloodlightModule, IStatisticsServic
 		ObjectMapper objectMapper = new ObjectMapper();
 		List<LinkSpeedConfig> linksSpeed = objectMapper.readValue(file, new TypeReference<List<LinkSpeedConfig>>(){});
 
-		log.info("Loaded link speed configs:");
+		log.debug("Loaded link speed configs:");
 		for (LinkSpeedConfig linkSpeedConfig: linksSpeed) {
-			log.info(linkSpeedConfig.toString());
+			log.debug(linkSpeedConfig.toString());
 		}
 
 		Map<NodePortTuple, Long> configMap = new HashMap<>();
