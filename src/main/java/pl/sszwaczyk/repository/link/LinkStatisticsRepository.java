@@ -73,7 +73,7 @@ public class LinkStatisticsRepository implements IFloodlightModule, ILinkStatist
     public void startUp(FloodlightModuleContext context) throws FloodlightModuleException {
         restApiService.addRestletRoutable(new LinkStatisticsRepositoryRoutable());
         threadPoolService.getScheduledExecutor().scheduleAtFixedRate(new MaxStatisticsFetcher(), 10, 10, TimeUnit.SECONDS);
-//        threadPoolService.getScheduledExecutor().scheduleAtFixedRate(new LinkUtilizationAtTimeFetcher(), 10, 10, TimeUnit.SECONDS);
+        threadPoolService.getScheduledExecutor().scheduleAtFixedRate(new LinkUtilizationAtTimeFetcher(), 60, 60, TimeUnit.SECONDS);
     }
 
     @Override
