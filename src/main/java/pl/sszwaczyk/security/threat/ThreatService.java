@@ -7,13 +7,19 @@ import net.floodlightcontroller.core.module.IFloodlightModule;
 import net.floodlightcontroller.core.module.IFloodlightService;
 import net.floodlightcontroller.restserver.IRestApiService;
 import net.floodlightcontroller.routing.IRoutingService;
+import org.apache.commons.collections4.CollectionUtils;
+import org.projectfloodlight.openflow.types.DatapathId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pl.sszwaczyk.security.threat.generator.IThreatGenerator;
+import pl.sszwaczyk.security.threat.generator.ITimeBetweenThreatsGenerator;
 import pl.sszwaczyk.security.threat.generator.UniformThreatsGenerator;
+import pl.sszwaczyk.security.threat.generator.UniformTimeBetweenThreatsGenerator;
 import pl.sszwaczyk.security.threat.web.ThreatWebRoutable;
 
 import java.time.LocalTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ThreatService implements IFloodlightModule, IThreatService {
 
@@ -24,6 +30,9 @@ public class ThreatService implements IFloodlightModule, IThreatService {
     private IRoutingService routingService;
 
     private List<IThreatListener> listeners = new ArrayList<>();
+
+    private List<Threat> actualThreats = new ArrayList<>();
+    private List<DatapathId> actualAttackedSwitches = new ArrayList<>();
 
     @Override
     public Collection<Class<? extends IFloodlightService>> getModuleServices() {
@@ -78,30 +87,21 @@ public class ThreatService implements IFloodlightModule, IThreatService {
                 onlyPath = false;
                 log.info("Only path not configured. Set default to " + onlyPath);
             }
-            UniformThreatsGenerator uniformThreatsGenerator = UniformThreatsGenerator.builder()
-                    .threatService(this)
-                    .routingService(routingService)
-                    .switchService(switchService)
-                    .seed(Integer.parseInt(configParameters.get("random-seed")))
-                    .onlySwitch(onlySwitch)
-                    .onlyPath(onlyPath)
-                    .minGap(Integer.parseInt(configParameters.get("min-gap")))
-                    .maxGap(Integer.parseInt(configParameters.get("max-gap")))
-                    .minDuration(Integer.parseInt(configParameters.get("min-duration")))
-                    .maxDuration(Integer.parseInt(configParameters.get("max-duration")))
-                    .build();
+            int seed = Integer.parseInt(configParameters.get("random-seed"));
+            int minDuration = Integer.parseInt(configParameters.get("min-duration"));
+            int maxDuration = Integer.parseInt(configParameters.get("max-duration"));
+            UniformThreatsGenerator uniformThreatsGenerator = new UniformThreatsGenerator(switchService, routingService,
+                    seed, minDuration, maxDuration, onlySwitch, onlyPath);
+
+            int minGap = Integer.parseInt(configParameters.get("min-gap"));
+            int maxGap = Integer.parseInt(configParameters.get("max-gap"));
+            ITimeBetweenThreatsGenerator timeBetweenThreatsGenerator = new UniformTimeBetweenThreatsGenerator(seed, minGap, maxGap);
 
             long startTime = Long.parseLong(configParameters.get("threats-generator-start-time"));
             log.info("Threats generator start time set to " + startTime + " seconds");
-            new Timer().schedule(
-                    new TimerTask() {
-                        @Override
-                        public void run() {
-                            uniformThreatsGenerator.start();
-                        }
-                    },
-                    startTime * 1000
-            );
+            boolean canAttackSameSwitch = Boolean.parseBoolean(configParameters.get("can-attack-same-switch"));
+
+            scheduleThreatsGeneration(startTime, uniformThreatsGenerator, timeBetweenThreatsGenerator, canAttackSameSwitch);
         }
     }
 
@@ -123,6 +123,13 @@ public class ThreatService implements IFloodlightModule, IThreatService {
             listener.threatStarted(threat);
             scheduleThreatEnd(threat);
         }
+
+        actualThreats.add(threat);
+        log.info("Threat {} added to actual threats.", threat);
+
+        actualAttackedSwitches.addAll(threat.getSwitches());
+        log.info("Attacked switches: {} added to actual attacked switches.",
+                threat.getSwitches().stream().map(DatapathId::toString).collect(Collectors.joining(", ")));
     }
 
     @Override
@@ -131,6 +138,58 @@ public class ThreatService implements IFloodlightModule, IThreatService {
         for(IThreatListener listener: listeners) {
             listener.threatEnded(threat);
         }
+
+        actualThreats.remove(threat);
+        log.info("Threat {} removed from actual threats.", threat);
+
+        actualAttackedSwitches.removeAll(threat.getSwitches());
+        log.info("Switches {} removed from attacked switches.",
+                threat.getSwitches().stream().map(DatapathId::toString).collect(Collectors.joining(", ")));
+
+    }
+
+    public void threatGenerationTask(IThreatGenerator threatGenerator, ITimeBetweenThreatsGenerator timeBetweenThreatsGenerator, boolean canAttackSameSwitch) {
+        while (true) {
+            if (!canAttackSameSwitch && actualAttackedSwitches.containsAll(switchService.getAllSwitchDpids())) {
+                log.info("All switches attacked and cannot attack same switch twice.");
+                sleepToNextThreat(timeBetweenThreatsGenerator.generateTimeBetweenThreats());
+                continue;
+            }
+
+            Threat threat = threatGenerator.generateThreat();
+            boolean isAnySwitchAlreadyAttacked = CollectionUtils.containsAny(actualAttackedSwitches, threat.getSwitches());
+            if (!canAttackSameSwitch && isAnySwitchAlreadyAttacked) {
+                log.info("Threat contains already attacked switch and cannot attack same switch twice.");
+                continue;
+            }
+
+            startThreat(threat);
+
+            sleepToNextThreat(timeBetweenThreatsGenerator.generateTimeBetweenThreats());
+        }
+    }
+
+    private void sleepToNextThreat(long time) {
+        try {
+            log.info("Sleeping between next threat generation for {} seconds", time / 1000);
+            Thread.sleep(time);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void scheduleThreatsGeneration(long delay, IThreatGenerator uniformThreatsGenerator,
+                                           ITimeBetweenThreatsGenerator timeBetweenThreatsGenerator,
+                                           boolean canAttackSameSwitch) {
+        new Timer().schedule(
+                new TimerTask() {
+                    @Override
+                    public void run() {
+                        threatGenerationTask(uniformThreatsGenerator, timeBetweenThreatsGenerator, canAttackSameSwitch);
+                    }
+                },
+                delay * 1000
+        );
     }
 
     private void scheduleThreatEnd(Threat threat) {

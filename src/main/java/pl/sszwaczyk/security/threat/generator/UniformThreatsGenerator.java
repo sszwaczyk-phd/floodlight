@@ -16,41 +16,75 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-@Data
-@Builder
-public class UniformThreatsGenerator {
+public class UniformThreatsGenerator implements IThreatGenerator {
 
     private static final Logger log = LoggerFactory.getLogger(UniformThreatsGenerator.class);
 
-    private IThreatService threatService;
-    private IOFSwitchService switchService;
-    private IRoutingService routingService;
+    private final IOFSwitchService switchService;
+    private final IRoutingService routingService;
 
-    private long seed;
+    private final Random random;
 
-    private int minGap;
-    private int maxGap;
+    private final int minDuration;
+    private final int maxDuration;
 
-    private int minDuration;
-    private int maxDuration;
+    private final boolean onlySwitch;
+    private final boolean onlyPath;
 
-    private boolean onlySwitch = false;
-    private boolean onlyPath = false;
+    public UniformThreatsGenerator(IOFSwitchService switchService,
+                                   IRoutingService routingService,
+                                   long seed,
+                                   int minDuration,
+                                   int maxDuration,
+                                   boolean onlySwitch,
+                                   boolean onlyPath) {
+        this.switchService = switchService;
+        this.routingService = routingService;
+        this.random = new Random(seed);
+        this.minDuration = minDuration;
+        this.maxDuration = maxDuration;
+        this.onlySwitch = onlySwitch;
+        this.onlyPath = onlyPath;
+    }
 
-    public void start() {
-        Random random = new Random(seed);
+    @Override
+    public Threat generateThreat() {
+        Threat threat = new Threat();
 
-        while(true) {
-            Threat threat = new Threat();
+        List<DatapathId> switches = new ArrayList<>();
+        List<DatapathId> dpids = new ArrayList<>(switchService.getAllSwitchDpids());
 
-            List<DatapathId> switches = new ArrayList<>();
-            List<DatapathId> dpids = new ArrayList<>(switchService.getAllSwitchDpids());
+        if(onlySwitch) {
+            //One switch attacked
+            int switchIndex = random.nextInt(dpids.size());
+            switches.add(dpids.get(switchIndex));
+        } else if(onlyPath) {
+            //Path attacked
+            boolean pathFound = false;
+            while (!pathFound) {
+                int startSwitchIndex = random.nextInt(dpids.size());
+                int endSwitchIndex = random.nextInt(dpids.size());
 
-            if(onlySwitch) {
+                DatapathId start = dpids.get(startSwitchIndex);
+                DatapathId end = dpids.get(endSwitchIndex);
+
+                List<Path> paths = routingService.getPathsSlow(start, end, 10);
+                if(paths.size() == 0) {
+                    log.warn("Path between " + start + " and " + end + " not found");
+                } else {
+                    Path path = paths.get(random.nextInt(paths.size()));
+                    switches.addAll(PathUtils.getSwitchesFromPath(path));
+                    pathFound = true;
+                }
+            }
+        } else {
+            //random switch or path
+            int switchOrPath = random.nextInt(2);
+            if(switchOrPath == 0) {
                 //One switch attacked
                 int switchIndex = random.nextInt(dpids.size());
                 switches.add(dpids.get(switchIndex));
-            } else if(onlyPath) {
+            } else {
                 //Path attacked
                 boolean pathFound = false;
                 while (!pathFound) {
@@ -69,48 +103,12 @@ public class UniformThreatsGenerator {
                         pathFound = true;
                     }
                 }
-            } else {
-                //random switch or path
-                int switchOrPath = random.nextInt(2);
-                if(switchOrPath == 0) {
-                    //One switch attacked
-                    int switchIndex = random.nextInt(dpids.size());
-                    switches.add(dpids.get(switchIndex));
-                } else {
-                    //Path attacked
-                    boolean pathFound = false;
-                    while (!pathFound) {
-                        int startSwitchIndex = random.nextInt(dpids.size());
-                        int endSwitchIndex = random.nextInt(dpids.size());
-
-                        DatapathId start = dpids.get(startSwitchIndex);
-                        DatapathId end = dpids.get(endSwitchIndex);
-
-                        List<Path> paths = routingService.getPathsSlow(start, end, 10);
-                        if(paths.size() == 0) {
-                            log.warn("Path between " + start + " and " + end + " not found");
-                        } else {
-                            Path path = paths.get(random.nextInt(paths.size()));
-                            switches.addAll(PathUtils.getSwitchesFromPath(path));
-                            pathFound = true;
-                        }
-                    }
-                }
-            }
-            threat.setSwitches(switches);
-
-            threat.setDuration(random.nextInt((maxDuration - minDuration) + 1) + minDuration);
-
-            log.info("Starting Threat {}", threat);
-            threatService.startThreat(threat);
-
-            try {
-                int gap = random.nextInt((maxGap - minGap) + 1) + minGap;
-                log.info("Sleeping between next threat generation for {} seconds", gap);
-                Thread.sleep(gap * 1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             }
         }
+        threat.setSwitches(switches);
+
+        threat.setDuration(random.nextInt((maxDuration - minDuration) + 1) + minDuration);
+
+        return threat;
     }
 }
