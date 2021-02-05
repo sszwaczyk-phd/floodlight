@@ -1,5 +1,7 @@
 package pl.sszwaczyk.repository.link;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import net.floodlightcontroller.core.module.FloodlightModuleContext;
 import net.floodlightcontroller.core.module.FloodlightModuleException;
 import net.floodlightcontroller.core.module.IFloodlightModule;
@@ -78,17 +80,17 @@ public class LinkStatisticsRepository implements IFloodlightModule, ILinkStatist
 
     @Override
     public List<MaxLinkUtilization> getMaxLinksBandwidth() {
-        return Collections.unmodifiableList(maxBandwidthConsumption);
+        return ImmutableList.copyOf(maxBandwidthConsumption);
     }
 
     @Override
     public Map<UnevenMetric, Double> getMaxUneven() {
-        return Collections.unmodifiableMap(maxUneven);
+        return ImmutableMap.copyOf(maxUneven);
     }
 
     @Override
     public List<LinkUtilizationAtTime> getLinkUtilizationAtTimes() {
-        return Collections.unmodifiableList(linkUtilizationAtTimes);
+        return ImmutableList.copyOf(linkUtilizationAtTimes);
     }
 
     class MaxStatisticsFetcher implements Runnable {

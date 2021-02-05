@@ -1,5 +1,7 @@
 package pl.sszwaczyk.repository.flow;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import net.floodlightcontroller.core.FloodlightContext;
 import net.floodlightcontroller.core.IFloodlightProviderService;
 import net.floodlightcontroller.core.IOFMessageListener;
@@ -102,7 +104,7 @@ public class SecureFlowsRepository implements IFloodlightModule, ISecureFlowsRep
 
     @Override
     public List<Flow> getFinishedFlows() {
-        return finishedFlows;
+        return ImmutableList.copyOf(finishedFlows);
     }
 
     public Flow getPendingFlow(AddressesAndPorts addressesAndPorts) {
@@ -111,7 +113,7 @@ public class SecureFlowsRepository implements IFloodlightModule, ISecureFlowsRep
 
     @Override
     public List<Flow> getPendingFlows() {
-        return pendingFlows;
+        return ImmutableList.copyOf(pendingFlows);
     }
 
     @Override
@@ -138,7 +140,7 @@ public class SecureFlowsRepository implements IFloodlightModule, ISecureFlowsRep
 
     @Override
     public Map<AddressesAndPorts, Path> getActualPaths() {
-        return actualPaths;
+        return ImmutableMap.copyOf(actualPaths);
     }
 
     @Override
