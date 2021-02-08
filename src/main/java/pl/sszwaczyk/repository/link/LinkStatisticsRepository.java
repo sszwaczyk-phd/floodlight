@@ -21,6 +21,7 @@ import pl.sszwaczyk.uneven.UnevenMetric;
 import java.time.LocalTime;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class LinkStatisticsRepository implements IFloodlightModule, ILinkStatisticsRepository {
 
@@ -80,7 +81,9 @@ public class LinkStatisticsRepository implements IFloodlightModule, ILinkStatist
 
     @Override
     public List<MaxLinkUtilization> getMaxLinksBandwidth() {
-        return ImmutableList.copyOf(maxBandwidthConsumption);
+        return ImmutableList.copyOf(maxBandwidthConsumption.stream()
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList()));
     }
 
     @Override
@@ -90,7 +93,9 @@ public class LinkStatisticsRepository implements IFloodlightModule, ILinkStatist
 
     @Override
     public List<LinkUtilizationAtTime> getLinkUtilizationAtTimes() {
-        return ImmutableList.copyOf(linkUtilizationAtTimes);
+        return ImmutableList.copyOf(linkUtilizationAtTimes.stream()
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList()));
     }
 
     class MaxStatisticsFetcher implements Runnable {

@@ -34,6 +34,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 public class SecureFlowsRepository implements IFloodlightModule, ISecureFlowsRepository, IOFMessageListener {
 
@@ -104,7 +105,9 @@ public class SecureFlowsRepository implements IFloodlightModule, ISecureFlowsRep
 
     @Override
     public List<Flow> getFinishedFlows() {
-        return ImmutableList.copyOf(finishedFlows);
+        return ImmutableList.copyOf(finishedFlows.stream()
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList()));
     }
 
     public Flow getPendingFlow(AddressesAndPorts addressesAndPorts) {
@@ -113,7 +116,9 @@ public class SecureFlowsRepository implements IFloodlightModule, ISecureFlowsRep
 
     @Override
     public List<Flow> getPendingFlows() {
-        return ImmutableList.copyOf(pendingFlows);
+        return ImmutableList.copyOf(pendingFlows.stream()
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList()));
     }
 
     @Override
