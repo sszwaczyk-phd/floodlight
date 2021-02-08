@@ -92,10 +92,10 @@
       "TRUST": 0.5
     },
     "consequences": {
-      "CONFIDENTIALITY": 0,
-      "INTEGRITY": 0,
-      "AVAILABILITY": 0,
-      "TRUST": 0
+      "CONFIDENTIALITY": 50,
+      "INTEGRITY": 50,
+      "AVAILABILITY": 50,
+      "TRUST": 50
     },
     "acceptableRiskIncrease": {
       "CONFIDENTIALITY": 0,
